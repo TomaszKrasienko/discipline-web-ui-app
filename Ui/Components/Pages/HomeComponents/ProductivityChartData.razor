@@ -1,0 +1,79 @@
+@using Ui.Services.Abstractions
+@inject ILaborIntensityService LaborIntensityService;
+@using ApexCharts
+@using Ui.Models
+@rendermode InteractiveServer
+
+<div style="pointer-events: none; user-select: none;">
+    <ApexChart TItem="DailyProductivity"
+               Title="Your progress"
+               Options="_options">
+
+        <ApexPointSeries TItem="DailyProductivity"
+                         Items="Data"
+                         SeriesType="SeriesType.Line"
+                         XValue="e => e.Day"
+                         YValue="e=> e.Percent"/>
+        <ApexPointSeries TItem="DailyProductivity"
+                      Items="BaseData"
+                      SeriesType="SeriesType.Line"
+                      XValue="e => e.Day"
+                      YValue="e=> e.Percent"
+        />
+    </ApexChart>
+</div>    
+
+@code {
+    private List<DailyProductivity> Data { get; set; } = new();
+    private List<DailyProductivity> BaseData { get; set; } = new();
+    private ApexChartOptions<DailyProductivity> _options;
+    protected override void OnInitialized()
+    {
+        Data = LaborIntensityService.GetLaborIntensities();
+        BaseData =
+        [
+            new DailyProductivity()
+            {
+                Day = "",
+                Percent = 0
+            },
+            new DailyProductivity()
+            {
+                Day = "",
+                Percent = 100
+            },
+        ];
+        _options = new ApexChartOptions<DailyProductivity>()
+        {
+            Chart = new Chart
+            {
+                Toolbar = new Toolbar
+                {
+                    Show = false
+                },
+                DropShadow = new DropShadow
+                {
+                    Enabled = true,
+                    Color = "",
+                    Top = 18,
+                    Left = 7,
+                    Blur = 10,
+                    Opacity = 0.2d
+                }
+            },
+            Grid = new Grid
+            {
+                BorderColor = "#e7e7e7",
+                Row = new GridRow
+                {
+                    Colors = new List<string> { "#f3f3f3", "transparent" },
+                    Opacity = 0.5d
+                }
+            },
+
+            Colors = new List<string> { "#77B6EA", "transparent" },
+            // Markers = new Markers { Shape = ShapeEnum.Circle, Size = 5, FillOpacity = new Opacity(0.8d) },
+            Stroke = new Stroke { Curve = Curve.Straight }
+        };
+    }
+}
