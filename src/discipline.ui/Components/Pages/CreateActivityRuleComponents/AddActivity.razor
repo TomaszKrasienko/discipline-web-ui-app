@@ -1,6 +1,7 @@
-@page "/add-activity"
-@using discipline.ui.Models
+@page "/create-activity-rule"
 @using discipline.core.Dispatchers.Models.ActivityRule
+@using discipline.ui.Helpers
+@using discipline.ui.Models
 @inject ILogger<AddActivity> Logger;
 @rendermode InteractiveServer
 
@@ -41,7 +42,7 @@
             {
                 <div class="discipline-input-group">
                     <label>Days:</label>
-                    @foreach (var weekdayCheck in _weekDays)
+                    @foreach (var weekdayCheck in _weekdays)
                     {
                         <div class="form-check">
                             <InputCheckbox
@@ -66,44 +67,8 @@
 @code {
     [SupplyParameterFromForm] public CreateActivityRuleRequest? CreateActivityRuleRequest { get; set; }
 
-    private readonly List<WeekdayCheck> _weekDays =
-    [
-        new WeekdayCheck()
-        {
-            IsChecked = false,
-            Name = "Monday"
-        },
-        new WeekdayCheck()
-        {
-            IsChecked = false,
-            Name = "Tuesday"
-        },
-        new WeekdayCheck()
-        {
-            IsChecked = false,
-            Name = "Wednesday"
-        },
-        new WeekdayCheck()
-        {
-            IsChecked = false,
-            Name = "Thursday"
-        },
-        new WeekdayCheck()
-        {
-            IsChecked = false,
-            Name = "Friday"
-        },
-        new WeekdayCheck()
-        {
-            IsChecked = false,
-            Name = "Saturday"
-        },
-        new WeekdayCheck()
-        {
-            IsChecked = false,
-            Name = "Sunday"
-        }
-    ];
+    private readonly List<Weekday> _weekdays = WeekdayFactory.Get();
+    
 
     private readonly List<string> _activityMode =
     [
@@ -121,9 +86,9 @@
         CreateActivityRuleRequest = new();
     }
 
-    private void ChangeWeekdayCheck(WeekdayCheck weekdayCheck)
+    private void ChangeWeekdayCheck(Weekday weekday)
     {
-        weekdayCheck.IsChecked = !weekdayCheck.IsChecked;
+        weekday.IsChecked = !weekday.IsChecked;
         Logger.LogInformation("Check changed");
     }
 
