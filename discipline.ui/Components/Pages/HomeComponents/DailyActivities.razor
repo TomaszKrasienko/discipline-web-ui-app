@@ -1,0 +1,31 @@
+@using discipline.ui.Services.Abstractions
+@using discipline.ui.Models
+@inject IDailyTasksService DailyTasksService;
+@rendermode InteractiveServer
+
+<div class="row">
+    <p>Your today tasks</p>
+
+    @foreach (var task in Tasks)
+    {
+        <div class="row">
+            <div class="form-check">
+                <InputCheckbox @bind-Value="task.Checked" @oninput="() => { ChangeCheck(task); }"/>
+                <label class="form-check-label" @onclick="() => ChangeCheck(task)">@task.Title</label>
+            </div>
+        </div>
+    }
+</div>
+@code {
+    private List<DailyActivity> Tasks { get; set; } = [];
+    protected override void OnInitialized()
+    {
+        Tasks = DailyTasksService.GetDailyTasks();
+    }
+    
+    private void ChangeCheck(DailyActivity dailyTask)
+    {
+        dailyTask.Checked = !dailyTask.Checked;
+        DailyTasksService.Update(dailyTask);
+    }
+}
