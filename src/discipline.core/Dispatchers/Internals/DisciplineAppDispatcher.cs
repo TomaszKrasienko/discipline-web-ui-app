@@ -12,7 +12,7 @@ internal sealed class DisciplineAppDispatcher(
     ILogger<DisciplineAppDispatcher> logger,
     IDisciplineAppClient disciplineAppClient) : IDisciplineAppDispatcher
 {
-    public async Task<ResponseDto> CreateActivityRuleAsync(CreateActivityRuleRequest request) 
+    public async Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request) 
     {
         var response = await disciplineAppClient.PostAsync("/activity-rule/create", request);
         switch (response.StatusCode)
@@ -31,9 +31,14 @@ internal sealed class DisciplineAppDispatcher(
         }
     }
 
-    public Task<ActivityRuleDto> GetByIdAsync(Guid activityRuleId)
+    public async Task<ActivityRuleDto> GetCreateActivityRuleByIdAsync(Guid activityRuleId)
     {
-        throw new NotImplementedException();
+        var response = await disciplineAppClient.GetAsync($"activity-rule/{activityRuleId}");
+        if (response.StatusCode is HttpStatusCode.NoContent)
+        {
+            return null;
+        }
+        return await response.Content.ReadFromJsonAsync<ActivityRuleDto>();
     }
 
     public async Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync()
