@@ -1,5 +1,6 @@
 @page "/add-activity"
 @using discipline.ui.Models
+@using discipline.core.Dispatchers.Models.ActivityRule
 @inject ILogger<AddActivity> Logger;
 @rendermode InteractiveServer
 
@@ -12,21 +13,21 @@
 </div>
 <div class="row">
     <div class="col-md-6 offset-3">
-        <EditForm method="post" OnSubmit="Submit" Model="NewActivity">
+        <EditForm method="post" OnSubmit="Submit" Model="CreateActivityRuleRequest">
             <div class="discipline-form-group">
                 <label for="new-activity-title">Title: </label>
                 <InputText
                     class="form-control"
                     id="new-activity-title"
                     placeholder="Title"
-                    @bind-Value="NewActivity!.Title"/>
+                    @bind-Value="CreateActivityRuleRequest!.Title"/>
             </div>
             <div class="discipline-input-group">
                 <label class="form-label" for="new-activity-mode">Mode: </label>
                 <InputSelect 
                     class="form-control"
                     id="new-activity-mode" 
-                    @bind-Value="NewActivity!.Mode">
+                    @bind-Value="CreateActivityRuleRequest!.Mode">
                     @foreach (var mode in _activityMode)
                     {
                         <option value="@mode">
@@ -36,7 +37,7 @@
                 </InputSelect>
             </div>
             
-            @if (NewActivity.Mode == "Custom")
+            @if (CreateActivityRuleRequest.Mode == "Custom")
             {
                 <div class="discipline-input-group">
                     <label>Days:</label>
@@ -63,7 +64,7 @@
     </div>
 </div>
 @code {
-    [SupplyParameterFromForm] public NewActivity? NewActivity { get; set; }
+    [SupplyParameterFromForm] public CreateActivityRuleRequest? CreateActivityRuleRequest { get; set; }
 
     private readonly List<WeekdayCheck> _weekDays =
     [
@@ -106,7 +107,7 @@
 
     private readonly List<string> _activityMode =
     [
-        "Every day", 
+        "EveryDay", 
         "Once a week", 
         "First day of week", 
         "Last day of week", 
@@ -117,7 +118,7 @@
     
     protected override void OnInitialized()
     {
-        NewActivity = new();
+        CreateActivityRuleRequest = new();
     }
 
     private void ChangeWeekdayCheck(WeekdayCheck weekdayCheck)

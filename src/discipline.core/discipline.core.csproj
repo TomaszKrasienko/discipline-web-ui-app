@@ -13,8 +13,4 @@
       <PackageReference Include="Polly" Version="8.4.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Dispatchers\Internals\" />
-    </ItemGroup>
-
 </Project>
