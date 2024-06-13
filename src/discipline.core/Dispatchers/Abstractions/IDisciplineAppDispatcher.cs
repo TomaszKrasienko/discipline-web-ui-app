@@ -7,4 +7,5 @@ public interface IDisciplineAppDispatcher
 {
     Task CreateActivityRuleAsync(CreateActivityRuleRequest request);
     Task<ActivityRuleDto> GetByIdAsync(Guid activityRuleId);
+    Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync();
 }

@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using discipline.core.Communication.HttpClients.Abstractions;
 using discipline.core.Dispatchers.Abstractions;
 using discipline.core.Dispatchers.Models.ActivityRule;
@@ -23,5 +24,16 @@ internal sealed class DisciplineAppDispatcher(
     public Task<ActivityRuleDto> GetByIdAsync(Guid activityRuleId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync()
+    {
+        var response = await disciplineAppClient.GetAsync("activity-rule-modes");
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogInformation($"GetActivityRuleModesAsync - status code: {response.StatusCode}");
+        }
+
+        return await response.Content.ReadFromJsonAsync<List<ActivityRuleModeDto>>();
     }
 }
