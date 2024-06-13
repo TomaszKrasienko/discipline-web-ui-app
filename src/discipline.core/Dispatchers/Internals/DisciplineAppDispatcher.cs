@@ -12,12 +12,22 @@ internal sealed class DisciplineAppDispatcher(
     ILogger<DisciplineAppDispatcher> logger,
     IDisciplineAppClient disciplineAppClient) : IDisciplineAppDispatcher
 {
-    public async Task CreateActivityRuleAsync(CreateActivityRuleRequest request)
+    public async Task<ResponseDto> CreateActivityRuleAsync(CreateActivityRuleRequest request) 
     {
         var response = await disciplineAppClient.PostAsync("/activity-rule/create", request);
-        if (response.StatusCode is not HttpStatusCode.OK)
+        switch (response.StatusCode)
         {
-            logger.LogInformation($"HttpStatusCode: {response.StatusCode}");
+            case HttpStatusCode.Created:
+            {
+                return ResponseDto.GetValid();
+            }
+            case (HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity):
+            {
+                var errorResult = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+                return ResponseDto.GetInvalid(errorResult.Message);
+            }
+            default:
+                return ResponseDto.GetInvalid();
         }
     }
 

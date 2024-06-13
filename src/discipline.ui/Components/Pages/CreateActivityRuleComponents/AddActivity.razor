@@ -2,7 +2,12 @@
 @using discipline.core.Dispatchers.Models.ActivityRule
 @using discipline.ui.Helpers
 @using discipline.ui.Models
+@using discipline.core.Dispatchers.Abstractions
+@using discipline.core.DTOs
+@using BlazorBootstrap
 @inject ILogger<AddActivity> Logger;
+@inject IDisciplineAppDispatcher DisciplineAppDispatcher;
+@inject NavigationManager NavigationManager;
 @rendermode InteractiveServer
 
 <PageTitle>Add new activity</PageTitle>
@@ -12,6 +17,12 @@
         <h2>Add new activity</h2>  
     </div>
 </div>
+@* @if (!_isValid) *@
+@* { *@
+    <div>
+        <Alert Color="AlertColor.Danger">Test</Alert>
+    </div>
+@* } *@
 <div class="row">
     <div class="col-md-6 offset-3">
         <EditForm method="post" OnSubmit="Submit" Model="CreateActivityRuleRequest">
@@ -29,10 +40,10 @@
                     class="form-control"
                     id="new-activity-mode" 
                     @bind-Value="CreateActivityRuleRequest!.Mode">
-                    @foreach (var mode in _activityMode)
+                    @foreach (var mode in _activityRuleModes)
                     {
-                        <option value="@mode">
-                            @mode
+                        <option value="@mode.Key">
+                            @mode.Name
                         </option>
                     }
                 </InputSelect>
@@ -65,25 +76,18 @@
     </div>
 </div>
 @code {
-    [SupplyParameterFromForm] public CreateActivityRuleRequest? CreateActivityRuleRequest { get; set; }
+    [SupplyParameterFromForm] 
+    public CreateActivityRuleRequest CreateActivityRuleRequest { get; set; } = new();
 
     private readonly List<Weekday> _weekdays = WeekdayFactory.Get();
+    private List<ActivityRuleModeDto> _activityRuleModes = new();
+    private bool _isValid = true;
+    private string _errorMessage = string.Empty;
     
-
-    private readonly List<string> _activityMode =
-    [
-        "EveryDay", 
-        "Once a week", 
-        "First day of week", 
-        "Last day of week", 
-        "First day of month",
-        "Last day of month",
-        "Custom"
-    ];
-    
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        CreateActivityRuleRequest = new();
+        _activityRuleModes = await DisciplineAppDispatcher.GetActivityRuleModesAsync();
+        CreateActivityRuleRequest.Mode = _activityRuleModes.FirstOrDefault()?.Key;
     }
 
     private void ChangeWeekdayCheck(Weekday weekday)
@@ -92,8 +96,17 @@
         Logger.LogInformation("Check changed");
     }
 
-    private void Submit()
+    private async Task Submit()
     {
-        Logger.LogInformation("Submitted");
+        var response = await DisciplineAppDispatcher.CreateActivityRuleAsync(CreateActivityRuleRequest);
+        if (!response.IsValid)
+        {
+            _isValid = false;
+            _errorMessage = response.Message;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }

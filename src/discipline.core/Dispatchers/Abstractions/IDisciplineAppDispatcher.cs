@@ -5,7 +5,7 @@ namespace discipline.core.Dispatchers.Abstractions;
 
 public interface IDisciplineAppDispatcher
 {
-    Task CreateActivityRuleAsync(CreateActivityRuleRequest request);
+    Task<ResponseDto> CreateActivityRuleAsync(CreateActivityRuleRequest request);
     Task<ActivityRuleDto> GetByIdAsync(Guid activityRuleId);
     Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync();
 }
