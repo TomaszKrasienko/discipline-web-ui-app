@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using discipline.core.Communication.HttpClients.Abstractions;
 using discipline.core.Dispatchers.Abstractions;
+using discipline.core.Dispatchers.Models;
 using discipline.core.Dispatchers.Models.ActivityRule;
 using discipline.core.DTOs;
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,14 @@ internal sealed class DisciplineAppDispatcher(
             return null;
         }
         return await response.Content.ReadFromJsonAsync<ActivityRuleDto>();
+    }
+
+    public async Task<List<ActivityRuleDto>> BrowseActivityRules(PaginationRequest request)
+    {
+        var response =
+            await disciplineAppClient.GetAsync(
+                $"activity-rules?pageNumber={request.PageNumber}&pageSize={request.PageSize}");
+        return await response.Content.ReadFromJsonAsync<List<ActivityRuleDto>>();
     }
 
     public async Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync()

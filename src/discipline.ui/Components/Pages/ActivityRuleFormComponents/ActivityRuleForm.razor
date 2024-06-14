@@ -1,5 +1,5 @@
 @page "/create-activity-rule"
-@page "/edit-activity-rule/{id:guid}"
+@page "/edit-activity-rule/{ActivityRuleId:guid}"
 @using discipline.core.Dispatchers.Models.ActivityRule
 @using discipline.ui.Helpers
 @using discipline.ui.Models
@@ -77,12 +77,14 @@
         </EditForm>
     </div>
 </div>
-@code {
+@code {    
+    [Parameter]
+    public Guid? ActivityRuleId { get; set; }
+    
     [SupplyParameterFromForm] 
     public ActivityRuleRequest ActivityRuleRequest { get; set; } = new();
     
-    [Parameter]
-    public Guid? ActivityRuleId { get; set; }
+
 
     private readonly List<Weekday> _weekdays = WeekdayFactory.Get();
     private List<ActivityRuleModeDto> _activityRuleModes = new();

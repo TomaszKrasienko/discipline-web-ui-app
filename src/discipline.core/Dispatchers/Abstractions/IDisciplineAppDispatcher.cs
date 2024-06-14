@@ -1,3 +1,4 @@
+using discipline.core.Dispatchers.Models;
 using discipline.core.Dispatchers.Models.ActivityRule;
 using discipline.core.DTOs;
 
@@ -7,5 +8,6 @@ public interface IDisciplineAppDispatcher
 {
     Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request);
     Task<ActivityRuleDto> GetCreateActivityRuleByIdAsync(Guid activityRuleId);
+    Task<List<ActivityRuleDto>> BrowseActivityRules(PaginationRequest request);
     Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync();
 }
