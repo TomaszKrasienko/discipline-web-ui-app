@@ -19,3 +19,9 @@
 .pagination-colors{
     color: black !important;   
 }
+
+.new-activity-btn{
+    position: fixed; 
+    right: 25px; 
+    padding-top: 40px;
+}

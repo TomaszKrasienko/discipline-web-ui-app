@@ -2,9 +2,12 @@
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.Dispatchers.Models
+@using discipline.core.Dispatchers.Models.ActivityRule
 @using discipline.core.DTOs
-@inject IDisciplineAppDispatcher DisciplineDispatcher;
+@using discipline.core.Helpers
+@inject IDisciplineAppDispatcher DisciplineAppDispatcher;
 @inject ILogger<ActivityRulesList> Logger;
+@rendermode InteractiveServer
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
 <PageTitle>Activity rules list</PageTitle>
@@ -26,7 +29,7 @@
         <div class="row">
             @foreach (var activityRule in _activityRules)
             {
-                <span class="activity-row" @onclick="() => OnRedirectToEdit(activityRule)">
+                <span class="activity-row" @onclick="() => OnShowToEdit(activityRule)">
                     <div class="row">
                         <div class="col-md-5 activity-cell">
                             @activityRule?.Title
@@ -63,13 +66,113 @@
     </div>
 </div>
 
+<div class="new-activity-btn">
+    <Button id="new-activity" Color="ButtonColor.Dark" @onclick="OnShowToAdd">
+        <i class="bi bi-plus-square-fill"></i>
+    </Button>
+</div>
+
+<Modal @ref="modal" title="Create new activity rule" UseStaticBackdrop="true" CloseOnEscape="false">
+    <BodyTemplate>
+        <div class="row">
+            <div class="col-md-10 offset-1">
+                <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="new-activity-title">Title: </label>
+                            <InputText
+                                class="form-control"
+                                id="new-activity-title"
+                                placeholder="Title"
+                                @bind-Value="ActivityRuleRequest!.Title"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="new-activity-mode">Mode: </label>
+                            <InputSelect 
+                                class="form-control"
+                                id="new-activity-mode" 
+                                @bind-Value="ActivityRuleRequest!.Mode">
+                                @foreach (var mode in _activityRuleModes)
+                                {
+                                    <option value="@mode.Key">
+                                        @mode.Name
+                                    </option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+                    @if (ActivityRuleRequest.Mode == "Custom")
+                    {
+                        <div class="row">
+                            <Dropdown Color="DropdownColor.Secondary" AutoClose="false">
+                                <DropdownToggleButton>Manual close</DropdownToggleButton>
+                                <DropdownMenu>
+                                @foreach (var weekday in _weekdays)
+                                {
+                                    <DropdownItem Type="DropdownItemType.Button" @onclick="() => ChangeWeekdayCheck(weekday)">
+                                        <div class="form-check">
+                                            <InputCheckbox
+                                                @bind-Value="weekday!.IsChecked"
+                                                @* @oninput="() => ChangeWeekdayCheck(weekday)" *@
+                                                >
+                                            </InputCheckbox>
+                                            <label
+                                                class="form-check-label">
+                                                @* @onclick="() => ChangeWeekdayCheck(weekday)"> *@
+                                                @weekday.Name
+                                            </label>
+                                        </div>
+                                    </DropdownItem>
+                                }
+                                </DropdownMenu>
+                            </Dropdown>
+                            
+                            
+                            <label>Days:</label>
+                            @foreach (var weekday in _weekdays)
+                            {
+                                <div class="form-check">
+                                    <InputCheckbox
+                                        @bind-Value="weekday!.IsChecked"
+                                        @oninput="() => ChangeWeekdayCheck(weekday)">
+                                    </InputCheckbox>
+                                    <label
+                                        class="form-check-label"
+                                        @onclick="() => ChangeWeekdayCheck(weekday)">@weekday.Name</label>
+                                </div>
+                            }
+                        </div>
+                    }
+                    <div class="form-group">
+                        <button class="btn btn-dark" type="submit">Submit</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick="OnHideModalClick">Close</Button>
+    </FooterTemplate>
+</Modal>
+
 
 @code {
+    //List
     private List<ActivityRuleDto> _activityRules = new();
     private int _pageNumber = 1;
     private int _totalPages = 1;
     private int _pageSize = 5;
+    
+    //Modal
+    private Modal modal = default!;
 
+    //Edit form
+    [SupplyParameterFromForm] 
+    public ActivityRuleRequest ActivityRuleRequest { get; set; } = new();
+    
+    private readonly List<WeekdayDto> _weekdays = WeekdayFactory.Get();
+    private List<ActivityRuleModeDto> _activityRuleModes = new();
+    
     protected override async Task OnInitializedAsync()
         => await InitializeData();
 
@@ -82,7 +185,7 @@
 
     private async Task InitializeData()
     {
-        var data = await DisciplineDispatcher.BrowseActivityRules(new PaginationRequest()
+        var data = await DisciplineAppDispatcher.BrowseActivityRules(new PaginationRequest()
         {
             PageNumber = _pageNumber,
             PageSize = _pageSize
@@ -92,8 +195,48 @@
         _totalPages = data.MetaData.TotalPages;
     }
 
-    private void OnRedirectToEdit(ActivityRuleDto activityRuleDto)
+    private void OnShowToEdit(ActivityRuleDto activityRuleDto)
     {
         Logger.LogInformation("Redirect");   
     }
+
+    private async Task OnShowToAdd()
+    {
+        Logger.LogInformation("ShowToAdd");
+        await OnShowModalClick();
+    }
+    
+    private async Task OnShowModalClick()
+    {
+        await modal.ShowAsync();
+        _activityRuleModes = await DisciplineAppDispatcher.GetActivityRuleModesAsync();
+        ActivityRuleRequest.Mode = _activityRuleModes.FirstOrDefault()?.Key;
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
+    }
+    
+    private async Task Submit()
+    {
+        var selectedDays = _weekdays.Where(x => x.IsChecked).Select(x => x.Id).ToList();
+        if (selectedDays.Any())
+        {
+            ActivityRuleRequest.SelectedDays = selectedDays;
+        }
+        var response = await DisciplineAppDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
+        // if (!response.IsValid)
+        // {
+        //     _isValid = false;
+        //     _errorMessage = response.Message;
+        // }
+        // else
+        // {
+        //     NavigationManager.NavigateTo("/");
+        // }
+    }
+    
+    private void ChangeWeekdayCheck(WeekdayDto weekday)
+        => weekday.IsChecked = !weekday.IsChecked;
 }
