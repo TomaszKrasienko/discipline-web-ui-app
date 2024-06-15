@@ -4,7 +4,9 @@
 @using discipline.core.Dispatchers.Models
 @using discipline.core.DTOs
 @inject IDisciplineAppDispatcher DisciplineDispatcher;
+@inject ILogger<ActivityRulesList> Logger;
 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
 <PageTitle>Activity rules list</PageTitle>
 <div class="row">
     <div class="col-md-8 offset-2">
@@ -14,45 +16,84 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-md-5">Title</div>
+            <div class="col-md-3">Mode</div>
+            <div class="col-md-1">Weekdays</div>
+        </div>
+        <div class="row">
+            <hr/>
+        </div>
+        <div class="row">
             @foreach (var activityRule in _activityRules)
             {
-                <div class="row">
-                    <div class="col-md-3">
-                        @activityRule.Title
+                <span class="activity-row" @onclick="() => OnRedirectToEdit(activityRule)">
+                    <div class="row">
+                        <div class="col-md-5 activity-cell">
+                            @activityRule?.Title
+                        </div>
+                        <div class="col-md-3 activity-cell">
+                            @activityRule?.Mode
+                        </div>
+                        <div class="col-md-4">
+                            @(activityRule?.Weekdays is null 
+                                ? string.Empty 
+                                : string.Join(", ", activityRule?.Weekdays?.Where(x 
+                                    => x.IsChecked).Select(x => x.Name)!))
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        @activityRule.Mode
-                    </div>
-                    <div class="col-md-3">
-                        
-                    </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-dark">Edit</button>
-                    </div>
-                </div>
+                </span>
             }
         </div>
     </div>
 </div>
+<div class="row" style="padding-top: 30px;">
+    <div class="col-md-8 offset-2">
+        <Pagination 
+            TotalPages="_totalPages" 
+            ActivePageNumber="_pageNumber" 
+            Size="PaginationSize.Small"
+            Alignment="Alignment.Center"
+            FirstLinkIcon="IconName.ChevronDoubleLeft"
+            PreviousLinkIcon="IconName.ChevronLeft"
+            NextLinkIcon="IconName.ChevronRight"
+            LastLinkIcon="IconName.ChevronDoubleRight"
+            Class="pagination-colors"
+            PageChanged="OnPageChangedAsync"
+            ></Pagination>
+    </div>
+</div>
 
 
-
-
-
-
-
-<Pagination TotalPages="10" ActivePageNumber=_pageNumber/>
 @code {
     private List<ActivityRuleDto> _activityRules = new();
     private int _pageNumber = 1;
-    private int _pageSize = 10;
+    private int _totalPages = 1;
+    private int _pageSize = 5;
 
     protected override async Task OnInitializedAsync()
+        => await InitializeData();
+
+    private async Task OnPageChangedAsync(int newPageNumber)
     {
-        _activityRules = await DisciplineDispatcher.BrowseActivityRules(new PaginationRequest()
+        Logger.LogInformation("On page changed");
+        _pageNumber = newPageNumber;
+        await InitializeData();
+    }
+
+    private async Task InitializeData()
+    {
+        var data = await DisciplineDispatcher.BrowseActivityRules(new PaginationRequest()
         {
             PageNumber = _pageNumber,
             PageSize = _pageSize
         });
+        _activityRules = data.Data;
+        _pageNumber = data.MetaData.CurrentPage;
+        _totalPages = data.MetaData.TotalPages;
+    }
+
+    private void OnRedirectToEdit(ActivityRuleDto activityRuleDto)
+    {
+        Logger.LogInformation("Redirect");   
     }
 }

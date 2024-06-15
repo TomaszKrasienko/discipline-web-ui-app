@@ -1,11 +1,11 @@
 @page "/create-activity-rule"
 @page "/edit-activity-rule/{ActivityRuleId:guid}"
 @using discipline.core.Dispatchers.Models.ActivityRule
-@using discipline.ui.Helpers
 @using discipline.ui.Models
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.DTOs
 @using BlazorBootstrap
+@using discipline.core.Helpers
 @inject IDisciplineAppDispatcher DisciplineAppDispatcher;
 @inject NavigationManager NavigationManager;
 @rendermode InteractiveServer
@@ -55,16 +55,16 @@
             {
                 <div class="discipline-input-group">
                     <label>Days:</label>
-                    @foreach (var weekdayCheck in _weekdays)
+                    @foreach (var weekday in _weekdays)
                     {
                         <div class="form-check">
                             <InputCheckbox
-                                @bind-Value="weekdayCheck!.IsChecked"
-                                @oninput="() => ChangeWeekdayCheck(weekdayCheck)">
+                                @bind-Value="weekday!.IsChecked"
+                                @oninput="() => ChangeWeekdayCheck(weekday)">
                             </InputCheckbox>
                             <label
                                 class="form-check-label"
-                                @onclick="() => ChangeWeekdayCheck(weekdayCheck)">@weekdayCheck.Name</label>
+                                @onclick="() => ChangeWeekdayCheck(weekday)">@weekday.Name</label>
                         </div>
                     }
                 </div>
@@ -86,7 +86,7 @@
     
 
 
-    private readonly List<Weekday> _weekdays = WeekdayFactory.Get();
+    private readonly List<WeekdayDto> _weekdays = WeekdayFactory.Get();
     private List<ActivityRuleModeDto> _activityRuleModes = new();
     private bool _isValid = true;
     private string _errorMessage = string.Empty;
@@ -107,7 +107,7 @@
         }
     }
 
-    private void ChangeWeekdayCheck(Weekday weekday)
+    private void ChangeWeekdayCheck(WeekdayDto weekday)
         => weekday.IsChecked = !weekday.IsChecked;
 
     private async Task Submit()

@@ -6,4 +6,5 @@ public class ActivityRuleDto
     public string Title { get; set; }
     public string Mode { get; set; }
     public List<int> SelectedDays { get; set; }
+    public List<WeekdayDto> Weekdays { get; set; }
 }

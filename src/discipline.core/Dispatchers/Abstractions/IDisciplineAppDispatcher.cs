@@ -8,6 +8,6 @@ public interface IDisciplineAppDispatcher
 {
     Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request);
     Task<ActivityRuleDto> GetCreateActivityRuleByIdAsync(Guid activityRuleId);
-    Task<List<ActivityRuleDto>> BrowseActivityRules(PaginationRequest request);
+    Task<PaginatedDataDto<List<ActivityRuleDto>>> BrowseActivityRules(PaginationRequest request);
     Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync();
 }

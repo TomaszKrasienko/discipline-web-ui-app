@@ -5,13 +5,16 @@ using discipline.core.Dispatchers.Abstractions;
 using discipline.core.Dispatchers.Models;
 using discipline.core.Dispatchers.Models.ActivityRule;
 using discipline.core.DTOs;
+using discipline.core.Helpers.Abstractions;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace discipline.core.Dispatchers.Internals;
 
 internal sealed class DisciplineAppDispatcher(
     ILogger<DisciplineAppDispatcher> logger,
-    IDisciplineAppClient disciplineAppClient) : IDisciplineAppDispatcher
+    IDisciplineAppClient disciplineAppClient,
+    IWeekdayTranslator weekdayTranslator) : IDisciplineAppDispatcher
 {
     public async Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request) 
     {
@@ -42,12 +45,24 @@ internal sealed class DisciplineAppDispatcher(
         return await response.Content.ReadFromJsonAsync<ActivityRuleDto>();
     }
 
-    public async Task<List<ActivityRuleDto>> BrowseActivityRules(PaginationRequest request)
+    public async Task<PaginatedDataDto<List<ActivityRuleDto>>> BrowseActivityRules(PaginationRequest request)
     {
-        var response =
-            await disciplineAppClient.GetAsync(
+        var response = await disciplineAppClient.GetAsync(
                 $"activity-rules?pageNumber={request.PageNumber}&pageSize={request.PageSize}");
-        return await response.Content.ReadFromJsonAsync<List<ActivityRuleDto>>();
+        
+        var activities = await response.Content.ReadFromJsonAsync<List<ActivityRuleDto>>();
+        foreach (var activity in activities)
+        {
+            activity.Weekdays = weekdayTranslator.Transform(activity.SelectedDays);
+        }
+
+        response.Headers.TryGetValues("x-pagination", out var pagination);
+
+        return new PaginatedDataDto<List<ActivityRuleDto>>()
+        {
+            Data = activities,
+            MetaData = JsonConvert.DeserializeObject<MetaDataDto>(pagination!.Single())
+        };
     }
 
     public async Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync()
