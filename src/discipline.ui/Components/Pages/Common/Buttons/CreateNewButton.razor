@@ -1,0 +1,17 @@
+@namespace discipline.ui.Components.Pages.Common.Buttons
+
+<div class="create-btn-position">
+    <button class="btn-dark btn-sm" @onclick="async () => await OnClick()">
+        <i class="bi bi-plus-lg create-btn-icon"></i>
+    </button>
+</div>
+
+@code {
+    [Parameter] 
+    public EventCallback<string> OnClickCallback { get; set; }
+
+    private async Task OnClick()
+    {
+        await OnClickCallback.InvokeAsync(string.Empty);
+    }
+}

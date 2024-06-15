@@ -1,0 +1,76 @@
+@namespace discipline.ui.Components.Pages.BrowseActivityRulesComponents.Components
+@using discipline.core.DTOs
+@using discipline.core.Dispatchers.Abstractions
+@using discipline.core.Dispatchers.Models
+@using discipline.core.Helpers.Statics
+@inject IDisciplineAppDispatcher DisciplineAppDispatcher;
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
+
+<div class="row table-header">
+    <div class="col-md-5">Title</div>
+    <div class="col-md-3">Mode</div>
+    <div class="col-md-4">Weekdays</div>
+</div>
+<div class="row">
+    @foreach (var activityRule in _activityRules)
+    {
+        <span class="table-row" @onclick="async () => OnClickToShowEdit(activityRule)">
+            <div class="row">
+                <div class="col-md-5 activity-cell">
+                    @activityRule?.Title
+                </div>
+                <div class="col-md-3 activity-cell">
+                    @activityRule?.Mode
+                </div>
+                <div class="col-md-4">
+                    @(activityRule?.AsCheckedWeekdaysString())
+                </div>
+            </div>
+        </span>
+    }
+</div>
+<div class="row pagination-position">
+    <Pagination 
+        TotalPages="_totalPages" 
+        ActivePageNumber="_pageNumber" 
+        Size="PaginationSize.Small"
+        Alignment="Alignment.Center"
+        FirstLinkIcon="IconName.ChevronDoubleLeft"
+        PreviousLinkIcon="IconName.ChevronLeft"
+        NextLinkIcon="IconName.ChevronRight"
+        LastLinkIcon="IconName.ChevronDoubleRight"
+        Class="pagination-colors"
+        PageChanged="OnPageChangedAsync"
+    />
+</div>
+
+@code {
+    private List<ActivityRuleDto> _activityRules = [];
+    private int _pageNumber = 1;
+    private int _totalPages = 1;
+    private int _pageSize = 5;
+    
+    protected override async Task OnInitializedAsync()
+        => await InitializeData();
+
+    private async Task OnPageChangedAsync(int newPageNumber)
+    {
+        _pageNumber = newPageNumber;
+        await InitializeData();
+    }
+
+    private async Task InitializeData()
+    {
+        var data = await DisciplineAppDispatcher.BrowseActivityRules(new PaginationRequest()
+        {
+            PageNumber = _pageNumber,
+            PageSize = _pageSize
+        });
+        _activityRules = data.Data;
+        _pageNumber = data.MetaData.CurrentPage;
+        _totalPages = data.MetaData.TotalPages;
+    }
+    
+    private async Task OnClickToShowEdit(ActivityRuleDto activityRuleDto){}
+}

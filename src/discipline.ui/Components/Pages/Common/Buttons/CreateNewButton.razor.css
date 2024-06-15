@@ -1,0 +1,9 @@
+.create-btn-position{
+    position: fixed;
+    right: 25px;
+    padding-top: 40px;
+}
+
+.create-btn-icon{
+    font-size: large;
+}
