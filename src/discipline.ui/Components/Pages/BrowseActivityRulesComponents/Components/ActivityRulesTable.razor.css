@@ -1,32 +1,36 @@
-.table-header{
+.discipline-table{
+    font-size: large;
+}
+
+.discipline-table-header{
     background-color: #f2f2f2;
     border-bottom-color: lightgray;
     border-bottom-width: 1px;
     border-bottom-style: groove;
 }
 
-.table-row{
+.discipline-table-row{
     background-color: #f7f7f7;
     border-bottom-color: white;
     border-bottom-width: 1px;
     border-bottom-style: groove;
 }
 
-.table-row:hover{
+.discipline-table-row:hover{
     background-color: white;
     cursor: pointer;
 }
 
-.table-cell{
+.discipline-table-cell{
     border-right-color: white;
     border-right-width: 1px;
     border-right-style: groove;
 }
 
-.pagination-position{
+.discipline-pagination-position{
     padding-top: 30px;
 }
 
-.pagination-colors{
+.discipline-pagination-colors{
     color: black !important;
 }

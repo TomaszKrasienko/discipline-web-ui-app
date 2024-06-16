@@ -3,34 +3,37 @@
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.Dispatchers.Models
 @using discipline.core.Helpers.Statics
+@using BlazorBootstrap
 @inject IDisciplineAppDispatcher DisciplineAppDispatcher;
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
 
-<div class="row table-header">
-    <div class="col-md-5">Title</div>
-    <div class="col-md-3">Mode</div>
-    <div class="col-md-4">Weekdays</div>
+<div class="discipline-table">
+    <div class="row discipline-table-header">
+        <div class="col-md-5">Title</div>
+        <div class="col-md-3">Mode</div>
+        <div class="col-md-4">Weekdays</div>
+    </div>
+    <div class="row">
+        @foreach (var activityRule in _activityRules)
+        {
+            <span class="discipline-table-row" @onclick="async () => OnClickToShowEdit(activityRule)">
+                <div class="row">
+                    <div class="col-md-5 discipline-table-cell">
+                        @activityRule?.Title
+                    </div>
+                    <div class="col-md-3 discipline-table-cell">
+                        @activityRule?.Mode
+                    </div>
+                    <div class="col-md-4 discipline-table-cell">
+                        @(activityRule?.AsCheckedWeekdaysString())
+                    </div>
+                </div>
+            </span>
+        }
+    </div>
 </div>
-<div class="row">
-    @foreach (var activityRule in _activityRules)
-    {
-        <span class="table-row" @onclick="async () => OnClickToShowEdit(activityRule)">
-            <div class="row">
-                <div class="col-md-5 activity-cell">
-                    @activityRule?.Title
-                </div>
-                <div class="col-md-3 activity-cell">
-                    @activityRule?.Mode
-                </div>
-                <div class="col-md-4">
-                    @(activityRule?.AsCheckedWeekdaysString())
-                </div>
-            </div>
-        </span>
-    }
-</div>
-<div class="row pagination-position">
+<div class="row discipline-pagination-position">
     <Pagination 
         TotalPages="_totalPages" 
         ActivePageNumber="_pageNumber" 
@@ -40,9 +43,8 @@
         PreviousLinkIcon="IconName.ChevronLeft"
         NextLinkIcon="IconName.ChevronRight"
         LastLinkIcon="IconName.ChevronDoubleRight"
-        Class="pagination-colors"
-        PageChanged="OnPageChangedAsync"
-    />
+        Class="discipline-pagination-colors"
+        PageChanged="OnPageChangedAsync"/>
 </div>
 
 @code {

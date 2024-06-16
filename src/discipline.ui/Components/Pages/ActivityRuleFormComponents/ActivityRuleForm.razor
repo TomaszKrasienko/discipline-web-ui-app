@@ -1,0 +1,115 @@
+@namespace discipline.ui.Components.Pages.ActivityRuleFormComponents
+
+@using discipline.core.Dispatchers.Models.ActivityRule
+@using discipline.core.DTOs
+@using discipline.core.Helpers
+@using discipline.ui.Components.Pages.Common.Buttons
+@using BlazorBootstrap
+@using discipline.core.Dispatchers.Abstractions
+@inject IDisciplineAppDispatcher DisciplineAppDispatcher;
+
+
+<EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
+    <div class="row" style="padding-top: 20px;">
+        <div class="col-md-6">
+            <label for="new-activity-title">Title: </label>
+            <InputText
+                class="form-control"
+                id="new-activity-title"
+                placeholder="Title"
+                @bind-Value="ActivityRuleRequest!.Title"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="new-activity-mode">Mode: </label>
+            <InputSelect 
+                class="form-control"
+                id="new-activity-mode" 
+                @bind-Value="ActivityRuleRequest!.Mode">
+                @foreach (var mode in _activityRuleModes)
+                {
+                    <option value="@mode.Key">
+                        @mode.Name
+                    </option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    @if (ActivityRuleRequest.Mode == "Custom")
+    {
+        <div class="row" style="padding-top: 20px;">
+            <div class="col-md-4 offset-4">
+                <Dropdown Color="DropdownColor.Secondary" AutoClose="false">
+                    <DropdownToggleButton Style="width: 100% !important;">Days</DropdownToggleButton>
+                    <DropdownMenu>
+                        @foreach (var weekday in _weekdays)
+                        {
+                            <span @onclick="() => ChangeWeekdayCheck(weekday)">
+                                <div class="form-check">
+                                    <InputCheckbox
+                                        @bind-Value="weekday!.IsChecked">
+                                    </InputCheckbox>
+                                    <label class="form-check-label">
+                                        @weekday.Name
+                                    </label>
+                                </div>
+                            </span>
+                        }
+                    </DropdownMenu>
+                </Dropdown>
+            </div>
+        </div>
+    }
+    <div class="row">
+        <SubmitButton/>
+    </div>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm] 
+    public ActivityRuleRequest ActivityRuleRequest { get; set; } = new();
+    
+    [Parameter] 
+    public Modal? Modal { get; set; }
+    
+    [Parameter] 
+    public List<ToastMessage>? Messages { get; set; }
+    
+    private readonly List<WeekdayDto> _weekdays = WeekdayFactory.Get();
+    private List<ActivityRuleModeDto> _activityRuleModes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _activityRuleModes = await DisciplineAppDispatcher.GetActivityRuleModesAsync();
+        ActivityRuleRequest.Mode = _activityRuleModes.FirstOrDefault()?.Key;
+    }
+
+    private async Task Submit()
+    {
+        var selectedDays = _weekdays.Where(x => x.IsChecked).Select(x => x.Id).ToList();
+        if (selectedDays.Any())
+        {
+            ActivityRuleRequest.SelectedDays = selectedDays;
+        }
+        var response = await DisciplineAppDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
+
+        Messages?.Add(response.IsValid 
+            ? CreateToastMessage(ToastType.Success, "Added activity rule") 
+            : CreateToastMessage(ToastType.Danger, response.Message));
+
+
+        if (Modal is not null)
+        {
+            await Modal.HideAsync();
+        }
+    }
+
+    private ToastMessage CreateToastMessage(ToastType type, string message)
+        => new ToastMessage
+        {
+            Type = type,
+            Message = message
+        };
+    
+    private void ChangeWeekdayCheck(WeekdayDto weekday)
+        => weekday.IsChecked = !weekday.IsChecked;
+}

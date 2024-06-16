@@ -15,8 +15,4 @@
       <PackageReference Include="Blazor.Bootstrap" Version="3.0.0-preview.1" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Components\Pages\ActivityRuleFormComponents\" />
-    </ItemGroup>
-
 </Project>
