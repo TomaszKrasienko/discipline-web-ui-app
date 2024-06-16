@@ -7,7 +7,7 @@
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
 @inject IDisciplineAppDispatcher DisciplineAppDispatcher;
-
+@inject ILogger<ActivityRuleForm> Logger;
 
 <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
     <div class="row" style="padding-top: 20px;">
@@ -113,7 +113,7 @@
             ? CreateToastMessage(ToastType.Success, "Added activity rule") 
             : CreateToastMessage(ToastType.Danger, response.Message));
 
-
+        
         if (Modal is not null)
         {
             await Modal.HideAsync();

@@ -1,6 +1,5 @@
 @namespace discipline.ui.Components.Pages.ActivityRuleFormComponents
 @using BlazorBootstrap
-@inject ILogger<ActivityRuleFormModal> Logger;
 
 <Modal 
     @ref="_modal" 
@@ -13,21 +12,26 @@
             <div class="col-md-10 offset-1">
                 <ActivityRuleForm 
                     Modal="_modal"
-                    Messages="Messages"
+                    Messages="_messages"
                     ActivityRuleId="ActivityRuleId"></ActivityRuleForm>  
             </div>
         </div>
     </BodyTemplate>
 </Modal>
 
+<Toasts 
+    Class="p-3" 
+    Messages="_messages" 
+    AutoHide="true" 
+    Delay="4000" 
+    Placement="ToastsPlacement.TopRight"/>
 
 @code {
-    [Parameter] public List<ToastMessage>? Messages { get; set; }
-    
     [Parameter] public Guid? ActivityRuleId { get; set; }
 
     private Modal _modal = default!;
-
+    private List<ToastMessage> _messages = [];
+    
     private async Task OnHideModalClick()
     {
         await _modal.HideAsync();

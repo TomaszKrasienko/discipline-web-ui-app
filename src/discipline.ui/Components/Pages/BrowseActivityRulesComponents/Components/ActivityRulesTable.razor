@@ -48,19 +48,14 @@
         PageChanged="OnPageChangedAsync"/>
 </div>
 
-<ActivityRuleFormModal
-    @ref="_activityRuleFromModal"
-    Messages="Messages"></ActivityRuleFormModal>
+<ActivityRuleFormModal @ref="_activityRuleFromModal"/>
 
 @code {
-    [Parameter]
-    public List<ToastMessage>? Messages { get; set; }
-    
     private List<ActivityRuleDto> _activityRules = [];
     private int _pageNumber = 1;
     private int _totalPages = 1;
     private int _pageSize = 10;
-    private ActivityRuleFormModal _activityRuleFromModal;
+    private ActivityRuleFormModal? _activityRuleFromModal = default;
     
     protected override async Task OnInitializedAsync()
         => await InitializeData();
@@ -85,7 +80,10 @@
 
     private async Task OnClickToShowEdit(ActivityRuleDto activityRuleDto)
     {
-        _activityRuleFromModal.ActivityRuleId = activityRuleDto.Id;
-        await _activityRuleFromModal.OnShowClick();
+        if (_activityRuleFromModal is not null)
+        {
+            _activityRuleFromModal.ActivityRuleId = activityRuleDto.Id;
+            await _activityRuleFromModal.OnShowClick();
+        }
     }
 }

@@ -1,5 +1,4 @@
 @page "/activity-rules-list"
-@using BlazorBootstrap
 @using discipline.ui.Components.Pages.Common.Buttons
 @using discipline.ui.Components.Pages.BrowseActivityRulesComponents.Components
 @using discipline.ui.Components.Pages.Common.Headers
@@ -7,12 +6,6 @@
 @rendermode InteractiveServer
 
 <PageTitle>Activity rules list</PageTitle>
-<Toasts 
-    Class="p-3" 
-    Messages="_messages" 
-    AutoHide="true" 
-    Delay="4000" 
-    Placement="ToastsPlacement.TopRight"/>
 
 <div class="row">
     <div class="col-md-8 offset-2">
@@ -23,40 +16,16 @@
 
 <CreateNewButton OnClickCallback="OnClickToCreate"/>
 
-<Modal 
-    @ref="_modal" 
-    title="Create new activity rule" 
-    UseStaticBackdrop="true" 
-    CloseOnEscape="false"
-    OnHiding="OnHideModalClick">
-    <BodyTemplate>
-        <div class="row">
-            <div class="col-md-10 offset-1">
-                <ActivityRuleForm 
-                    Modal="_modal"
-                    Messages="_messages"></ActivityRuleForm>  
-            </div>
-        </div>
-    </BodyTemplate>
-</Modal>
-
+<ActivityRuleFormModal @ref="_activityRuleFromModal"/>
 
 @code {
-    private Modal _modal = default!;
-    private readonly List<ToastMessage> _messages = [];
+    private ActivityRuleFormModal? _activityRuleFromModal = default;
     
     private async Task OnClickToCreate()
     {
-        await OnShowModalClick();
-    }
-    
-    private async Task OnShowModalClick()
-    {
-        await _modal.ShowAsync();
-    }
-
-    private async Task OnHideModalClick()
-    {
-        await _modal.HideAsync();
+        if (_activityRuleFromModal is not null)
+        {
+            await _activityRuleFromModal.OnShowClick();
+        }
     }
 }
