@@ -1,0 +1,41 @@
+@namespace discipline.ui.Components.Pages.ActivityRuleFormComponents
+@using BlazorBootstrap
+@inject ILogger<ActivityRuleFormModal> Logger;
+
+<Modal 
+    @ref="_modal" 
+    title="Create new activity rule" 
+    UseStaticBackdrop="true" 
+    CloseOnEscape="false"
+    OnHiding="OnHideModalClick">
+    <BodyTemplate>
+        <div class="row">
+            <div class="col-md-10 offset-1">
+                <ActivityRuleForm 
+                    Modal="_modal"
+                    Messages="Messages"
+                    ActivityRuleId="ActivityRuleId"></ActivityRuleForm>  
+            </div>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+
+@code {
+    [Parameter] public List<ToastMessage>? Messages { get; set; }
+    
+    [Parameter] public Guid? ActivityRuleId { get; set; }
+
+    private Modal _modal = default!;
+
+    private async Task OnHideModalClick()
+    {
+        await _modal.HideAsync();
+    }
+
+    public async Task OnShowClick()
+    {
+        await _modal.ShowAsync();
+    }
+    
+}

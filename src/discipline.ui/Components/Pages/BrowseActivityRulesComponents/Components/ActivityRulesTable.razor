@@ -3,6 +3,7 @@
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.Dispatchers.Models
 @using discipline.core.Helpers.Statics
+@using discipline.ui.Components.Pages.ActivityRuleFormComponents
 @using BlazorBootstrap
 @inject IDisciplineAppDispatcher DisciplineAppDispatcher;
 
@@ -17,7 +18,7 @@
     <div class="row">
         @foreach (var activityRule in _activityRules)
         {
-            <span class="discipline-table-row" @onclick="async () => OnClickToShowEdit(activityRule)">
+            <span class="discipline-table-row" @onclick="async () => await OnClickToShowEdit(activityRule)">
                 <div class="row">
                     <div class="col-md-5 discipline-table-cell">
                         @activityRule?.Title
@@ -47,11 +48,19 @@
         PageChanged="OnPageChangedAsync"/>
 </div>
 
+<ActivityRuleFormModal
+    @ref="_activityRuleFromModal"
+    Messages="Messages"></ActivityRuleFormModal>
+
 @code {
+    [Parameter]
+    public List<ToastMessage>? Messages { get; set; }
+    
     private List<ActivityRuleDto> _activityRules = [];
     private int _pageNumber = 1;
     private int _totalPages = 1;
-    private int _pageSize = 5;
+    private int _pageSize = 10;
+    private ActivityRuleFormModal _activityRuleFromModal;
     
     protected override async Task OnInitializedAsync()
         => await InitializeData();
@@ -73,6 +82,10 @@
         _pageNumber = data.MetaData.CurrentPage;
         _totalPages = data.MetaData.TotalPages;
     }
-    
-    private async Task OnClickToShowEdit(ActivityRuleDto activityRuleDto){}
+
+    private async Task OnClickToShowEdit(ActivityRuleDto activityRuleDto)
+    {
+        _activityRuleFromModal.ActivityRuleId = activityRuleDto.Id;
+        await _activityRuleFromModal.OnShowClick();
+    }
 }
