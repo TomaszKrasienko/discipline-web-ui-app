@@ -40,7 +40,7 @@ internal sealed class DisciplineAppDispatcher(
         var response = await disciplineAppClient.PutAsync($"/activity-rule/{activityRuleId}/edit", request);
         switch (response.StatusCode)
         {
-            case HttpStatusCode.Created:
+            case HttpStatusCode.OK:
             {
                 return ResponseDto.GetValid();
             }

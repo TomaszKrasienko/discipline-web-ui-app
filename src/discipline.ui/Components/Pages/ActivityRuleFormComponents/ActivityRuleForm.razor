@@ -6,7 +6,9 @@
 @using discipline.ui.Components.Pages.Common.Buttons
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
+@using discipline.core.Helpers.Abstractions
 @inject IDisciplineAppDispatcher DisciplineAppDispatcher;
+@inject IWeekdayTranslator WeekdayTranslator;
 @inject ILogger<ActivityRuleForm> Logger;
 
 <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
@@ -24,7 +26,9 @@
             <InputSelect 
                 class="form-control"
                 id="new-activity-mode" 
-                @bind-Value="ActivityRuleRequest!.Mode">
+                Value="ActivityRuleRequest!.Mode"
+                ValueExpression="() => ActivityRuleRequest.Mode"
+                ValueChanged="(string mode) => OnModeChanged(mode)">
                 @foreach (var mode in _activityRuleModes)
                 {
                     <option value="@mode.Key">
@@ -34,7 +38,7 @@
             </InputSelect>
         </div>
     </div>
-    @if (ActivityRuleRequest.Mode == "Custom")
+    @if (ActivityRuleRequest.Mode == ModeWithDays)
     {
         <div class="row" style="padding-top: 20px;">
             <div class="col-md-4 offset-4">
@@ -43,7 +47,7 @@
                     <DropdownMenu>
                         @foreach (var weekday in _weekdays)
                         {
-                            <span @onclick="() => ChangeWeekdayCheck(weekday)">
+                            <span @onclick="() => OnWeekdayCheckChanged(weekday)">
                                 <div class="form-check">
                                     <InputCheckbox
                                         @bind-Value="weekday!.IsChecked">
@@ -76,9 +80,10 @@
     
     [Parameter]
     public Guid? ActivityRuleId { get; set; }
-    
-    private readonly List<WeekdayDto> _weekdays = WeekdayFactory.Get();
-    private List<ActivityRuleModeDto> _activityRuleModes = new();
+
+    private const string ModeWithDays = "Custom";
+    private List<WeekdayDto> _weekdays = default!;
+    private List<ActivityRuleModeDto> _activityRuleModes = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -98,21 +103,26 @@
                 SelectedDays = rule.SelectedDays
             };
         }
+        _weekdays = WeekdayTranslator.Transform(ActivityRuleRequest.SelectedDays);
     }
 
     private async Task Submit()
     {
+        ActivityRuleRequest.SelectedDays = null;
         var selectedDays = _weekdays.Where(x => x.IsChecked).Select(x => x.Id).ToList();
         if (selectedDays.Any())
         {
             ActivityRuleRequest.SelectedDays = selectedDays;
         }
-        var response = await DisciplineAppDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
 
-        Messages?.Add(response.IsValid 
-            ? CreateToastMessage(ToastType.Success, "Added activity rule") 
-            : CreateToastMessage(ToastType.Danger, response.Message));
-
+        if (ActivityRuleId is null)
+        {
+            await AddActivityRuleAsync();
+        }
+        else
+        {
+            await EditActivityRuleAsync();
+        }
         
         if (Modal is not null)
         {
@@ -120,13 +130,38 @@
         }
     }
 
+    private async Task AddActivityRuleAsync()
+    {
+        var response = await DisciplineAppDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
+        Messages?.Add(response.IsValid 
+            ? CreateToastMessage(ToastType.Success, "Added activity rule") 
+            : CreateToastMessage(ToastType.Danger, response.Message));
+    }
+
+    private async Task EditActivityRuleAsync()
+    {
+        var response = await DisciplineAppDispatcher.EditActivityRuleAsync(ActivityRuleId!.Value, ActivityRuleRequest);
+            
+        Messages?.Add(response.IsValid 
+            ? CreateToastMessage(ToastType.Success, "Activity rule updated") 
+            : CreateToastMessage(ToastType.Danger, response.Message));
+    }
+
     private ToastMessage CreateToastMessage(ToastType type, string message)
-        => new ToastMessage
+        => new()
         {
             Type = type,
             Message = message
         };
     
-    private void ChangeWeekdayCheck(WeekdayDto weekday)
+    private void OnWeekdayCheckChanged(WeekdayDto weekday)
         => weekday.IsChecked = !weekday.IsChecked;
+
+    private void OnModeChanged(string mode)
+    {
+        ActivityRuleRequest.Mode = mode;
+        _weekdays = mode != ModeWithDays 
+            ? WeekdayFactory.Get() 
+            : WeekdayTranslator.Transform(ActivityRuleRequest.SelectedDays);
+    }
 }
