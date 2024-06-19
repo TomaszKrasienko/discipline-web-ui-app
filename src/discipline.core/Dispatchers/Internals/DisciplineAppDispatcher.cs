@@ -35,6 +35,25 @@ internal sealed class DisciplineAppDispatcher(
         }
     }
 
+    public async Task<ResponseDto> EditActivityRuleAsync(Guid activityRuleId, ActivityRuleRequest request)
+    {
+        var response = await disciplineAppClient.PutAsync($"/activity-rule/{activityRuleId}/edit", request);
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.Created:
+            {
+                return ResponseDto.GetValid();
+            }
+            case (HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity):
+            {
+                var errorResult = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+                return ResponseDto.GetInvalid(errorResult.Message);
+            }
+            default:
+                return ResponseDto.GetInvalid();
+        }
+    }
+
     public async Task<ActivityRuleDto> GetCreateActivityRuleByIdAsync(Guid activityRuleId)
     {
         var response = await disciplineAppClient.GetAsync($"activity-rule/{activityRuleId}");
