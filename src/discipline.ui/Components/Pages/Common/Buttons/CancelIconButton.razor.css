@@ -1,0 +1,12 @@
+.cancel-icon-button{
+    font-size: x-large;
+    color: darkred;
+}
+
+.cancel-icon-button:hover{
+    cursor: pointer;
+}
+
+.cancel-icon-button:active{
+    color: white;
+}

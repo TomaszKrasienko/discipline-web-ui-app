@@ -1,0 +1,12 @@
+.confirm-icon-button{
+    font-size: x-large;
+    color: darkgreen;
+}
+
+.confirm-icon-button:hover{
+    cursor: pointer;
+}
+
+.confirm-icon-button:active{
+    color: white;
+}

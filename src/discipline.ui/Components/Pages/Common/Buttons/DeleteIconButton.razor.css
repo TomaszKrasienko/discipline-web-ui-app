@@ -1,0 +1,12 @@
+.delete-icon-button{
+    font-size: large;
+    color: darkred;
+}
+
+.delete-icon-button:hover{
+    cursor: pointer;
+}
+
+.delete-icon-button:active{
+    color: white;
+}

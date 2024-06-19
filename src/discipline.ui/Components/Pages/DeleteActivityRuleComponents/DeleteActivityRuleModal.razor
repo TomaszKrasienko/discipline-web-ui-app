@@ -1,0 +1,35 @@
+@using discipline.ui.Components.Pages.Common.Buttons
+@using BlazorBootstrap
+@using discipline.core.Dispatchers.Abstractions
+@inject IDisciplineAppDispatcher DisciplineAppDispatcher;
+
+
+<Modal
+    @ref="_deleteConfirmationModal"
+    Title="Confirm">
+    <BodyTemplate>
+        Are you sure you want delete item?
+    </BodyTemplate>
+    <FooterTemplate>
+        <CancelIconButton OnClickCallback="HideModalAsync"></CancelIconButton>
+        <ConfirmIconButton></ConfirmIconButton>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    [Parameter] 
+    public Guid? ActivityRuleId { get; set; }
+    
+    private Modal _deleteConfirmationModal = default!;
+    
+    private async Task HideModalAsync()
+    {
+        await _deleteConfirmationModal.HideAsync();
+    }
+
+    internal async Task ShowAsync()
+    {
+        await _deleteConfirmationModal.ShowAsync();
+    }
+    
+}

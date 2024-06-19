@@ -1,0 +1,17 @@
+@namespace discipline.ui.Components.Pages.Common.Buttons
+
+<div>
+    <span class="delete-icon-button" @onclick="OnClick">
+        <i class="bi bi-trash-fill"></i>
+    </span>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnClickCallback { get; set; }
+
+    private async Task OnClick()
+    {
+        await OnClickCallback.InvokeAsync(string.Empty);
+    }
+}
