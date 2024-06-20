@@ -1,28 +1,38 @@
-@namespace discipline.ui.Components.Pages.BrowseActivityRulesComponents.Components
+@namespace discipline.ui.Components.Pages.ActivityRulesComponents.BrowseActivityRulesComponents.Components
 @using discipline.core.DTOs
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.Dispatchers.Models
 @using discipline.core.Helpers.Statics
-@using discipline.ui.Components.Pages.ActivityRuleFormComponents
-@using discipline.ui.Components.Pages.Common.Buttons
+@using discipline.ui.Components.Pages.ActivityRulesComponents.ActivityRuleFormComponents
+@using discipline.ui.Components.Pages.CommonComponents.Buttons
 @using BlazorBootstrap
-@using discipline.ui.Components.Pages.DeleteActivityRuleComponents
+@using discipline.ui.Components.Pages.ActivityRulesComponents.DeleteActivityRuleComponents
 @inject IDisciplineAppDispatcher DisciplineAppDispatcher;
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
 <div class="row">
     @foreach (var activityRule in _activityRules)
     {
-        <span class="discipline-table-row" @onmouseover="() => OnMouseOverRow(activityRule.Id)" @onmouseout="OnMouseOutRow">
-            <div class="row discipline-table-row-header">@activityRule.Title</div>
+        <span class="discipline-table-row"
+              @onmouseover="() => OnMouseOverRow(activityRule.Id)"
+              @onmouseout="OnMouseOutRow">
             <div class="row">
-            <div class="col-md-10 discipline-table-row-mode">@activityRule.Mode @activityRule.AsCheckedWeekdaysString("-")</div>
-            @if (activityRule.Id == _activeRowId)
-            {
-                <div class="col-md-2 text-end">
-                    <DeleteIconButton OnClickCallback="async () => await DeleteActivityRule(activityRule.Id)"/>
+                <div class="col-md-10">
+                    <span @onclick="async () => await OnClickToShowEdit(activityRule)">
+                        <div class="row discipline-table-row-header">
+                            <span><i class="bi bi-dot"></i>@activityRule.Title</span>
+                        </div>
+                        <div class="row discipline-table-row-mode">
+                            <span>@activityRule.Mode @activityRule.AsCheckedWeekdaysString("-")</span>
+                        </div>
+                    </span>
                 </div>
-            }
+                <div class="col-md-2 text-end">
+                    @if (activityRule.Id == _activeRowId)
+                    {
+                        <DeleteIconButton OnClickCallback="async () => await DeleteActivityRule(activityRule.Id)"/>
+                    }
+                </div>
             </div>
         </span>
     }
@@ -43,8 +53,14 @@
         PageChanged="OnPageChangedAsync"/>
 </div>
 
-<ActivityRuleFormModal @ref="_activityRuleFromModal"/>
-<DeleteActivityRuleModal @ref="_deleteActivityRuleModal"></DeleteActivityRuleModal>
+<ActivityRuleFormModal 
+    @ref="_activityRuleFromModal"
+    OnHidingEventCallback="OnActivityRuleFromModalHiding"/>
+
+<DeleteActivityRuleModal
+    @ref="_deleteActivityRuleModal"
+    OnHidingEventCallback="OnDeleteActivityRuleModalHiding"/>
+
 @code {
     private List<ActivityRuleDto> _activityRules = [];
     private Guid? _activeRowId = null;
@@ -85,18 +101,22 @@
     }
     
     private void OnMouseOverRow(Guid activityRuleId)
-    {
-        _activeRowId = activityRuleId;
-    }
-
+        => _activeRowId = activityRuleId;
+    
     private void OnMouseOutRow()
-    {
-        _activeRowId = null;
-    }
+        => _activeRowId = null;
+    
     
     private async Task DeleteActivityRule(Guid id)
     {
         _deleteActivityRuleModal!.ActivityRuleId = id;
         await _deleteActivityRuleModal.ShowAsync();
     }
+
+    private async Task OnDeleteActivityRuleModalHiding()
+        => await InitializeData();
+
+    private async Task OnActivityRuleFromModalHiding()
+        => await InitializeData();
+
 }

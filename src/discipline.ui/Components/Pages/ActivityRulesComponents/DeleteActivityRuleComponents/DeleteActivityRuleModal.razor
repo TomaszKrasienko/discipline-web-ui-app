@@ -1,4 +1,4 @@
-@using discipline.ui.Components.Pages.Common.Buttons
+@using discipline.ui.Components.Pages.CommonComponents.Buttons
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
 @inject IDisciplineAppDispatcher DisciplineAppDispatcher;
@@ -27,6 +27,9 @@
     [Parameter] 
     public Guid? ActivityRuleId { get; set; }
     
+    [Parameter]
+    public EventCallback OnHidingEventCallback { get; set; }
+    
     private Modal _deleteConfirmationModal = default!;
     private List<ToastMessage> _messages = [];
     
@@ -41,6 +44,7 @@
         _messages?.Add(response.IsValid 
             ? CreateToastMessage(ToastType.Success, "Deleted activity rule") 
             : CreateToastMessage(ToastType.Danger, response.Message));
+        await OnHidingEventCallback.InvokeAsync();
         await _deleteConfirmationModal.HideAsync();
     }
     

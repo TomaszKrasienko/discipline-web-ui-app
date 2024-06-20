@@ -1,15 +1,15 @@
-@namespace discipline.ui.Components.Pages.ActivityRuleFormComponents
+@namespace discipline.ui.Components.Pages.ActivityRulesComponents.ActivityRuleFormComponents
 
 @using discipline.core.Dispatchers.Models.ActivityRule
 @using discipline.core.DTOs
 @using discipline.core.Helpers
-@using discipline.ui.Components.Pages.Common.Buttons
+@using discipline.ui.Components.Pages.CommonComponents.Buttons
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.Helpers.Abstractions
+@using discipline.ui.Helpers
 @inject IDisciplineAppDispatcher DisciplineAppDispatcher;
 @inject IWeekdayTranslator WeekdayTranslator;
-@inject ILogger<ActivityRuleForm> Logger;
 
 <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
     <div class="row" style="padding-top: 20px;">
@@ -133,26 +133,14 @@
     private async Task AddActivityRuleAsync()
     {
         var response = await DisciplineAppDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
-        Messages?.Add(response.IsValid 
-            ? CreateToastMessage(ToastType.Success, "Added activity rule") 
-            : CreateToastMessage(ToastType.Danger, response.Message));
+        Messages?.Add(response.AsToastMessage("Added activity rule"));
     }
 
     private async Task EditActivityRuleAsync()
     {
         var response = await DisciplineAppDispatcher.EditActivityRuleAsync(ActivityRuleId!.Value, ActivityRuleRequest);
-            
-        Messages?.Add(response.IsValid 
-            ? CreateToastMessage(ToastType.Success, "Activity rule updated") 
-            : CreateToastMessage(ToastType.Danger, response.Message));
+        Messages?.Add(response.AsToastMessage("Activity rule updated"));
     }
-
-    private ToastMessage CreateToastMessage(ToastType type, string message)
-        => new()
-        {
-            Type = type,
-            Message = message
-        };
     
     private void OnWeekdayCheckChanged(WeekdayDto weekday)
         => weekday.IsChecked = !weekday.IsChecked;

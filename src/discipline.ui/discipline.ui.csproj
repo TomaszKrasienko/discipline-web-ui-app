@@ -15,4 +15,20 @@
       <PackageReference Include="Blazor.Bootstrap" Version="3.0.0-preview.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\Pages\ActivityRulesComponents\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\ActivityRuleFormComponents\ActivityRuleForm.razor" />
+      <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\ActivityRuleFormComponents\ActivityRuleFormModal.razor" />
+      <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\BrowseActivityRulesComponents\ActivityRulesList.razor" />
+      <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\BrowseActivityRulesComponents\Components\ActivityRulesTable.razor" />
+      <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\DeleteActivityRuleComponents\DeleteActivityRuleModal.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Components\Pages\DeleteActivityRuleComponents\DeleteActivityRuleModal.razor" />
+    </ItemGroup>
+
 </Project>

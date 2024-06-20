@@ -1,4 +1,4 @@
-@namespace discipline.ui.Components.Pages.ActivityRuleFormComponents
+@namespace discipline.ui.Components.Pages.ActivityRulesComponents.ActivityRuleFormComponents
 @using BlazorBootstrap
 
 <Modal 
@@ -21,19 +21,24 @@
 
 <Toasts 
     Class="p-3" 
-    Messages="_messages" 
+    Messages="_messages"
     AutoHide="true" 
     Delay="4000" 
     Placement="ToastsPlacement.TopRight"/>
 
 @code {
-    [Parameter] public Guid? ActivityRuleId { get; set; }
+    [Parameter] 
+    public Guid? ActivityRuleId { get; set; }
+    
+    [Parameter]
+    public EventCallback OnHidingEventCallback { get; set; }
 
     private Modal _modal = default!;
     private List<ToastMessage> _messages = [];
     
     private async Task OnHideModalClick()
     {
+        await OnHidingEventCallback.InvokeAsync();
         await _modal.HideAsync();
     }
 

@@ -1,5 +1,6 @@
 using discipline.core.Configuration;
 using discipline.ui.Components;
+using discipline.ui.Components.Layout;
 using discipline.ui.Services.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
