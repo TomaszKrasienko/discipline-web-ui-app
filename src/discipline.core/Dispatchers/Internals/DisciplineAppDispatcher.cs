@@ -18,7 +18,7 @@ internal sealed class DisciplineAppDispatcher(
 {
     public async Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request) 
     {
-        var response = await disciplineAppClient.PostAsync("/activity-rule/create", request);
+        var response = await disciplineAppClient.PostAsync("/activity-rules/create", request);
         switch (response.StatusCode)
         {
             case HttpStatusCode.Created:
@@ -37,7 +37,7 @@ internal sealed class DisciplineAppDispatcher(
 
     public async Task<ResponseDto> EditActivityRuleAsync(Guid activityRuleId, ActivityRuleRequest request)
     {
-        var response = await disciplineAppClient.PutAsync($"/activity-rule/{activityRuleId}/edit", request);
+        var response = await disciplineAppClient.PutAsync($"/activity-rules/{activityRuleId}/edit", request);
         switch (response.StatusCode)
         {
             case HttpStatusCode.OK:
@@ -54,9 +54,28 @@ internal sealed class DisciplineAppDispatcher(
         }
     }
 
+    public async Task<ResponseDto> DeleteActivityRuleAsync(Guid activityRuleId)
+    {
+        var response = await disciplineAppClient.DeleteAsync($"/activity-rules/{activityRuleId}/delete");
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.OK:
+            {
+                return ResponseDto.GetValid();
+            }
+            case (HttpStatusCode.BadRequest):
+            {
+                var errorResult = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+                return ResponseDto.GetInvalid(errorResult.Message);
+            }
+            default:
+                return ResponseDto.GetInvalid();
+        }
+    }
+
     public async Task<ActivityRuleDto> GetCreateActivityRuleByIdAsync(Guid activityRuleId)
     {
-        var response = await disciplineAppClient.GetAsync($"activity-rule/{activityRuleId}");
+        var response = await disciplineAppClient.GetAsync($"activity-rules/{activityRuleId}");
         if (response.StatusCode is HttpStatusCode.NoContent)
         {
             return null;
