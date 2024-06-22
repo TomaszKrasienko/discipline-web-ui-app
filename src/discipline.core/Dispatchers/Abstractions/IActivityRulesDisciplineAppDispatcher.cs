@@ -4,7 +4,7 @@ using discipline.core.DTOs;
 
 namespace discipline.core.Dispatchers.Abstractions;
 
-public interface IDisciplineAppDispatcher
+public interface IActivityRulesDisciplineAppDispatcher
 {
     Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request);
     Task<ResponseDto> EditActivityRuleAsync(Guid activityRuleId, ActivityRuleRequest request);

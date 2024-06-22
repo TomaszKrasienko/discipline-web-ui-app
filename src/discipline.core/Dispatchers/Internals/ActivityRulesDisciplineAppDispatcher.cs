@@ -11,10 +11,10 @@ using Newtonsoft.Json;
 
 namespace discipline.core.Dispatchers.Internals;
 
-internal sealed class DisciplineAppDispatcher(
-    ILogger<DisciplineAppDispatcher> logger,
+internal sealed class ActivityRulesDisciplineAppDispatcher(
+    ILogger<ActivityRulesDisciplineAppDispatcher> logger,
     IDisciplineAppClient disciplineAppClient,
-    IWeekdayTranslator weekdayTranslator) : IDisciplineAppDispatcher
+    IWeekdayTranslator weekdayTranslator) : IActivityRulesDisciplineAppDispatcher
 {
     public async Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request) 
     {

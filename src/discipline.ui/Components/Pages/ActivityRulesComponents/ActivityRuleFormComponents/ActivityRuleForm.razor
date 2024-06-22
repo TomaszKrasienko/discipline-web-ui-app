@@ -8,7 +8,7 @@
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.Helpers.Abstractions
 @using discipline.ui.Helpers
-@inject IDisciplineAppDispatcher DisciplineAppDispatcher;
+@inject IActivityRulesDisciplineAppDispatcher ActivityRulesDisciplineAppDispatcher;
 @inject IWeekdayTranslator WeekdayTranslator;
 
 <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
@@ -87,7 +87,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _activityRuleModes = await DisciplineAppDispatcher.GetActivityRuleModesAsync();
+        _activityRuleModes = await ActivityRulesDisciplineAppDispatcher.GetActivityRuleModesAsync();
         ActivityRuleRequest.Mode = _activityRuleModes.FirstOrDefault()?.Key;
     }
 
@@ -95,7 +95,7 @@
     {
         if (ActivityRuleId is not null)
         {
-            var rule = await DisciplineAppDispatcher.GetCreateActivityRuleByIdAsync(ActivityRuleId.Value);
+            var rule = await ActivityRulesDisciplineAppDispatcher.GetCreateActivityRuleByIdAsync(ActivityRuleId.Value);
             ActivityRuleRequest = new ActivityRuleRequest()
             {
                 Title = rule.Title,
@@ -132,13 +132,13 @@
 
     private async Task AddActivityRuleAsync()
     {
-        var response = await DisciplineAppDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
+        var response = await ActivityRulesDisciplineAppDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
         Messages?.Add(response.AsToastMessage("Added activity rule"));
     }
 
     private async Task EditActivityRuleAsync()
     {
-        var response = await DisciplineAppDispatcher.EditActivityRuleAsync(ActivityRuleId!.Value, ActivityRuleRequest);
+        var response = await ActivityRulesDisciplineAppDispatcher.EditActivityRuleAsync(ActivityRuleId!.Value, ActivityRuleRequest);
         Messages?.Add(response.AsToastMessage("Activity rule updated"));
     }
     

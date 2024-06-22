@@ -1,7 +1,7 @@
 @using discipline.ui.Components.Pages.CommonComponents.Buttons
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
-@inject IDisciplineAppDispatcher DisciplineAppDispatcher;
+@inject IActivityRulesDisciplineAppDispatcher ActivityRulesDisciplineAppDispatcher;
 
 
 <Modal
@@ -40,7 +40,7 @@
 
     private async Task DeleteAsync()
     {
-        var response = await DisciplineAppDispatcher.DeleteActivityRuleAsync(ActivityRuleId!.Value);
+        var response = await ActivityRulesDisciplineAppDispatcher.DeleteActivityRuleAsync(ActivityRuleId!.Value);
         _messages?.Add(response.IsValid 
             ? CreateToastMessage(ToastType.Success, "Deleted activity rule") 
             : CreateToastMessage(ToastType.Danger, response.Message));

@@ -21,6 +21,10 @@
         return await Task.FromResult(request.ApplyTo(_navItems));
     }
 
+    protected override void OnInitialized()
+        => ToggleSidebar();
+    
+
     private IEnumerable<NavItem> GetNavItems()
     {
         _navItems = new List<NavItem>
