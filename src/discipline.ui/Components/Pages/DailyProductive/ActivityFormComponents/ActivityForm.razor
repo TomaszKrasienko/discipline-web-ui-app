@@ -1,0 +1,49 @@
+@using discipline.core.Dispatchers.Models.DailyProductivity
+@using discipline.ui.Components.Pages.CommonComponents.Buttons
+@using BlazorBootstrap
+
+<EditForm 
+    method="post" 
+    Model="ActivityRequest"
+    OnSubmit="async () => await SubmitAsync()">
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            <label for="new-activity-title">
+                Title:
+            </label>
+            <InputText
+                class="form-control"
+                id="new-activity-title"
+                placeholder="Title"
+                @bind-Value="ActivityRequest!.Title"/>
+        </div>
+    </div>
+    <div class="row">
+        <SubmitButton/>
+    </div>
+</EditForm>
+<Toasts 
+    Class="p-3" 
+    Messages="_messages"
+    AutoHide="true" 
+    Delay="4000" 
+    Placement="ToastsPlacement.TopRight"/>
+
+@code {
+    [Parameter] public ActivityRequest? ActivityRequest { get; set; }
+    [Parameter] public DateOnly Day { get; set; }
+    private List<ToastMessage> _messages = [];
+
+    protected override void OnParametersSet()
+    {
+        if (ActivityRequest is null)
+        {
+            ActivityRequest = new();
+        }   
+    }
+
+    private async Task SubmitAsync()
+    {
+        
+    }
+}

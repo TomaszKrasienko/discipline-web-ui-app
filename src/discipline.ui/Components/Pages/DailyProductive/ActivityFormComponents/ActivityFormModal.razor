@@ -1,0 +1,43 @@
+@using discipline.core.Dispatchers.Models.DailyProductivity
+@using BlazorBootstrap
+
+<Modal 
+    @ref="_modal" 
+    title="Create new activity" 
+    UseStaticBackdrop="true" 
+    CloseOnEscape="false"
+    OnHiding="OnHidingModalAsync">
+    <BodyTemplate>
+        <div class="row">
+            <div class="col-md-10 offset-1">
+                <ActivityForm
+                    ActivityRequest="ActivityRequest"
+                    Day="Day"/>
+            </div>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+
+@code {
+    [Parameter] 
+    public ActivityRequest? ActivityRequest { get; set; }
+    
+    [Parameter] 
+    public DateOnly Day { get; set; }
+    
+    [Parameter]
+    public EventCallback OnHidingEventCallback { get; set; }
+
+    private Modal _modal = default!;
+
+    private async Task OnHidingModalAsync()
+    {
+        await OnHidingEventCallback.InvokeAsync();
+        await _modal.HideAsync();
+    }
+
+    internal async Task ShowModalAsync()
+        => await _modal.ShowAsync();
+    
+}

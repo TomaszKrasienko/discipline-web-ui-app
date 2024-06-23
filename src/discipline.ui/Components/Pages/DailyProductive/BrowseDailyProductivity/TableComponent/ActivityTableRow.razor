@@ -1,0 +1,37 @@
+@namespace discipline.ui.Components.Pages.DailyProductive.BrowseDailyProductivity.TableComponent
+@using discipline.core.DTOs
+@using discipline.ui.Components.Pages.CommonComponents.Buttons
+
+
+<span
+    class="activity-table-row"
+    @onmouseover="OnMouseOver"
+    @onmouseout="OnMouseOut">
+    <div class="row">
+        <div class="col-md-10" @onclick="async () => await OnRowClick()">
+            <ActivityCheckIcon IsChecked="Activity?.IsChecked"/>
+            @Activity?.Title
+        </div>
+        <div class="col-md-2 text-end">
+            @if (_isHover)
+            {
+                <DeleteIconButton/>
+            }
+        </div>
+    </div>
+</span>
+
+@code {
+    [Parameter] public ActivityDto? Activity { get; set; }
+    [Parameter] public EventCallback OnActivityRowClick { get; set; }
+    private bool _isHover = false;
+    
+    private async Task OnRowClick()
+        => await OnActivityRowClick.InvokeAsync();
+
+    private void OnMouseOver()
+        => _isHover = true;
+
+    private void OnMouseOut()
+        => _isHover = false;
+}

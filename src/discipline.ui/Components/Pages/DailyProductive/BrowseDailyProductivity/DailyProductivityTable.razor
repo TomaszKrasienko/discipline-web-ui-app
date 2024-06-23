@@ -3,7 +3,11 @@
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.DTOs
+@using discipline.ui.Components.Pages.DailyProductive.BrowseDailyProductivity.TableComponent
+@using discipline.ui.Components.Pages.CommonComponents.Buttons
+@using discipline.ui.Components.Pages.DailyProductive.ActivityFormComponents
 @inject IDailyProductivityDisciplineAppDispatcher DailyProductivityDisciplineAppDispatcher
+@rendermode InteractiveServer
 
 <PageTitle>Daily productivity</PageTitle>
 <PageHeader Title="Daily productivity"/>
@@ -12,26 +16,32 @@
         <DateInput TValue="DateOnly" @bind-Value="@_day" Id="daily-productivity-day"/>
     </div>
 </div>
-<div class="row">
+<div class="row pt-5">
     <div class="col-md-6 offset-2 mx-auto">
-    @if (_dailyProductivity is not null)
-    {
-        @foreach (var activity in _dailyProductivity?.Activities!)
+        @if (_dailyProductivity is not null)
         {
-            <div class="row">
-                <div class="form-check">
-                    <ActivityCheckIcon IsChecked="@activity?.IsChecked"/>
-                    <label class="form-check-label" @onclick="() => ChangeCheck(activity)">@activity?.Title</label>
+            @foreach (var activity in _dailyProductivity?.Activities!)
+            {
+                <div class="row">
+                    <ActivityTableRow 
+                        Activity="activity" 
+                        OnActivityRowClick="() => ChangeCheck(activity)"/>
                 </div>
-            </div>
+            }
         }
-    }
     </div>
 </div>
+
+<CreateNewButton 
+    OnClickCallback="OnCreateNewButtonClickAsync"/>
+<ActivityFormModal
+    @ref="_activityFormModal"
+    Day="_day"/>
 
 @code {
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now.Date);
     private DailyProductivityDto? _dailyProductivity;
+    private ActivityFormModal _activityFormModal = default!;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -39,7 +49,9 @@
     }
 
     private void ChangeCheck(ActivityDto activity)
-    {
-        activity.IsChecked = !activity.IsChecked;
-    }
+        => activity.IsChecked = !activity.IsChecked;
+
+    private async Task OnCreateNewButtonClickAsync()
+        => await _activityFormModal.ShowModalAsync();
+
 }
