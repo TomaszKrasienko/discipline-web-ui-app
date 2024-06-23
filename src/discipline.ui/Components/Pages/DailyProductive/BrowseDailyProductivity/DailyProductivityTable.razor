@@ -2,15 +2,44 @@
 @using discipline.ui.Components.Pages.CommonComponents.Headers
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
+@using discipline.core.DTOs
 @inject IDailyProductivityDisciplineAppDispatcher DailyProductivityDisciplineAppDispatcher
 
 <PageTitle>Daily productivity</PageTitle>
 <PageHeader Title="Daily productivity"/>
 <div class="row text-center">
-    <DateInput TValue="DateTime" @bind-Value="@_day"/>
+    <div class="col-md-4 offset-4">
+        <DateInput TValue="DateOnly" @bind-Value="@_day" Id="daily-productivity-day"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6 offset-2 mx-auto">
+    @if (_dailyProductivity is not null)
+    {
+        @foreach (var activity in _dailyProductivity?.Activities!)
+        {
+            <div class="row">
+                <div class="form-check">
+                    <ActivityCheckIcon IsChecked="@activity?.IsChecked"/>
+                    <label class="form-check-label" @onclick="() => ChangeCheck(activity)">@activity?.Title</label>
+                </div>
+            </div>
+        }
+    }
+    </div>
 </div>
 
-
 @code {
-    private DateTime _day = DateTime.Now.Date;
+    private DateOnly _day = DateOnly.FromDateTime(DateTime.Now.Date);
+    private DailyProductivityDto? _dailyProductivity;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day);
+    }
+
+    private void ChangeCheck(ActivityDto activity)
+    {
+        activity.IsChecked = !activity.IsChecked;
+    }
 }

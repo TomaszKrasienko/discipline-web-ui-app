@@ -30,4 +30,14 @@ internal sealed class DailyProductivityDisciplineAppDispatcher(
                 return ResponseDto.GetInvalid();
         }
     }
+
+    public async Task<DailyProductivityDto> GetDailyProductivityByDay(DateOnly day)
+    {
+        var response = await disciplineAppClient.GetAsync($"daily-productivity/{day:yyyy-MM-dd}");
+        if (response.StatusCode is HttpStatusCode.NoContent)
+        {
+            return null;
+        }
+        return await response.Content.ReadFromJsonAsync<DailyProductivityDto>();
+    }
 }

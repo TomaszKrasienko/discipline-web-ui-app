@@ -1,0 +1,12 @@
+<div>
+    <span class="activity-check-icon">
+    @if (IsChecked ?? false)
+    {
+        <i class="bi bi-check-lg"></i>
+    }
+    </span>
+</div>
+@code {
+    [Parameter] 
+    public bool? IsChecked { get; set; }
+}
