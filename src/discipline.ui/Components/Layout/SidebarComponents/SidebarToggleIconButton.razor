@@ -1,0 +1,22 @@
+@namespace discipline.ui.Components.Layout.SidebarComponents
+
+<div>
+    <span class="universal-icon-button" @onclick="OnClickAsync">
+        @if (IsUnfolded)
+        {
+            <i class="bi bi-arrow-bar-left"></i>   
+        }
+        else
+        {
+            <i class="bi bi-arrow-bar-right"></i>   
+        }
+    </span>
+</div>
+
+@code {
+    [Parameter] public bool IsUnfolded { get; set; }
+    [Parameter] public EventCallback SidebarToggleIconButtonClickCallback { get; set; }
+
+    private async Task OnClickAsync()
+        => await SidebarToggleIconButtonClickCallback.InvokeAsync(string.Empty);
+}

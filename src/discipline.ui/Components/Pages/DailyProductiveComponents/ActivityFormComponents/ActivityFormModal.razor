@@ -20,16 +20,11 @@
 
 
 @code {
-    [Parameter] 
-    public ActivityRequest? ActivityRequest { get; set; }
-    
-    [Parameter] 
-    public DateOnly Day { get; set; }
-    
-    [Parameter]
-    public EventCallback OnHidingEventCallback { get; set; }
-
+    [Parameter] public ActivityRequest? ActivityRequest { get; set; }
+    [Parameter] public DateOnly Day { get; set; }
+    [Parameter] public EventCallback OnHidingEventCallback { get; set; }
     private Modal _modal = default!;
+    private List<ToastMessage> _messages = [];
 
     private async Task OnHidingModalAsync()
     {

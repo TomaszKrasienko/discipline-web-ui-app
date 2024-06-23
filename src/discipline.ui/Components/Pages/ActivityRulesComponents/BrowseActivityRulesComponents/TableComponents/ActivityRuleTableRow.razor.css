@@ -1,29 +1,22 @@
-.discipline-table-row {
+.activity-rule-table-row {
     background-color: #f7f7f7;
     border-bottom-color: white;
     border-bottom-width: 2px;
     border-bottom-style: groove;
 }
 
-.discipline-table-row:hover{
+.activity-rule-table-row:hover {
     background-color: white;
     cursor: pointer;
 }
 
-.discipline-table-row-header{
+.activity-rule-table-row-header{
     font-size: larger;
     padding-bottom: 1px;
 }
 
-.discipline-table-row-mode{
+.activity-rule-table-row-details{
     font-size: smaller;
     color: GrayText;
     padding-bottom: 1px;
-}
-.discipline-pagination-position{
-    padding-top: 30px;
-}
-
-.discipline-pagination-colors{
-    color: black !important;
 }

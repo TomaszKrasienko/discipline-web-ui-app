@@ -1,5 +1,5 @@
+@namespace discipline.ui.Components.Layout.SidebarComponents
 @using BlazorBootstrap
-@using discipline.ui.Components.Pages.CommonComponents.Buttons
 @rendermode InteractiveServer
 
 <Sidebar 
@@ -7,7 +7,9 @@
     Title="Discipline."
     DataProvider="SidebarDataProvider"/>
 <div class="top-row d-flex align-items-center">
-    <UniversalIconButton IconName=@(_isUnfolded ? "bi bi-arrow-bar-left" : "bi bi-arrow-bar-right") OnClickCallback="ToggleSidebar"/>
+    <SidebarToggleIconButton
+        IsUnfolded="_isUnfolded"
+        SidebarToggleIconButtonClickCallback="ToggleSidebar"/>
 </div>
 
 @code {

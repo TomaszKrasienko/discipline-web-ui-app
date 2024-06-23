@@ -1,8 +1,8 @@
 @page "/activity-rules-list"
-@using discipline.ui.Components.Pages.CommonComponents.Buttons
-@using discipline.ui.Components.Pages.CommonComponents.Headers
+@using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Components.Common.HeadersComponents
 @using discipline.ui.Components.Pages.ActivityRulesComponents.ActivityRuleFormComponents
-@using discipline.ui.Components.Pages.ActivityRulesComponents.BrowseActivityRulesComponents.Components
+@using discipline.ui.Components.Pages.ActivityRulesComponents.BrowseActivityRulesComponents.TableComponents
 @rendermode InteractiveServer
 
 <PageTitle>Activity rules list</PageTitle>
@@ -14,20 +14,18 @@
     </div>
 </div>
 
-<CreateNewButton OnClickCallback="OnClickToCreate"/>
+<CreateNewButton 
+    OnClickCallback="OnClickToCreateAsync"/>
 
-<ActivityRuleFormModal @ref="_activityRuleFromModal"/>
+<ActivityRuleFormModal 
+    @ref="_activityRuleFromModal"/>
 
 @code {
     private ActivityRuleFormModal? _activityRuleFromModal = default;
     
-    private async Task OnClickToCreate()
-    {
-        if (_activityRuleFromModal is not null)
-        {
-            await _activityRuleFromModal.OnShowClick();
-        }
-    }
+    private async Task OnClickToCreateAsync()
+        => await _activityRuleFromModal!.OnShowClick();
+    
     
     
 }

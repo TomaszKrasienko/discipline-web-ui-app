@@ -16,14 +16,22 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Components\Common\" />
       <Folder Include="Components\Pages\ActivityRulesComponents\" />
     </ItemGroup>
 
     <ItemGroup>
+      <AdditionalFiles Include="Components\Common\ButtonsComponents\CancelIconButton.razor" />
+      <AdditionalFiles Include="Components\Common\ButtonsComponents\ConfirmIconButton.razor" />
+      <AdditionalFiles Include="Components\Common\ButtonsComponents\CreateNewButton.razor" />
+      <AdditionalFiles Include="Components\Common\ButtonsComponents\DeleteIconButton.razor" />
+      <AdditionalFiles Include="Components\Common\ButtonsComponents\SubmitButton.razor" />
+      <AdditionalFiles Include="Components\Common\ButtonsComponents\UniversalIconButton.razor" />
+      <AdditionalFiles Include="Components\Common\HeadersComponents\PageHeader.razor" />
       <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\ActivityRuleFormComponents\ActivityRuleForm.razor" />
       <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\ActivityRuleFormComponents\ActivityRuleFormModal.razor" />
       <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\BrowseActivityRulesComponents\ActivityRulesList.razor" />
-      <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\BrowseActivityRulesComponents\Components\ActivityRulesTable.razor" />
+      <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\BrowseActivityRulesComponents\TableComponents\ActivityRulesTable.razor" />
       <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\DeleteActivityRuleComponents\DeleteActivityRuleModal.razor" />
     </ItemGroup>
 

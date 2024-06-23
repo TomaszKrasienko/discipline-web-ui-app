@@ -1,11 +1,11 @@
 @page "/daily-productivity"
-@using discipline.ui.Components.Pages.CommonComponents.Headers
 @using BlazorBootstrap
+@using discipline.ui.Components.Common.HeadersComponents
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.DTOs
 @using discipline.ui.Components.Pages.DailyProductive.BrowseDailyProductivity.TableComponent
-@using discipline.ui.Components.Pages.CommonComponents.Buttons
-@using discipline.ui.Components.Pages.DailyProductive.ActivityFormComponents
+@using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Components.Pages.DailyProductiveComponents.ActivityFormComponents
 @inject IDailyProductivityDisciplineAppDispatcher DailyProductivityDisciplineAppDispatcher
 @rendermode InteractiveServer
 
@@ -34,6 +34,7 @@
 
 <CreateNewButton 
     OnClickCallback="OnCreateNewButtonClickAsync"/>
+
 <ActivityFormModal
     @ref="_activityFormModal"
     Day="_day"/>
