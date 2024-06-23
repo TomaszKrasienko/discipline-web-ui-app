@@ -1,0 +1,16 @@
+@page "/daily-productivity"
+@using discipline.ui.Components.Pages.CommonComponents.Headers
+@using BlazorBootstrap
+@using discipline.core.Dispatchers.Abstractions
+@inject IDailyProductivityDisciplineAppDispatcher DailyProductivityDisciplineAppDispatcher
+
+<PageTitle>Daily productivity</PageTitle>
+<PageHeader Title="Daily productivity"/>
+<div class="row text-center">
+    <DateInput TValue="DateTime" @bind-Value="@_day"/>
+</div>
+
+
+@code {
+    private DateTime _day = DateTime.Now.Date;
+}

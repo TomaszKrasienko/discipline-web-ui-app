@@ -21,9 +21,14 @@
         return await Task.FromResult(request.ApplyTo(_navItems));
     }
 
-    protected override void OnInitialized()
-        => ToggleSidebar();
-    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ToggleSidebar();
+        }
+    }
+
 
     private IEnumerable<NavItem> GetNavItems()
     {
@@ -31,6 +36,7 @@
         {
             new NavItem { Id = "1", Href = "#", IconName = IconName.HouseDoorFill, Text = "Home", IconColor = IconColor.White},
             new NavItem { Id = "2", Href = "/activity-rules-list", IconName = IconName.ListTask, Text = "Activity rules", IconColor = IconColor.White},
+            new NavItem { Id = "2", Href = "/daily-productivity", IconName = IconName.ListTask, Text = "Daily productivity", IconColor = IconColor.White},
         };
         return _navItems;
     }
