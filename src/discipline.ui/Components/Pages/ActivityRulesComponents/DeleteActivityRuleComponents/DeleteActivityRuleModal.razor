@@ -1,20 +1,29 @@
 @using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Components.Common.DialogsComponents
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
+@using discipline.ui.Helpers
 @inject IActivityRulesDisciplineAppDispatcher ActivityRulesDisciplineAppDispatcher;
 
 
-<Modal
+@* <Modal *@
+@*     @ref="_deleteConfirmationModal" *@
+@*     Title="Confirm"> *@
+@*     <BodyTemplate> *@
+@*         Are you sure you want delete item? *@
+@*     </BodyTemplate> *@
+@*     <FooterTemplate> *@
+@*         <CancelIconButton OnClickCallback="HideDeleteActivityRuleModalAsync"/> *@
+@*         <ConfirmIconButton OnClickCallback="DeleteActivityRuleAsync"/> *@
+@*     </FooterTemplate> *@
+@* </Modal> *@
+
+<ConfirmDialogModal
     @ref="_deleteConfirmationModal"
-    Title="Confirm">
-    <BodyTemplate>
-        Are you sure you want delete item?
-    </BodyTemplate>
-    <FooterTemplate>
-        <CancelIconButton OnClickCallback="HideModalAsync"></CancelIconButton>
-        <ConfirmIconButton OnClickCallback="DeleteAsync"/>
-    </FooterTemplate>
-</Modal>
+    Title="Confirm"
+    Content="Are you sure you want to delete item?"
+    OnConfirmDialogCallback="DeleteActivityRuleAsync"/>
+    
 
 <Toasts 
     Class="p-3" 
@@ -24,39 +33,18 @@
     Placement="ToastsPlacement.TopRight"/>
 
 @code {
-    [Parameter] 
-    public Guid? ActivityRuleId { get; set; }
-    
-    [Parameter]
-    public EventCallback OnHidingEventCallback { get; set; }
-    
-    private Modal _deleteConfirmationModal = default!;
+    [Parameter] public Guid? ActivityRuleId { get; set; }
+    [Parameter] public EventCallback OnHidingEventCallback { get; set; }
+    private ConfirmDialogModal _deleteConfirmationModal = default!;
     private List<ToastMessage> _messages = [];
-    
-    private async Task HideModalAsync()
-    {
-        await _deleteConfirmationModal.HideAsync();
-    }
 
-    private async Task DeleteAsync()
+    private async Task DeleteActivityRuleAsync()
     {
         var response = await ActivityRulesDisciplineAppDispatcher.DeleteActivityRuleAsync(ActivityRuleId!.Value);
-        _messages?.Add(response.IsValid 
-            ? CreateToastMessage(ToastType.Success, "Deleted activity rule") 
-            : CreateToastMessage(ToastType.Danger, response.Message));
+        _messages?.Add(response.AsToastMessage("Deleted activity rule"));
         await OnHidingEventCallback.InvokeAsync();
-        await _deleteConfirmationModal.HideAsync();
     }
-    
-    private ToastMessage CreateToastMessage(ToastType type, string message)
-        => new()
-        {
-            Type = type,
-            Message = message
-        };
 
     internal async Task ShowAsync()
-    {
-        await _deleteConfirmationModal.ShowAsync();
-    }
+        => await _deleteConfirmationModal.ShowModalAsync();
 }

@@ -69,18 +69,10 @@
 </EditForm>
 
 @code {
-    [SupplyParameterFromForm] 
-    public ActivityRuleRequest ActivityRuleRequest { get; set; } = new();
-    
-    [Parameter] 
-    public Modal? Modal { get; set; }
-    
-    [Parameter] 
-    public List<ToastMessage>? Messages { get; set; }
-    
-    [Parameter]
-    public Guid? ActivityRuleId { get; set; }
-
+    [SupplyParameterFromForm] public ActivityRuleRequest ActivityRuleRequest { get; set; } = new();
+    [Parameter] public Modal? Modal { get; set; }
+    [Parameter] public List<ToastMessage>? Messages { get; set; }
+    [Parameter] public Guid? ActivityRuleId { get; set; }
     private const string ModeWithDays = "Custom";
     private List<WeekdayDto> _weekdays = default!;
     private List<ActivityRuleModeDto> _activityRuleModes = [];
