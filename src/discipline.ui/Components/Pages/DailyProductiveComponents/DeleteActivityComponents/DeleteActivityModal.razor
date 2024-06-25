@@ -1,0 +1,37 @@
+@using discipline.core.Dispatchers.Abstractions
+@using discipline.ui.Components.Common.DialogsComponents
+@using BlazorBootstrap
+@using discipline.ui.Helpers
+@inject IDailyProductivityDisciplineAppDispatcher DailyProductivityDisciplineAppDispatcher
+
+<ConfirmDialogModal
+    @ref="_confirmDialogModal"
+    Title="Confirm"
+    Content="Are you sure you want to delete activity?"
+    OnConfirmDialogCallback="DeleteActivityAsync"/>
+
+<Toasts 
+    Class="p-3" 
+    Messages="_messages" 
+    AutoHide="true" 
+    Delay="4000" 
+    Placement="ToastsPlacement.TopRight"/>
+
+@code {
+    [Parameter] public Guid? ActivityId { get; set; }
+    [Parameter] public EventCallback OnDeleteCallback { get; set; }
+    private ConfirmDialogModal _confirmDialogModal = default!;
+    private List<ToastMessage> _messages = [];
+
+    private async Task DeleteActivityAsync()
+    {
+        var response = await DailyProductivityDisciplineAppDispatcher
+            .DeleteActivityAsync(ActivityId!.Value);
+        _messages.Add(response.AsToastMessage("Deleted activity"));
+        await OnDeleteCallback.InvokeAsync();
+    }
+
+    internal async Task ShowAsync()
+        => await _confirmDialogModal.ShowModalAsync();
+
+}

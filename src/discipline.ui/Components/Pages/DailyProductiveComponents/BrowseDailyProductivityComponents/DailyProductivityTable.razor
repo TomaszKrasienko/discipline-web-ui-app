@@ -25,7 +25,8 @@
                 <div class="row">
                     <ActivityTableRow 
                         Activity="activity" 
-                        OnActivityRowClick="() => ChangeCheck(activity)"/>
+                        OnActivityRowClick="() => ChangeCheck(activity)"
+                        OnDeleteActivityCallback="InitializeAsync"/>
                 </div>
             }
         }
@@ -33,7 +34,7 @@
 </div>
 
 <CreateNewButton 
-    OnClickCallback="OnCreateNewButtonClickAsync"/>
+    OnClickCallback="ShowCreateNewFormAsync"/>
 
 <ActivityFormModal
     @ref="_activityFormModal"
@@ -45,14 +46,15 @@
     private ActivityFormModal _activityFormModal = default!;
 
     protected override async Task OnParametersSetAsync()
-    {
-        _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day);
-    }
+        => await InitializeAsync();
 
+    private async Task InitializeAsync()
+            => _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day); 
+        
     private void ChangeCheck(ActivityDto activity)
         => activity.IsChecked = !activity.IsChecked;
 
-    private async Task OnCreateNewButtonClickAsync()
+    private async Task ShowCreateNewFormAsync()
         => await _activityFormModal.ShowModalAsync();
 
 }

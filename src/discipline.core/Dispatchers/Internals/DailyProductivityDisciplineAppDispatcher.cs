@@ -31,6 +31,25 @@ internal sealed class DailyProductivityDisciplineAppDispatcher(
         }
     }
 
+    public async Task<ResponseDto> DeleteActivityAsync(Guid activityId)
+    {
+        var response = await disciplineAppClient.DeleteAsync($"/daily-productivity/activity/{activityId}");
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.OK:
+            {
+                return ResponseDto.GetValid();
+            }
+            case (HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity):
+            {
+                var errorResult = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+                return ResponseDto.GetInvalid(errorResult.Message);
+            }
+            default:
+                return ResponseDto.GetInvalid();
+        }
+    }
+
     public async Task<DailyProductivityDto> GetDailyProductivityByDay(DateOnly day)
     {
         var response = await disciplineAppClient.GetAsync($"daily-productivity/{day:yyyy-MM-dd}");

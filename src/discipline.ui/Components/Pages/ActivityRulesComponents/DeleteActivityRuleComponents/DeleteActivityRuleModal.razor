@@ -5,25 +5,11 @@
 @using discipline.ui.Helpers
 @inject IActivityRulesDisciplineAppDispatcher ActivityRulesDisciplineAppDispatcher;
 
-
-@* <Modal *@
-@*     @ref="_deleteConfirmationModal" *@
-@*     Title="Confirm"> *@
-@*     <BodyTemplate> *@
-@*         Are you sure you want delete item? *@
-@*     </BodyTemplate> *@
-@*     <FooterTemplate> *@
-@*         <CancelIconButton OnClickCallback="HideDeleteActivityRuleModalAsync"/> *@
-@*         <ConfirmIconButton OnClickCallback="DeleteActivityRuleAsync"/> *@
-@*     </FooterTemplate> *@
-@* </Modal> *@
-
 <ConfirmDialogModal
     @ref="_deleteConfirmationModal"
     Title="Confirm"
     Content="Are you sure you want to delete item?"
     OnConfirmDialogCallback="DeleteActivityRuleAsync"/>
-    
 
 <Toasts 
     Class="p-3" 
