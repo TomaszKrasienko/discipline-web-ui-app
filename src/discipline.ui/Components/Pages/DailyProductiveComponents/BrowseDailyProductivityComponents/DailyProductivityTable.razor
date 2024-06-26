@@ -13,7 +13,12 @@
 <PageHeader Title="Daily productivity"/>
 <div class="row text-center">
     <div class="col-md-4 offset-4">
-        <DateInput TValue="DateOnly" @bind-Value="@_day" Id="daily-productivity-day"/>
+        <DateInput 
+            TValue="DateOnly" 
+            Id="daily-productivity-day"
+            Value="_day"
+            ValueExpression="() => _day"
+            ValueChanged="OnDateChanged"/>
     </div>
 </div>
 <div class="row pt-5">
@@ -51,6 +56,11 @@
 
     private async Task InitializeAsync()
             => _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day);
+
+    private async Task OnDateChanged()
+    {
+        
+    }
 
     private async Task ChangeCheck(ActivityDto activity)
     {
