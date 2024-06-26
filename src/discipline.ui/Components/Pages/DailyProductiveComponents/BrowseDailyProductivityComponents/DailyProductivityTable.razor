@@ -6,7 +6,7 @@
 @using discipline.ui.Components.Pages.DailyProductive.BrowseDailyProductivity.TableComponent
 @using discipline.ui.Components.Common.ButtonsComponents
 @using discipline.ui.Components.Pages.DailyProductiveComponents.ActivityFormComponents
-@inject IDailyProductivityDisciplineAppDispatcher DailyProductivityDisciplineAppDispatcher
+@inject IDailyProductivityDispatcher DailyProductivityDisciplineAppDispatcher
 @rendermode InteractiveServer
 
 <PageTitle>Daily productivity</PageTitle>
@@ -25,7 +25,7 @@
                 <div class="row">
                     <ActivityTableRow 
                         Activity="activity" 
-                        OnActivityRowClick="() => ChangeCheck(activity)"
+                        OnActivityRowClick="async () => await ChangeCheck(activity)"
                         OnDeleteActivityCallback="InitializeAsync"/>
                 </div>
             }
@@ -49,10 +49,16 @@
         => await InitializeAsync();
 
     private async Task InitializeAsync()
-            => _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day); 
-        
-    private void ChangeCheck(ActivityDto activity)
-        => activity.IsChecked = !activity.IsChecked;
+            => _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day);
+
+    private async Task ChangeCheck(ActivityDto activity)
+    {
+        var response = await DailyProductivityDisciplineAppDispatcher.ChangeActivityCheck(activity.Id);
+        if (response.IsValid)
+        {
+            activity.IsChecked = !activity.IsChecked;
+        }
+    }
 
     private async Task ShowCreateNewFormAsync()
         => await _activityFormModal.ShowModalAsync();

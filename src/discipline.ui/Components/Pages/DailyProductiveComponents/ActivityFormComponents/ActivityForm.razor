@@ -1,6 +1,9 @@
 @using discipline.core.Dispatchers.Models.DailyProductivity
 @using discipline.ui.Components.Common.ButtonsComponents
 @using BlazorBootstrap
+@using discipline.core.Dispatchers.Abstractions
+@using discipline.ui.Helpers
+@inject IDailyProductivityDispatcher DailyProductivityDisciplineAppDispatcher
 
 <EditForm 
     method="post" 
@@ -33,17 +36,17 @@
     [Parameter] public ActivityRequest? ActivityRequest { get; set; }
     [Parameter] public DateOnly Day { get; set; }
     [Parameter] public List<ToastMessage>? Messages { get; set; }
-
+    [Parameter] public EventCallback OnSubmitCallback { get; set; }
+    
     protected override void OnParametersSet()
     {
-        if (ActivityRequest is null)
-        {
-            ActivityRequest = new();
-        }   
+        ActivityRequest ??= new();
     }
 
     private async Task SubmitAsync()
     {
-        
+        var response = await DailyProductivityDisciplineAppDispatcher.CreateTodayActivity(ActivityRequest with { Day = Day });
+        Messages?.Add(response.AsToastMessage("Added activity rule"));
+        await OnSubmitCallback.InvokeAsync();
     }
 }

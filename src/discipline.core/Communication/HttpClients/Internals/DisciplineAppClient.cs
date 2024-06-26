@@ -15,6 +15,9 @@ internal sealed class DisciplineAppClient(
     public Task<HttpResponseMessage> PutAsync<T>(string path, T t) where T : class
         => httpClient.PutAsJsonAsync<T>(path, t);
 
+    public Task<HttpResponseMessage> PatchAsync(string path)
+        => httpClient.PatchAsync(path, null);
+
     public Task<HttpResponseMessage> DeleteAsync(string path)
         => httpClient.DeleteAsync(path);
 }
