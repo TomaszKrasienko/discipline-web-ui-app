@@ -12,7 +12,7 @@ internal sealed class DailyProductivityDispatcher(
 {
     public async Task<ResponseDto> CreateTodayActivity(ActivityRequest request)
         => await (await disciplineAppClient.PostAsync(
-            $"/daily-productivity/{request.Day}/add-activity", request)).ToResponseDto();
+            $"/daily-productivity/{request.Day:yyyy-MM-dd}/add-activity", request)).ToResponseDto();
 
     public async Task<ResponseDto> DeleteActivityAsync(Guid activityId)
         => await (await disciplineAppClient.DeleteAsync(
