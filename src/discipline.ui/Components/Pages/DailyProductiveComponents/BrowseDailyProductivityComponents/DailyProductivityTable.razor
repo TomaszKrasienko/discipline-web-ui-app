@@ -38,7 +38,8 @@
 
 <ActivityFormModal
     @ref="_activityFormModal"
-    Day="_day"/>
+    Day="_day"
+    OnHidingEventCallback="InitializeAsync"/>
 
 @code {
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now.Date);

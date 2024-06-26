@@ -13,11 +13,13 @@
                 <ActivityForm
                     ActivityRequest="ActivityRequest"
                     Day="Day"
-                    OnSubmitCallback="OnHidingEventCallback"/>
+                    Messages="_messages"
+                    OnSubmitCallback="OnHidingModalAsync"/>
             </div>
         </div>
     </BodyTemplate>
 </Modal>
+
 <Toasts
     Class="p-3"
     Messages="_messages"
