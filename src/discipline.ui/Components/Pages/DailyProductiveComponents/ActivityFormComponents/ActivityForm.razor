@@ -45,7 +45,7 @@
 
     private async Task SubmitAsync()
     {
-        var response = await DailyProductivityDisciplineAppDispatcher.CreateTodayActivity(ActivityRequest with { Day = Day });
+        var response = await DailyProductivityDisciplineAppDispatcher.CreateTodayActivity(ActivityRequest! with { Day = Day });
         Messages?.Add(response.AsToastMessage("Added activity rule"));
         await OnSubmitCallback.InvokeAsync();
     }

@@ -18,7 +18,12 @@
         </div>
     </BodyTemplate>
 </Modal>
-
+<Toasts
+    Class="p-3"
+    Messages="_messages"
+    AutoHide="true"
+    Delay="4000"
+    Placement="ToastsPlacement.TopRight"/>
 
 @code {
     [Parameter] public ActivityRequest? ActivityRequest { get; set; }
