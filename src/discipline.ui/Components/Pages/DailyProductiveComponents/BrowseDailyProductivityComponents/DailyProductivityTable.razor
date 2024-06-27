@@ -7,6 +7,7 @@
 @using discipline.ui.Components.Common.ButtonsComponents
 @using discipline.ui.Components.Pages.DailyProductiveComponents.ActivityFormComponents
 @inject IDailyProductivityDispatcher DailyProductivityDisciplineAppDispatcher
+@inject ILogger<DailyProductivityTable> Logger;
 @rendermode InteractiveServer
 
 <PageTitle>Daily productivity</PageTitle>
@@ -18,7 +19,7 @@
             Id="daily-productivity-day"
             Value="_day"
             ValueExpression="() => _day"
-            ValueChanged="OnDateChanged"/>
+            ValueChanged="async (value) => await OnDateChanged(value)"/>
     </div>
 </div>
 <div class="row pt-5">
@@ -31,7 +32,7 @@
                     <ActivityTableRow 
                         Activity="activity" 
                         OnActivityRowClick="async () => await ChangeCheck(activity)"
-                        OnDeleteActivityCallback="InitializeAsync"/>
+                        OnDeleteActivityCallback="InitializeDailyProductivityAsync"/>
                 </div>
             }
         }
@@ -44,22 +45,29 @@
 <ActivityFormModal
     @ref="_activityFormModal"
     Day="_day"
-    OnHidingEventCallback="InitializeAsync"/>
+    OnHidingEventCallback="InitializeDailyProductivityAsync"/>
 
 @code {
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now.Date);
     private DailyProductivityDto? _dailyProductivity;
     private ActivityFormModal _activityFormModal = default!;
 
-    protected override async Task OnParametersSetAsync()
-        => await InitializeAsync();
+    protected override async Task OnInitializedAsync()
+        => await InitializeDailyProductivityAsync();
 
-    private async Task InitializeAsync()
-            => _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day);
+    private async Task InitializeDailyProductivityAsync()
+        => _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day);
+    
 
-    private async Task OnDateChanged()
+    private async Task OnDateChanged(DateOnly date)
     {
-        
+        if (!(_day == date))
+        {
+            _day = date;
+            await InitializeDailyProductivityAsync();
+            StateHasChanged();
+        }
+
     }
 
     private async Task ChangeCheck(ActivityDto activity)
