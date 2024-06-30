@@ -1,5 +1,3 @@
-using System.Net;
-using System.Net.Http.Json;
 using discipline.core.Communication.HttpClients.Abstractions;
 using discipline.core.Dispatchers.Abstractions;
 using discipline.core.Dispatchers.Models.DailyProductivity;
@@ -13,6 +11,10 @@ internal sealed class DailyProductivityDispatcher(
     public async Task<ResponseDto> CreateTodayActivity(ActivityRequest request)
         => await (await disciplineAppClient.PostAsync(
             $"/daily-productivity/{request.Day:yyyy-MM-dd}/add-activity", request)).ToResponseDto();
+
+    public async Task<ResponseDto> CreateFromActivityRule(ActivityFromRuleRequest request)
+        => await (await disciplineAppClient.PostAsync(
+            $"/daily-productivity/today/add-activity-from-rule", request)).ToResponseDto();
 
     public async Task<ResponseDto> DeleteActivityAsync(Guid activityId)
         => await (await disciplineAppClient.DeleteAsync(

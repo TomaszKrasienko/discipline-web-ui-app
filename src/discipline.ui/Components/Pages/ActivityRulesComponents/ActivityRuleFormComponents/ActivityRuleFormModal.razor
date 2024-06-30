@@ -3,7 +3,7 @@
 
 <Modal 
     @ref="_modal" 
-    title="Create new activity rule" 
+    title=@GetTitle()
     UseStaticBackdrop="true" 
     CloseOnEscape="false"
     OnHiding="OnHideModalClick">
@@ -13,7 +13,7 @@
                 <ActivityRuleForm 
                     Modal="_modal"
                     Messages="_messages"
-                    ActivityRuleId="ActivityRuleId"></ActivityRuleForm>  
+                    ActivityRuleId="ActivityRuleId"/>  
             </div>
         </div>
     </BodyTemplate>
@@ -46,5 +46,10 @@
     {
         await _modal.ShowAsync();
     }
-    
+
+    private string GetTitle()
+        => ActivityRuleId is null
+            ? "Create new activity rule"
+            : "Edit activity rule";
+
 }

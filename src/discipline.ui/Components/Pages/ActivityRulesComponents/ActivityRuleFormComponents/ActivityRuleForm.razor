@@ -1,14 +1,15 @@
 @namespace discipline.ui.Components.Pages.ActivityRulesComponents.ActivityRuleFormComponents
-
 @using discipline.core.Dispatchers.Models.ActivityRule
 @using discipline.core.DTOs
 @using discipline.core.Helpers
 @using discipline.ui.Components.Common.ButtonsComponents
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
+@using discipline.core.Dispatchers.Models.DailyProductivity
 @using discipline.core.Helpers.Abstractions
 @using discipline.ui.Helpers
-@inject IActivityRulesDispatcher ActivityRulesDisciplineAppDispatcher;
+@inject IActivityRulesDispatcher ActivityRulesDispatcher;
+@inject IDailyProductivityDispatcher DailyProductivityDispatcher;
 @inject IWeekdayTranslator WeekdayTranslator;
 
 <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
@@ -65,7 +66,10 @@
     }
     <div class="row btns-position">
         <div class="col-md-12 d-flex justify-content-end">
-            <CreateFromRuleButton/>
+            @if (ActivityRuleId is not null)
+            {
+                <CreateFromRuleButton OnClickCallback="CreateActivityFromRuleAsync"/>
+            }
             <SubmitButton/>
         </div>
     </div>
@@ -82,7 +86,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _activityRuleModes = await ActivityRulesDisciplineAppDispatcher.GetActivityRuleModesAsync();
+        _activityRuleModes = await ActivityRulesDispatcher.GetActivityRuleModesAsync();
         ActivityRuleRequest.Mode = _activityRuleModes.FirstOrDefault()?.Key;
     }
 
@@ -90,7 +94,7 @@
     {
         if (ActivityRuleId is not null)
         {
-            var rule = await ActivityRulesDisciplineAppDispatcher.GetCreateActivityRuleByIdAsync(ActivityRuleId.Value);
+            var rule = await ActivityRulesDispatcher.GetCreateActivityRuleByIdAsync(ActivityRuleId.Value);
             ActivityRuleRequest = new ActivityRuleRequest()
             {
                 Title = rule.Title,
@@ -118,22 +122,18 @@
         {
             await EditActivityRuleAsync();
         }
-        
-        if (Modal is not null)
-        {
-            await Modal.HideAsync();
-        }
+        await Modal!.HideAsync();
     }
 
     private async Task AddActivityRuleAsync()
     {
-        var response = await ActivityRulesDisciplineAppDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
+        var response = await ActivityRulesDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
         Messages?.Add(response.AsToastMessage("Added activity rule"));
     }
 
     private async Task EditActivityRuleAsync()
     {
-        var response = await ActivityRulesDisciplineAppDispatcher.EditActivityRuleAsync(ActivityRuleId!.Value, ActivityRuleRequest);
+        var response = await ActivityRulesDispatcher.EditActivityRuleAsync(ActivityRuleId!.Value, ActivityRuleRequest);
         Messages?.Add(response.AsToastMessage("Activity rule updated"));
     }
     
@@ -146,5 +146,15 @@
         _weekdays = mode != ModeWithDays 
             ? WeekdayFactory.Get() 
             : WeekdayTranslator.Transform(ActivityRuleRequest.SelectedDays);
+    }
+
+    private async Task CreateActivityFromRuleAsync()
+    {
+        var response = await DailyProductivityDispatcher.CreateFromActivityRule(new ActivityFromRuleRequest()
+        {
+            ActivityRuleId = ActivityRuleId!.Value
+        });
+        Messages?.Add(response.AsToastMessage("Activity added"));
+        await Modal!.HideAsync();
     }
 }
