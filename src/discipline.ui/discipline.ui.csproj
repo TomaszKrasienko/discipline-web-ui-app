@@ -25,7 +25,6 @@
       <AdditionalFiles Include="Components\Common\ButtonsComponents\CreateNewButton.razor" />
       <AdditionalFiles Include="Components\Common\ButtonsComponents\DeleteIconButton.razor" />
       <AdditionalFiles Include="Components\Common\ButtonsComponents\SubmitButton.razor" />
-      <AdditionalFiles Include="Components\Common\ButtonsComponents\UniversalIconButton.razor" />
       <AdditionalFiles Include="Components\Common\HeadersComponents\PageHeader.razor" />
       <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\ActivityRuleFormComponents\ActivityRuleForm.razor" />
       <AdditionalFiles Include="Components\Pages\ActivityRulesComponents\ActivityRuleFormComponents\ActivityRuleFormModal.razor" />

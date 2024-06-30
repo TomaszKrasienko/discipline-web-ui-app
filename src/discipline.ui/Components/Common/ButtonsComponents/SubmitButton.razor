@@ -1,9 +1,13 @@
 @namespace discipline.ui.Components.Common.ButtonsComponents
+@using BlazorBootstrap
 
-<div class="d-flex justify-content-end submit-btn-position">
-    <button type="submit" class="btn btn-dark btn-sm submit-btn">
-        <i class="bi bi-check-lg submit-btn-icon"></i>
-    </button>
+<div class="submit-btn-position">
+    
+    <Tooltip Class="me-4" Title="Submit">
+        <button type="submit" class="btn btn-dark btn-sm submit-btn">
+            <i class="bi bi-check-lg submit-btn-icon"></i>
+        </button>
+    </Tooltip>
 </div>
 @code {
     
