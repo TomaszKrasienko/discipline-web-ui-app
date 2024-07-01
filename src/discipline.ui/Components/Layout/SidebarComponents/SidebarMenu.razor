@@ -5,6 +5,7 @@
 <Sidebar 
     @ref="_sidebar" 
     Title="Discipline."
+    ImageSrc="https://raw.githubusercontent.com/TomaszKrasienko/discipline-web-ui-app/readme/assets/discipline_sm_logo.png"
     DataProvider="SidebarDataProvider"/>
 <div class="top-row d-flex align-items-center">
     <SidebarToggleIconButton
@@ -37,7 +38,7 @@
         _navItems = new List<NavItem>
         {
             new NavItem { Id = "1", Href = "#", IconName = IconName.HouseDoorFill, Text = "Home", IconColor = IconColor.White},
-            new NavItem { Id = "2", Href = "/activity-rules-list", IconName = IconName.ListTask, Text = "Activity rules", IconColor = IconColor.White},
+            new NavItem { Id = "2", Href = "/activity-rules-list", IconName = IconName.FileRuledFill, Text = "Activity rules", IconColor = IconColor.White},
             new NavItem { Id = "2", Href = "/daily-productivity", IconName = IconName.ListTask, Text = "Daily productivity", IconColor = IconColor.White},
         };
         return _navItems;

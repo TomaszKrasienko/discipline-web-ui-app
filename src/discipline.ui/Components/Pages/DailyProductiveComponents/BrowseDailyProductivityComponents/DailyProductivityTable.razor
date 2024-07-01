@@ -1,4 +1,5 @@
 @page "/daily-productivity"
+@namespace discipline.ui.Components.DailyProductivity
 @using BlazorBootstrap
 @using discipline.ui.Components.Common.HeadersComponents
 @using discipline.core.Dispatchers.Abstractions
@@ -11,7 +12,10 @@
 @rendermode InteractiveServer
 
 <PageTitle>Daily productivity</PageTitle>
-<PageHeader Title="Daily productivity"/>
+@if (IsTitleVisible)
+{
+    <PageHeader Title="Daily productivity"/>
+}
 <div class="row text-center">
     <div class="col-md-4 offset-4">
         <DateInput 
@@ -48,6 +52,7 @@
     OnHidingEventCallback="InitializeDailyProductivityAsync"/>
 
 @code {
+    [Parameter] public bool IsTitleVisible { get; set; } = true;
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now.Date);
     private DailyProductivityDto? _dailyProductivity;
     private ActivityFormModal _activityFormModal = default!;
