@@ -1,21 +1,16 @@
-﻿@page "/"
+﻿@using discipline.ui.Components.DailyProductivity
+@page "/"
 
 
 <PageTitle>Discipline.</PageTitle>
 <div class="row">
-    <div class="col-md-8 offset-2">
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <h2>Welcome again. Keep your Discipline.</h2>
-            </div>
-        </div>
-        <div class="row" style="padding-top: 40px;">
-            <div class="col-md-6 mx-auto">
-                <DailyActivities></DailyActivities>
-            </div>
-        </div>
-        <div class="row" style="padding-top: 40px;">
-            <ProductivityChartData></ProductivityChartData>
-        </div>
+    <div class="col-md-12 text-center">
+        <h2>Welcome again. Keep your Discipline.</h2>
     </div>
 </div>
+<div>
+    <DailyProductivityTable 
+        IsTitleVisible="false"/> 
+</div>
+
+<ProductivityChartData></ProductivityChartData>

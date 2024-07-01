@@ -37,4 +37,10 @@
       <_ContentIncludedByDefault Remove="Components\Pages\DeleteActivityRuleComponents\DeleteActivityRuleModal.razor" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="wwwroot\favicon.ico">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
