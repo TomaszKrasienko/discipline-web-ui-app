@@ -7,7 +7,6 @@
 @using BlazorBootstrap
 @inject ILaborIntensityService LaborIntensityService;
 @inject IDailyProductivityDispatcher DailyProductivityDispatcher;
-@inject ILogger<Dashboard> Logger;
 @rendermode InteractiveServer
 
 <div class="row">
@@ -15,81 +14,72 @@
         <h2>Welcome again. Keep your Discipline.</h2>
     </div>
 </div>
-<div>
+<div class="dashboard-element-position">
     <DailyProductivityTable 
         ActivityCheckedCallback="RefreshChart"
-        IsTitleVisible="false"
-        /> 
+        IsTitleVisible="false"/> 
 </div>
-
-<div style="pointer-events: none; user-select: none;">
-    <LineChart @ref="_lineChart"/>
-</div> 
-
+<div class="row dashboard-element-position">
+    <div class="col-md-8 offset-2">
+        <LineChart
+            @ref="_lineChart"/>
+    </div>
+</div>
 @code {
-    private List<ProgressDataDto> Data { get; set; } = new();
-    private List<ProgressDataDto> BaseData { get; set; } = new();
+    private List<ProgressDataDto> Data { get; set; } = [];
     private LineChart _lineChart = default!;
-    ChartData chartData = default;
+    private ChartData _chartData = default!;
+    private LineChartOptions _lineChartOptions = default!;
+    private const string BlackColorHex = "#000000"; 
     
-    private LineChartOptions lineChartOptions = default!;
-
     internal async Task RefreshChart()
     {
         await InitializeAsync();
-        Logger.LogInformation(JsonConvert.SerializeObject(Data));
-        var labels = Data.Select(x => x.Day.ToString()).ToList();
-        var datasets = new List<IChartDataset>();
-        datasets.Add(new LineChartDataset()
-        {
-            Label = "Progress",
-            Data = Data.Select(x => x.Percent).ToList(),
-            BackgroundColor = ["#000000"],
-            BorderWidth = [5],
-            HoverBorderWidth = [4],
-            PointBackgroundColor = ["#000000"],
-            PointHoverRadius = [0]
-        });
-
-        chartData = new ChartData() { Labels = labels, Datasets = datasets };
-        await _lineChart.UpdateAsync(chartData, lineChartOptions);
+        InitializeChart();
+        await _lineChart.UpdateAsync(_chartData, _lineChartOptions);
     }
 
     protected override async Task OnInitializedAsync()
     {
         await InitializeAsync();
-        var colors = ColorUtility.CategoricalTwelveColors;
+        InitializeChart();
+        InitializeChartOptions();
+    }
+
+    private async Task InitializeAsync()
+        => Data = await DailyProductivityDispatcher.GetProgressDate();
+
+    private void InitializeChart()
+    {
         var labels = Data.Select(x => x.Day.ToString()).ToList();
         var datasets = new List<IChartDataset>();
         datasets.Add(new LineChartDataset()
         {
             Label = "Progress",
             Data = Data.Select(x => x.Percent).ToList(),
-            BackgroundColor = ["#000000"],
+            BackgroundColor = [BlackColorHex],
             BorderWidth = [5],
             HoverBorderWidth = [4],
-            PointBackgroundColor = ["#000000"],
+            PointBackgroundColor = [BlackColorHex],
             PointHoverRadius = [0]
         });
-
-        chartData = new ChartData() { Labels = labels, Datasets = datasets };
-        
-        lineChartOptions = new();
-        lineChartOptions.Responsive = true;
-        lineChartOptions.Interaction = new Interaction { Mode = InteractionMode.Index };
-        
-        lineChartOptions.Scales.Y!.Max = 100;
-        lineChartOptions.Scales.Y!.Title = new ChartAxesTitle { Text = "Tasks done", Display = true };
+        _chartData = new ChartData() { Labels = labels, Datasets = datasets };
     }
 
-    private async Task InitializeAsync()
-        => Data = await DailyProductivityDispatcher.GetProgressDate();
+    private void InitializeChartOptions()
+    {
+        _lineChartOptions = new();
+        _lineChartOptions.Responsive = true;
+        _lineChartOptions.Interaction = new Interaction { Mode = InteractionMode.Index };
+        _lineChartOptions.Layout.Padding = 70;
+        _lineChartOptions.Scales.Y!.Max = 100;
+    }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await _lineChart.InitializeAsync(chartData, lineChartOptions);
+            await _lineChart.InitializeAsync(_chartData, _lineChartOptions);
         }
         await base.OnAfterRenderAsync(firstRender);
     }
