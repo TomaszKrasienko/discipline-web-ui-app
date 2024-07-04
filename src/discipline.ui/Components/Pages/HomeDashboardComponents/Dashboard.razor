@@ -1,0 +1,94 @@
+@using discipline.ui.Components.DailyProductivity 
+@using discipline.ui.Services.Abstractions
+@using discipline.core.Dispatchers.Abstractions
+@using discipline.core.DTOs
+@using discipline.ui.Models
+@using Newtonsoft.Json
+@using BlazorBootstrap
+@inject ILaborIntensityService LaborIntensityService;
+@inject IDailyProductivityDispatcher DailyProductivityDispatcher;
+@inject ILogger<Dashboard> Logger;
+@rendermode InteractiveServer
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h2>Welcome again. Keep your Discipline.</h2>
+    </div>
+</div>
+<div>
+    <DailyProductivityTable 
+        ActivityCheckedCallback="RefreshChart"
+        IsTitleVisible="false"
+        /> 
+</div>
+
+<div style="pointer-events: none; user-select: none;">
+    @* <ApexChart TItem="ProgressDataDto" *@
+    @*            Title="Your progress" *@
+    @*            Options="_options" *@
+    @*            @ref="_chart"> *@
+    @*     <ApexPointSeries TItem="ProgressDataDto" *@
+    @*                      Items="Data" *@
+    @*                      SeriesType="SeriesType.Line" *@
+    @*                      XValue="e => e.Day" *@
+    @*                      YValue="e=> e.Percent"/> *@
+    @*     <ApexPointSeries TItem="ProgressDataDto" *@
+    @*                   Items="BaseData" *@
+    @*                   SeriesType="SeriesType.Line" *@
+    @*                   XValue="e => e.Day" *@
+    @*                   YValue="e=> e.Percent"/> *@
+    @* </ApexChart> *@
+    <LineChart @ref="_lineChart"/>
+</div> 
+
+@code {
+    private List<ProgressDataDto> Data { get; set; } = new();
+    private List<ProgressDataDto> BaseData { get; set; } = new();
+    private LineChart _lineChart = default!;
+
+    internal async Task RefreshChart()
+    {
+        await InitializeAsync();
+        Logger.LogInformation(JsonConvert.SerializeObject(Data));
+        //await _chart.UpdateSeriesAsync(false);
+        //await _chart.RenderAsync();
+        //await _chart.
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ChartData chartData = default;
+        await InitializeAsync();
+        BaseData =
+        [
+            new ProgressDataDto()
+            {
+                Day = DateOnly.MinValue,
+                Percent = 0
+            },
+            new ProgressDataDto()
+            {
+                Day = DateOnly.MinValue,
+                Percent = 100
+            },
+        ];
+        var colors = ColorUtility.CategoricalTwelveColors;
+        var labels = Data.Select(x => x.Day.ToString()).ToString();
+        var datasets = new List<IChartDataset>();
+        datasets.Add(new LineChartDataset()
+        {
+            Label = "Progress",
+            Data = Data.Select(x => x.Percent).ToList(),
+            BackgroundColor = [colors[0]],
+            BorderWidth = [2],
+            HoverBorderWidth = [4],
+            PointBackgroundColor = [colors[0]],
+            PointHoverRadius = [0]
+        });
+
+        _lineChart = new ChartData() { Labels = labels, Datasets = datasets };
+    }
+
+    private async Task InitializeAsync()
+        => Data = await DailyProductivityDispatcher.GetProgressDate();
+}
