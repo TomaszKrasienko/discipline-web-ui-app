@@ -23,21 +23,6 @@
 </div>
 
 <div style="pointer-events: none; user-select: none;">
-    @* <ApexChart TItem="ProgressDataDto" *@
-    @*            Title="Your progress" *@
-    @*            Options="_options" *@
-    @*            @ref="_chart"> *@
-    @*     <ApexPointSeries TItem="ProgressDataDto" *@
-    @*                      Items="Data" *@
-    @*                      SeriesType="SeriesType.Line" *@
-    @*                      XValue="e => e.Day" *@
-    @*                      YValue="e=> e.Percent"/> *@
-    @*     <ApexPointSeries TItem="ProgressDataDto" *@
-    @*                   Items="BaseData" *@
-    @*                   SeriesType="SeriesType.Line" *@
-    @*                   XValue="e => e.Day" *@
-    @*                   YValue="e=> e.Percent"/> *@
-    @* </ApexChart> *@
     <LineChart @ref="_lineChart"/>
 </div> 
 
@@ -45,50 +30,67 @@
     private List<ProgressDataDto> Data { get; set; } = new();
     private List<ProgressDataDto> BaseData { get; set; } = new();
     private LineChart _lineChart = default!;
+    ChartData chartData = default;
+    
+    private LineChartOptions lineChartOptions = default!;
 
     internal async Task RefreshChart()
     {
         await InitializeAsync();
         Logger.LogInformation(JsonConvert.SerializeObject(Data));
-        //await _chart.UpdateSeriesAsync(false);
-        //await _chart.RenderAsync();
-        //await _chart.
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        ChartData chartData = default;
-        await InitializeAsync();
-        BaseData =
-        [
-            new ProgressDataDto()
-            {
-                Day = DateOnly.MinValue,
-                Percent = 0
-            },
-            new ProgressDataDto()
-            {
-                Day = DateOnly.MinValue,
-                Percent = 100
-            },
-        ];
-        var colors = ColorUtility.CategoricalTwelveColors;
-        var labels = Data.Select(x => x.Day.ToString()).ToString();
+        var labels = Data.Select(x => x.Day.ToString()).ToList();
         var datasets = new List<IChartDataset>();
         datasets.Add(new LineChartDataset()
         {
             Label = "Progress",
             Data = Data.Select(x => x.Percent).ToList(),
-            BackgroundColor = [colors[0]],
-            BorderWidth = [2],
+            BackgroundColor = ["#000000"],
+            BorderWidth = [5],
             HoverBorderWidth = [4],
-            PointBackgroundColor = [colors[0]],
+            PointBackgroundColor = ["#000000"],
             PointHoverRadius = [0]
         });
 
-        _lineChart = new ChartData() { Labels = labels, Datasets = datasets };
+        chartData = new ChartData() { Labels = labels, Datasets = datasets };
+        await _lineChart.UpdateAsync(chartData, lineChartOptions);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeAsync();
+        var colors = ColorUtility.CategoricalTwelveColors;
+        var labels = Data.Select(x => x.Day.ToString()).ToList();
+        var datasets = new List<IChartDataset>();
+        datasets.Add(new LineChartDataset()
+        {
+            Label = "Progress",
+            Data = Data.Select(x => x.Percent).ToList(),
+            BackgroundColor = ["#000000"],
+            BorderWidth = [5],
+            HoverBorderWidth = [4],
+            PointBackgroundColor = ["#000000"],
+            PointHoverRadius = [0]
+        });
+
+        chartData = new ChartData() { Labels = labels, Datasets = datasets };
+        
+        lineChartOptions = new();
+        lineChartOptions.Responsive = true;
+        lineChartOptions.Interaction = new Interaction { Mode = InteractionMode.Index };
+        
+        lineChartOptions.Scales.Y!.Max = 100;
+        lineChartOptions.Scales.Y!.Title = new ChartAxesTitle { Text = "Tasks done", Display = true };
     }
 
     private async Task InitializeAsync()
         => Data = await DailyProductivityDispatcher.GetProgressDate();
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _lineChart.InitializeAsync(chartData, lineChartOptions);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
 }
