@@ -49,7 +49,7 @@
     }
 
     private async Task InitializeAsync()
-        => Data = await DailyProductivityDispatcher.GetProgressDate();
+        => Data = (await DailyProductivityDispatcher.GetProgressData()).ToList();
 
     private void InitializeChart()
     {

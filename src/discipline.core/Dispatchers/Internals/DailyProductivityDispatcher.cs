@@ -27,4 +27,7 @@ internal sealed class DailyProductivityDispatcher(
     public async Task<DailyProductivityDto> GetDailyProductivityByDay(DateOnly day)
         => await (await disciplineAppClient.GetAsync($"daily-productivity/{day:yyyy-MM-dd}"))
             .ToResults<DailyProductivityDto>();
+
+    public async Task<IEnumerable<ProgressDataDto>> GetProgressData()
+        => await (await disciplineAppClient.GetAsync("progress/data")).ToResults<IEnumerable<ProgressDataDto>>();
 }

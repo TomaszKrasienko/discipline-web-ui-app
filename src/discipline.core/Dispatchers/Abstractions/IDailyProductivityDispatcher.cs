@@ -10,4 +10,5 @@ public interface IDailyProductivityDispatcher
     Task<ResponseDto> DeleteActivityAsync(Guid activityId);
     Task<ResponseDto> ChangeActivityCheck(Guid activityId);
     Task<DailyProductivityDto> GetDailyProductivityByDay(DateOnly day);
+    Task<IEnumerable<ProgressDataDto>> GetProgressData();
 }
