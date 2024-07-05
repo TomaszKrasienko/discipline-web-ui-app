@@ -15,17 +15,13 @@
     </div>
 </div>
 <div class="row dashboard-element-position">
-    <div class="col-md-8 offset-2">
-        <DailyProductivityTable
-            ActivityCheckedCallback="RefreshChart"
-            IsTitleVisible="false"/>
-    </div>
+    <DailyProductivityTable
+        ActivityCheckChangedCallback="RefreshChart"
+        IsTitleVisible="false"/>
 </div>
 <div class="row dashboard-element-position">
-    <div class="col-md-8 offset-2">
-        <LineChart
-            @ref="_lineChart"/>
-    </div>
+    <LineChart
+        @ref="_lineChart"/>
 </div>
 @code {
     private List<ProgressDataDto> Data { get; set; } = [];
