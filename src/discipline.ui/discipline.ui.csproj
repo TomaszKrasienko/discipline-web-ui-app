@@ -35,6 +35,8 @@
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Components\Pages\DeleteActivityRuleComponents\DeleteActivityRuleModal.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\SidebarComponents\SidebarMenu.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\SidebarComponents\SidebarToggleIconButton.razor" />
     </ItemGroup>
 
     <ItemGroup>

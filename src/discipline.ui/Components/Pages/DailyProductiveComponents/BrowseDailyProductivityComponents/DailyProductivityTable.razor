@@ -53,7 +53,7 @@
 
 @code {
     [Parameter] public bool IsTitleVisible { get; set; } = true;
-    [Parameter] public EventCallback ActivityCheckChangedCallback { get; set; }
+    [Parameter] public EventCallback OnActivityCheckChanged { get; set; }
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now.Date);
     private DailyProductivityDto? _dailyProductivity;
     private ActivityFormModal _activityFormModal = default!;
@@ -82,7 +82,7 @@
         if (response.IsValid)
         {
             activity.IsChecked = !activity.IsChecked;
-            
+            await OnActivityCheckChanged.InvokeAsync();
         }
     }
 
