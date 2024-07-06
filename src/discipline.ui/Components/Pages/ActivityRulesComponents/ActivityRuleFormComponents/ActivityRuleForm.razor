@@ -80,6 +80,7 @@
     [Parameter] public Modal? Modal { get; set; }
     [Parameter] public List<ToastMessage>? Messages { get; set; }
     [Parameter] public Guid? ActivityRuleId { get; set; }
+    [Parameter] public EventCallback OnActivityAdd { get; set; }
     private const string ModeWithDays = "Custom";
     private List<WeekdayDto> _weekdays = default!;
     private List<ActivityRuleModeDto> _activityRuleModes = [];
@@ -122,7 +123,8 @@
         {
             await EditActivityRuleAsync();
         }
-        await Modal!.HideAsync();
+
+        await OnActivityAdd.InvokeAsync();
     }
 
     private async Task AddActivityRuleAsync()
