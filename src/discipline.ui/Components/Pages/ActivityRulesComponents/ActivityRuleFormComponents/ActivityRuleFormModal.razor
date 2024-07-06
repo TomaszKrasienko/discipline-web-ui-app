@@ -13,7 +13,8 @@
                 <ActivityRuleForm 
                     Modal="_modal"
                     Messages="_messages"
-                    ActivityRuleId="ActivityRuleId"/>  
+                    ActivityRuleId="ActivityRuleId"
+                    OnActivityAdd="HideAfterAdd"/>  
             </div>
         </div>
     </BodyTemplate>
@@ -27,24 +28,26 @@
     Placement="ToastsPlacement.TopRight"/>
 
 @code {
-    [Parameter] 
-    public Guid? ActivityRuleId { get; set; }
-    
-    [Parameter]
-    public EventCallback OnHidingEventCallback { get; set; }
+    [Parameter] public Guid? ActivityRuleId { get; set; }
+    [Parameter] public EventCallback OnHidingEvent { get; set; }
+    [Parameter] public EventCallback OnActivityAdded { get; set; }
 
     private Modal _modal = default!;
     private List<ToastMessage> _messages = [];
     
     private async Task OnHideModalClick()
     {
-        await OnHidingEventCallback.InvokeAsync();
+        await OnHidingEvent.InvokeAsync();
         await _modal.HideAsync();
     }
 
     public async Task OnShowClick()
+        => await _modal.ShowAsync();
+
+    private async Task HideAfterAdd()
     {
-        await _modal.ShowAsync();
+        await _modal.HideAsync();
+        await OnActivityAdded.InvokeAsync();
     }
 
     private string GetTitle()
