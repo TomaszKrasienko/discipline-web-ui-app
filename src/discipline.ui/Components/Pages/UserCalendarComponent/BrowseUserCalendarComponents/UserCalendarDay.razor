@@ -18,17 +18,41 @@
                 ValueExpression="() => _day"
                 ValueChanged="async (value) => await OnDateChanged(value)"/>
         </div>
-        <div class="row" style="background-color: #f7f7f7">
-            @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
+        
+        <div class="row" style="padding-top: 60px">
+            <span style="background-color: #f7f7f7;">
+                @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
+                {
+                    <div class="col-md-10 offset-1">
+                        <span style="background-color: #eac8c8">
+                            <p>@importantDay.Title</p>
+                        </span>
+                    </div>
+                }    
+            </span>
+        </div>
+        
+        <div class="row">
+            
+            
+            @foreach (var calendarEvent in _userCalendarDto?.CalendarEvents ?? [])
             {
-                <p>@importantDay.Id</p>
-                <p>@importantDay.Title</p>
+                <p>@calendarEvent.Id</p>
+                <p>@calendarEvent.Title</p>
+                <p>@calendarEvent.TimeFrom</p>
+                <p>@calendarEvent.TimeTo</p>
+                <p>@calendarEvent.Action</p>
             }
             
-            @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
+            @foreach (var meeting in _userCalendarDto?.Meetings ?? [])
             {
-                <p>@importantDay.Id</p>
-                <p>@importantDay.Title</p>
+                <p>@meeting.Id</p>
+                <p>@meeting.Title</p>
+                <p>@meeting.TimeFrom</p>
+                <p>@meeting.TimeTo</p>
+                <p>@meeting.Platform</p>
+                <p>@meeting.Uri</p>
+                <p>@meeting.Place</p>
             }
         </div>
     </div>
