@@ -1,0 +1,58 @@
+@page "/user-calendar/{Day}"
+@using BlazorBootstrap
+@using discipline.core.Dispatchers.Abstractions
+@using discipline.core.DTOs
+@using discipline.ui.Components.Common.HeadersComponents
+@inject IUserCalendarDispatcher UserCalendarDispatcher
+
+<PageTitle>@Title</PageTitle>
+<PageHeader Title=@Title/>
+
+<div class="row text-center">
+    <div class="col-md-4 offset-4">
+        <div class="row">
+            <DateInput
+                TValue="DateOnly"
+                Id="user-calendar-day"
+                Value="_day"
+                ValueExpression="() => _day"
+                ValueChanged="async (value) => await OnDateChanged(value)"/>
+        </div>
+        <div class="row" style="background-color: #f7f7f7">
+            @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
+            {
+                <p>@importantDay.Id</p>
+                <p>@importantDay.Title</p>
+            }
+            
+            @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
+            {
+                <p>@importantDay.Id</p>
+                <p>@importantDay.Title</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private const string Title = "User Calendar";
+    private DateOnly _day;
+    private UserCalendarDto? _userCalendarDto;
+    
+    [Parameter] 
+    public string Day { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _day = DateOnly.Parse(Day);
+        _userCalendarDto = await UserCalendarDispatcher.GetUserCalendarByDayAsync(_day);
+    }
+
+    private async Task OnDateChanged(DateOnly date)
+    {
+        if (!(_day == date))
+        {
+            _day = date;
+        }
+    }
+}
