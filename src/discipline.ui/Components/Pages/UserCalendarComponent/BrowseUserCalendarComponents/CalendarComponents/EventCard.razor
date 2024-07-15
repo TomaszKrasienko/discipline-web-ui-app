@@ -2,8 +2,8 @@
 @using System.Text
 @namespace discipline.ui.Components.Pages.UserCalendarComponent.BrowseUserCalendarComponents.CalendarComponents
 
-<div class="event-card-border @GetEventCardColorClass()">
-    <div style="padding: 5px">
+<div class="event-card-border @GetEventCardColorClass() event-card-content">
+    <div class="card-title">
         <div class="row">
             <div class="col-md-8 text-start">
                 <span class="card-title">
@@ -14,7 +14,7 @@
                 @GetMeetingTimeSpan()
             </div>
         </div>
-        <div class="row text-start">
+        <div class="row text-start card-content">
             <span>
                 @if (CalendarEventDto is not null)
                 {
@@ -52,7 +52,7 @@
         if (CalendarEventDto is not null)
             return GetTime(CalendarEventDto.TimeFrom, CalendarEventDto.TimeTo);
         if (MeetingDto is not null)
-            GetTime(MeetingDto.TimeFrom, MeetingDto.TimeTo);
+            return GetTime(MeetingDto.TimeFrom, MeetingDto.TimeTo);
         return string.Empty;
     }
 

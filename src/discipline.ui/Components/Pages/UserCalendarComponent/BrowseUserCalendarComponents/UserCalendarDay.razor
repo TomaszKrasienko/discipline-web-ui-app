@@ -10,9 +10,9 @@
 <PageHeader Title=@Title/>
 
 <div class="row text-center">
-    <div class="col-md-6 offset-3">
+    <div class="col-md-10 offset-1">
         <div class="row">
-            <div class="col-md-8 offset-2">
+            <div class="col-md-4 offset-4">
                 <DateInput
                     TValue="DateOnly"
                     Id="user-calendar-day"
@@ -22,24 +22,42 @@
             </div>
         </div>
         
-        <div class="row" style="padding-top: 60px">
-            <span style="background-color: #f7f7f7;">
-            @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
-            {
-                <EventCard ImportantDateDto="importantDay"/>
-            }    
-            @foreach (var calendarEvent in _userCalendarDto?.CalendarEvents ?? [])
-            {
-                <EventCard CalendarEventDto="calendarEvent"/>
-            }
-            @foreach (var meeting in _userCalendarDto?.Meetings ?? [])
-            {
-                <EventCard MeetingDto="meeting"/>
-            }
-            </span>
+        <div class="row calendar">
+            <div class="col-md-8 offset-2">
+                <p>Important event</p>
+                <div class="event-section">
+                    @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
+                    {
+                        <div class="event-card">
+                            <EventCard ImportantDateDto="importantDay"/>
+                        </div>
+                    }
+                </div>
+                <p>Calendar events</p>
+                <div class="event-section">
+                    @foreach (var calendarEvent in _userCalendarDto?.CalendarEvents ?? [])
+                    {
+                        <div class="event-card">
+                            <EventCard CalendarEventDto="calendarEvent"/>
+                        </div>
+                    }
+                </div>
+                <p>Meetings:</p>
+                <div class="event-section">
+                    @foreach (var meeting in _userCalendarDto?.Meetings ?? [])
+                    {
+                        <div class="event-card">
+                            <EventCard MeetingDto="meeting"/>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<CreateNewButton 
+    OnClickCallback="ShowCreateNewFormAsync"/>
 
 @code {
     private const string Title = "User Calendar";
@@ -52,14 +70,20 @@
     protected override async Task OnParametersSetAsync()
     {
         _day = DateOnly.Parse(Day);
-        _userCalendarDto = await UserCalendarDispatcher.GetUserCalendarByDayAsync(_day);
+        await InitializeData();
     }
+    
+    private async Task InitializeData()
+        => _userCalendarDto = await UserCalendarDispatcher.GetUserCalendarByDayAsync(_day);
 
     private async Task OnDateChanged(DateOnly date)
     {
         if (!(_day == date))
         {
             _day = date;
+            await InitializeData();
         }
     }
+    
+    
 }

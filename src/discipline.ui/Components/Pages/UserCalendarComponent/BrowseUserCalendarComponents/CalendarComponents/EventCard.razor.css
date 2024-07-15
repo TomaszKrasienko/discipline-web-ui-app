@@ -1,7 +1,7 @@
 .event-card-border{
     border-style: solid;
-    border-width: 3px; 
-    border-radius: 10px
+    border-width: 2px; 
+    border-radius: 5px
 }
 
 .important-date-card-color {
@@ -16,6 +16,14 @@
     border-color: #5b5b80;
 }
 
+.event-card-content {
+    padding: 7px;
+}
+
 .card-title {
-    font-size: larger;
+    font-size: large;
+}
+
+.card-content {
+    font-size: small;
 }
