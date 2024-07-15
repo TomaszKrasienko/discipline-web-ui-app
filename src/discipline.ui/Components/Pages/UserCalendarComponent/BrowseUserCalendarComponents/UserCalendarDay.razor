@@ -5,6 +5,8 @@
 @using discipline.ui.Components.Common.ButtonsComponents
 @using discipline.ui.Components.Common.HeadersComponents
 @using discipline.ui.Components.Pages.UserCalendarComponent.BrowseUserCalendarComponents.CalendarComponents
+@using discipline.ui.Dictionaries
+@using discipline.ui.Enums
 @inject IUserCalendarDispatcher UserCalendarDispatcher
 
 <PageTitle>@Title</PageTitle>
@@ -58,14 +60,14 @@
 </div>
 
 <CreateNewDropUpButton
-    Options="_options"
+    Options="EventTypeDictionary.Dictionary"
     OnClickCallback="ShowCreateNewFormAsync"/>
 
 @code {
     private const string Title = "User Calendar";
     private DateOnly _day;
     private UserCalendarDto? _userCalendarDto;
-    private List<string> _options = ["test", "test1"];
+    
     [Parameter] 
     public string Day { get; set; }
 
@@ -86,7 +88,10 @@
             await InitializeData();
         }
     }
-    
-    private async Task ShowCreateNewFormAsync(){}
+
+    private async Task ShowCreateNewFormAsync(EventType type)
+    {
+        
+    }
     
 }

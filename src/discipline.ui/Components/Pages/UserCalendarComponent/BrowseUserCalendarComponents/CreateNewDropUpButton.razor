@@ -1,0 +1,26 @@
+@using discipline.ui.Enums
+<div class="create-btn-position">
+    <div class="btn-group dropup">
+        <button class="btn-dark btn-sm" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-plus-lg create-btn-icon"></i>
+        </button>
+        <ul class="dropdown-menu">
+            @foreach (var option in Options)
+            {
+                <li>
+                    <a class="dropdown-item" @onclick="async () => await OnClick(option.Key)">
+                        @option.Value
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Dictionary<EventType, string> Options { get; set; } = [];
+    [Parameter] public EventCallback<EventType> OnClickCallback { get; set; }
+
+    private async Task OnClick(EventType type)
+        => await OnClickCallback.InvokeAsync(type);
+}
