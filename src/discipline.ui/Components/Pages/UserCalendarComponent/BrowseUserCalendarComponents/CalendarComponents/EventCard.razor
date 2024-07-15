@@ -52,31 +52,15 @@
     private string GetMeetingTimeSpan()
     {
         if (CalendarEventDto is not null)
-        {
-            if (CalendarEventDto.TimeTo is null)
-            {
-                return $"{CalendarEventDto.TimeFrom}";
-            }
-            else
-            {
-                return $"{CalendarEventDto.TimeFrom} - {CalendarEventDto.TimeTo}";
-            }
-        }
-        
+            return GetTime(CalendarEventDto.TimeFrom, CalendarEventDto.TimeTo);
         if (MeetingDto is not null)
-        {
-            if (MeetingDto.TimeTo is null)
-            {
-                return $"{MeetingDto.TimeFrom}";
-            }
-            else
-            {
-                return $"{MeetingDto.TimeFrom} - {MeetingDto.TimeTo}";
-            }
-        }
-
+            GetTime(MeetingDto.TimeFrom, MeetingDto.TimeTo);
         return string.Empty;
     }
+
+    private string GetTime(TimeOnly timeFrom, TimeOnly? timeTo)
+        => timeTo is null ? $"{timeFrom:hh:mm}" : $"{timeFrom:hh:mm} - {timeTo:hh:mm}";
+    
     
     private string GetEventCardColorClass()
     {
