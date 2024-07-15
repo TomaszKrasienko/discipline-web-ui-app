@@ -3,57 +3,40 @@
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.DTOs
 @using discipline.ui.Components.Common.HeadersComponents
+@using discipline.ui.Components.Pages.UserCalendarComponent.BrowseUserCalendarComponents.CalendarComponents
 @inject IUserCalendarDispatcher UserCalendarDispatcher
 
 <PageTitle>@Title</PageTitle>
 <PageHeader Title=@Title/>
 
 <div class="row text-center">
-    <div class="col-md-4 offset-4">
+    <div class="col-md-6 offset-3">
         <div class="row">
-            <DateInput
-                TValue="DateOnly"
-                Id="user-calendar-day"
-                Value="_day"
-                ValueExpression="() => _day"
-                ValueChanged="async (value) => await OnDateChanged(value)"/>
+            <div class="col-md-8 offset-2">
+                <DateInput
+                    TValue="DateOnly"
+                    Id="user-calendar-day"
+                    Value="_day"
+                    ValueExpression="() => _day"
+                    ValueChanged="async (value) => await OnDateChanged(value)"/>
+            </div>
         </div>
         
         <div class="row" style="padding-top: 60px">
             <span style="background-color: #f7f7f7;">
-                @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
-                {
-                    <div class="col-md-10 offset-1">
-                        <span style="background-color: #eac8c8">
-                            <p>@importantDay.Title</p>
-                        </span>
-                    </div>
-                }    
-            </span>
-        </div>
-        
-        <div class="row">
-            
-            
+            @foreach (var importantDay in _userCalendarDto?.ImportantDates ?? [])
+            {
+                <EventCard ImportantDateDto="importantDay"/>
+            }    
             @foreach (var calendarEvent in _userCalendarDto?.CalendarEvents ?? [])
             {
-                <p>@calendarEvent.Id</p>
-                <p>@calendarEvent.Title</p>
-                <p>@calendarEvent.TimeFrom</p>
-                <p>@calendarEvent.TimeTo</p>
-                <p>@calendarEvent.Action</p>
+                <EventCard CalendarEventDto="calendarEvent"/>
             }
-            
             @foreach (var meeting in _userCalendarDto?.Meetings ?? [])
             {
-                <p>@meeting.Id</p>
-                <p>@meeting.Title</p>
-                <p>@meeting.TimeFrom</p>
-                <p>@meeting.TimeTo</p>
-                <p>@meeting.Platform</p>
-                <p>@meeting.Uri</p>
-                <p>@meeting.Place</p>
+                <EventCard MeetingDto="meeting"/>
             }
+            </span>
         </div>
     </div>
 </div>
