@@ -3,32 +3,30 @@
 @namespace discipline.ui.Components.Pages.UserCalendarComponent.BrowseUserCalendarComponents.CalendarComponents
 
 <div class="event-card-border @GetEventCardColorClass()">
-    <div class="row">
-        <div class="col-md-8">
-            <span class="card-title">
-                @GetTitle()
-            </span>
+    <div style="padding: 5px">
+        <div class="row">
+            <div class="col-md-8 text-start">
+                <span class="card-title">
+                    @GetTitle()
+                </span>
+            </div>
+            <div class="col-md-4 text-end">
+                @GetMeetingTimeSpan()
+            </div>
         </div>
-        <div class="col-md-4">
-            @GetMeetingTimeSpan()
+        <div class="row text-start">
+            <span>
+                @if (CalendarEventDto is not null)
+                {
+                    @CalendarEventDto.Action
+                }
+                @if (MeetingDto is not null)
+                {
+                    @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
+                }
+            </span>
         </div>
     </div>
-    @if (CalendarEventDto is not null)
-    {
-        <div class="row">
-            <span>
-                @CalendarEventDto.Action
-            </span>
-        </div>
-    }
-    @if (MeetingDto is not null)
-    {
-        <div class="row">
-            <span>
-                @GetMeetingNavigationData()
-            </span>
-        </div>
-    }
 </div>
 
 @code {
@@ -73,12 +71,16 @@
     private string GetMeetingNavigationData()
     {
         StringBuilder data = new StringBuilder();
-        if(MeetingDto?.Platform is not null) 
+        if(!string.IsNullOrWhiteSpace(MeetingDto?.Platform)) 
             data.AppendLine($"Platform: {MeetingDto.Platform}");
-        if (MeetingDto?.Uri is not null)
+        if (!string.IsNullOrWhiteSpace(MeetingDto?.Uri))
             data.AppendLine($"Uri: {MeetingDto.Uri}");
-        if (MeetingDto?.Place is not null)
+        if (!string.IsNullOrWhiteSpace(MeetingDto?.Place))
             data.AppendLine($"Place: {MeetingDto.Place}");
         return data.ToString();
     }
+
+    private string ConvertToHtmlLines(string input)
+        => input.Replace("\n", "<br>");
+
 }
