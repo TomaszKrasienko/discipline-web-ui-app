@@ -1,0 +1,100 @@
+@using discipline.core.DTOs
+@using System.Text
+@namespace discipline.ui.Components.Pages.UserCalendarComponent.BrowseUserCalendarComponents.CalendarComponents
+
+<div class="event-card-border @GetEventCardColorClass()">
+    <div class="row">
+        <div class="col-md-8">
+            <span class="card-title">
+                @GetTitle()
+            </span>
+        </div>
+        <div class="col-md-4">
+            @GetMeetingTimeSpan()
+        </div>
+    </div>
+    @if (CalendarEventDto is not null)
+    {
+        <div class="row">
+            <span>
+                @CalendarEventDto.Action
+            </span>
+        </div>
+    }
+    @if (MeetingDto is not null)
+    {
+        <div class="row">
+            <span>
+                @GetMeetingNavigationData()
+            </span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] 
+    public ImportantDateDto? ImportantDateDto { get; set; }
+    
+    [Parameter] 
+    public CalendarEventDto? CalendarEventDto { get; set; }
+    
+    [Parameter]
+    public MeetingDto? MeetingDto { get; set; }
+
+    private string GetTitle()
+    {
+        if (ImportantDateDto is not null) return ImportantDateDto.Title;
+        if (CalendarEventDto is not null) return CalendarEventDto.Title;
+        if (MeetingDto is not null) return MeetingDto.Title;
+        return string.Empty;
+    }
+
+    private string GetMeetingTimeSpan()
+    {
+        if (CalendarEventDto is not null)
+        {
+            if (CalendarEventDto.TimeTo is null)
+            {
+                return $"{CalendarEventDto.TimeFrom}";
+            }
+            else
+            {
+                return $"{CalendarEventDto.TimeFrom} - {CalendarEventDto.TimeTo}";
+            }
+        }
+        
+        if (MeetingDto is not null)
+        {
+            if (MeetingDto.TimeTo is null)
+            {
+                return $"{MeetingDto.TimeFrom}";
+            }
+            else
+            {
+                return $"{MeetingDto.TimeFrom} - {MeetingDto.TimeTo}";
+            }
+        }
+
+        return string.Empty;
+    }
+    
+    private string GetEventCardColorClass()
+    {
+        if (ImportantDateDto is not null) return "important-date-card-color";
+        if (CalendarEventDto is not null) return "calendar-event-card-color";
+        if (MeetingDto is not null) return "meeting-card-color";
+        return string.Empty;
+    }
+
+    private string GetMeetingNavigationData()
+    {
+        StringBuilder data = new StringBuilder();
+        if(MeetingDto?.Platform is not null) 
+            data.AppendLine($"Platform: {MeetingDto.Platform}");
+        if (MeetingDto?.Uri is not null)
+            data.AppendLine($"Uri: {MeetingDto.Uri}");
+        if (MeetingDto?.Place is not null)
+            data.AppendLine($"Place: {MeetingDto.Place}");
+        return data.ToString();
+    }
+}

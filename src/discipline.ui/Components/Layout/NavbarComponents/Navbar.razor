@@ -20,6 +20,10 @@
           Text="Activities"
           IconClass="bi-list-task"
           OnButtonClick="NavigateToActivities"/>
+      <NavbarButton
+          Text="User Calendar"
+          IconClass="bi-calendar-check"
+          OnButtonClick="NavigateToUserCalendar"/>
   </div>
 </nav>
 
@@ -30,5 +34,11 @@
 
     private void NavigateToActivities()
         => NavigationManager.NavigateTo("/daily-productivity");
+
+    private void NavigateToUserCalendar()
+    {
+        var day = DateOnly.FromDateTime(DateTime.Now);
+        NavigationManager.NavigateTo($"/user-calendar/{day:yyyy-MM-dd}");
+    }
 
 }
