@@ -1,0 +1,32 @@
+@using discipline.ui.Components.Common.ButtonsComponents
+@inject ILogger<EventForm> Logger;
+<EditForm
+    method="post"
+    OnSubmit="async () => await SubmitAsync()">
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            <label for="new-activity-title">
+                Title:
+            </label>
+            <InputText
+                class="form-control"
+                id="new-activity-title"
+                placeholder="Title"
+                @bind-Value="_title"/>
+        </div> 
+    </div>
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+            <SubmitButton/>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    private string _title;
+    private async Task SubmitAsync()
+    {
+        Logger.LogInformation(_title);
+    }
+}
