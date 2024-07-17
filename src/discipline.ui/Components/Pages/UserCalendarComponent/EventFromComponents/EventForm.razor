@@ -1,7 +1,11 @@
 @using discipline.ui.Components.Common.ButtonsComponents
 @using discipline.ui.Enums
 @using discipline.ui.Models
-@inject ILogger<EventForm> Logger;
+@using BlazorBootstrap
+@using discipline.core.Dispatchers.Abstractions
+@using discipline.ui.Helpers
+@inject IUserCalendarDispatcher UserCalendarDispatcher
+
 <EditForm
     method="post"
     Model="UserCalendarEvent"
@@ -27,7 +31,7 @@
             {
                 <div class="row">
                     <label for="user-calendar-event-time-from">Time from:</label>
-                    <InputDate
+                    <TimeInput
                         class="form-control"
                         id="user-calendar-event-time-from"
                         TValue="TimeOnly"
@@ -35,7 +39,7 @@
                 </div>
                 <div class="row">
                     <label for="user-calendar-event-time-to">Time to:</label>
-                    <InputDate
+                    <TimeInput
                         class="form-control"
                         id="user-calendar-event-time-to"
                         TValue="TimeOnly?"
@@ -94,7 +98,8 @@
     [Parameter] public UserCalendarEvent? UserCalendarEvent { get; set; }
     [Parameter] public DateOnly Day { get; set; }
     [Parameter] public EventType Type { get; set; }
-    private string _title;
+    [Parameter] public List<ToastMessage>? Messages { get; set; }
+    [Parameter] public EventCallback OnSubmitCallback { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -104,6 +109,11 @@
 
     private async Task SubmitAsync()
     {
-        Logger.LogInformation(_title);
+        if (Type is EventType.ImportantDate)
+        {
+            var response = await UserCalendarDispatcher.AddImportantDateAsync(UserCalendarEvent?.AsImportantDate());
+            Messages?.Add(response.AsToastMessage("Added important date"));
+            await OnSubmitCallback.InvokeAsync();
+        }
     }
 }

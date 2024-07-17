@@ -67,7 +67,8 @@
 
 <EventFormModal 
     @ref="_formModal"
-    Day="_day"/>
+    Day="_day"
+    OnHidingEventCallback="InitializeData"/>
 
 @code {
     private const string Title = "User Calendar";
@@ -98,5 +99,4 @@
 
     private async Task ShowCreateNewFormAsync(EventType type)
         => await _formModal.ShowModalAsync(type);
-
 }
