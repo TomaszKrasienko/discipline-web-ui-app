@@ -10,7 +10,8 @@
         <div class="row">
             <div class="col-md-10 offset-1">
                 <EventForm
-                    Day="Day"/>
+                    Day="Day"
+                    Type="_eventType"/>
             </div>
         </div>
     </BodyTemplate>
@@ -28,6 +29,7 @@
     [Parameter] public EventCallback OnHidingEventCallback { get; set; }
     private Modal _modal = default!;
     private readonly List<ToastMessage> _messages = [];
+    private EventType _eventType;
 
     private async Task OnHidingModalAsync()
     {
@@ -35,9 +37,9 @@
         await _modal.HideAsync();
     }
 
-    internal async Task ShowModalAsync(EventType eventType, DateOnly day)
+    internal async Task ShowModalAsync(EventType eventType)
     {
-        
+        _eventType = eventType;
         await _modal.ShowAsync();
     }
 
