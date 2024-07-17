@@ -1,7 +1,7 @@
 @using BlazorBootstrap
 @using discipline.ui.Enums
 <Modal 
-    @ref="_modal" 
+    @ref="_modal"
     title="Create new activity" 
     UseStaticBackdrop="true" 
     CloseOnEscape="false"
@@ -9,6 +9,8 @@
     <BodyTemplate>
         <div class="row">
             <div class="col-md-10 offset-1">
+                <EventForm
+                    Day="Day"/>
             </div>
         </div>
     </BodyTemplate>
@@ -20,6 +22,7 @@
     AutoHide="true"
     Delay="4000"
     Placement="ToastsPlacement.TopRight"/>
+
 @code {
     [Parameter] public DateOnly Day { get; set; }
     [Parameter] public EventCallback OnHidingEventCallback { get; set; }
@@ -32,6 +35,10 @@
         await _modal.HideAsync();
     }
 
-    internal async Task ShowModalAsync(EventType eventType)
-        => await _modal.ShowAsync();
+    internal async Task ShowModalAsync(EventType eventType, DateOnly day)
+    {
+        
+        await _modal.ShowAsync();
+    }
+
 }

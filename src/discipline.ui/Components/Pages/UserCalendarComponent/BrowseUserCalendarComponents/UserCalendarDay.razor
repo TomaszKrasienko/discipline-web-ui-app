@@ -9,6 +9,7 @@
 @using discipline.ui.Dictionaries
 @using discipline.ui.Enums
 @inject IUserCalendarDispatcher UserCalendarDispatcher
+@rendermode InteractiveServer
 
 <PageTitle>@Title</PageTitle>
 <PageHeader Title=@Title/>
@@ -95,6 +96,6 @@
     }
 
     private async Task ShowCreateNewFormAsync(EventType type)
-        => await _formModal.ShowModalAsync(type);
+        => await _formModal.ShowModalAsync(type, _day);
 
 }

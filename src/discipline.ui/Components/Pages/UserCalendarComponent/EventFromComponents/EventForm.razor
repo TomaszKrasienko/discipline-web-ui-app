@@ -1,18 +1,85 @@
 @using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Enums
+@using discipline.ui.Models
 @inject ILogger<EventForm> Logger;
 <EditForm
     method="post"
+    Model="UserCalendarEvent"
     OnSubmit="async () => await SubmitAsync()">
     <div class="row">
         <div class="col-md-6 offset-3">
-            <label for="new-activity-title">
-                Title:
-            </label>
-            <InputText
-                class="form-control"
-                id="new-activity-title"
-                placeholder="Title"
-                @bind-Value="_title"/>
+            <div class="row">
+                <label for="user-calendar-day">Day: </label>
+                <InputDate
+                    class="form-control"
+                    id="user-calendar-day"
+                    @bind-Value="UserCalendarEvent!.Day"/>
+            </div>
+            <div class="row">
+                <label for="user-calendar-event-title">Title:</label>
+                <InputText
+                    class="form-control"
+                    id="user-calendar-event-title"
+                    placeholder="Title"
+                    @bind-Value="UserCalendarEvent!.Title"/>
+            </div>
+            @if (Type is EventType.CalendarEvent or EventType.Meeting)
+            {
+                <div class="row">
+                    <label for="user-calendar-event-time-from">Time from:</label>
+                    <InputDate
+                        class="form-control"
+                        id="user-calendar-event-time-from"
+                        TValue="TimeOnly"
+                        @bind-Value="UserCalendarEvent!.TimeFrom"/>
+                </div>
+                <div class="row">
+                    <label for="user-calendar-event-time-to">Time to:</label>
+                    <InputDate
+                        class="form-control"
+                        id="user-calendar-event-time-to"
+                        TValue="TimeOnly?"
+                        @bind-Value="UserCalendarEvent!.TimeTo"/>
+                </div>
+            }
+            @if (Type is EventType.CalendarEvent)
+            {
+                <div class="row">
+                    <label for="user-calendar-event-action">Action:</label>
+                    <InputText
+                        class="form-control"
+                        id="user-calendar-event-action"
+                        placeholder="Action"
+                        @bind-Value="UserCalendarEvent!.Action"/>
+                </div>
+            }
+            @if (Type is EventType.Meeting)
+            {
+                <div class="row">
+                    <label for="user-calendar-event-platform">Platform:</label>
+                    <InputText
+                        class="form-control"
+                        id="user-calendar-event-platform"
+                        placeholder="Platform"
+                        @bind-Value="UserCalendarEvent!.Platform"/>
+                </div>
+                <div class="row">
+                    <label for="user-calendar-event-uri">Uri:</label>
+                    <InputText
+                        class="form-control"
+                        id="user-calendar-event-uri"
+                        placeholder="Uri"
+                        @bind-Value="UserCalendarEvent!.Uri"/>
+                </div>
+                <div class="row">
+                    <label for="user-calendar-event-place">Place:</label>
+                    <InputText
+                        class="form-control"
+                        id="user-calendar-event-place"
+                        placeholder="Place"
+                        @bind-Value="UserCalendarEvent!.Place"/>
+                </div>
+            }
         </div> 
     </div>
     <div class="row">
@@ -24,7 +91,17 @@
 
 
 @code {
+    [Parameter] public UserCalendarEvent? UserCalendarEvent { get; set; }
+    [Parameter] public DateOnly Day { get; set; }
+    [Parameter] public EventType Type { get; set; }
     private string _title;
+
+    protected override void OnParametersSet()
+    {
+        UserCalendarEvent ??= new();
+        UserCalendarEvent.Day = Day;
+    }
+
     private async Task SubmitAsync()
     {
         Logger.LogInformation(_title);
