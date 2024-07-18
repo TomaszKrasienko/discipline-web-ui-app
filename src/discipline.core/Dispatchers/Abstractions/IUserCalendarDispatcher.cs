@@ -7,4 +7,5 @@ public interface IUserCalendarDispatcher
 {
     Task<UserCalendarDto> GetUserCalendarByDayAsync(DateOnly day);
     Task<ResponseDto> AddImportantDateAsync(ImportantDateRequest request);
+    Task<ResponseDto> AddCalendarEventAsync(CalendarEventRequest request);
 }

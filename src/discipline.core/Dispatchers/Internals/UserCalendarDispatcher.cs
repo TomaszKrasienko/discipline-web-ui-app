@@ -14,4 +14,7 @@ internal sealed class UserCalendarDispatcher(
 
     public async Task<ResponseDto> AddImportantDateAsync(ImportantDateRequest request)
         => await (await disciplineAppClient.PostAsync("/user-calendar/add-important-date", request)).ToResponseDto();
+
+    public async Task<ResponseDto> AddCalendarEventAsync(CalendarEventRequest request)
+        => await (await disciplineAppClient.PostAsync("/user-calendar/add-calendar-event", request)).ToResponseDto();
 }
