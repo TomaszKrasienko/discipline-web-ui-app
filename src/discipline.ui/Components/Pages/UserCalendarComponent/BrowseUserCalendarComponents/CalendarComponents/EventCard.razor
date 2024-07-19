@@ -57,7 +57,7 @@
     }
 
     private string GetTime(TimeOnly timeFrom, TimeOnly? timeTo)
-        => timeTo is null ? $"{timeFrom:hh:mm}" : $"{timeFrom:hh:mm} - {timeTo:hh:mm}";
+        => timeTo is null ? $"{timeFrom:HH:mm}" : $"{timeFrom:HH:mm} - {timeTo:HH:mm}";
     
     
     private string GetEventCardColorClass()
