@@ -115,5 +115,11 @@
             Messages?.Add(response.AsToastMessage("Added important date"));
             await OnSubmitCallback.InvokeAsync();
         }
+        else if (Type is EventType.CalendarEvent)
+        {
+            var response = await UserCalendarDispatcher.AddCalendarEventAsync(UserCalendarEvent?.AsCalendarEventRequest());
+            Messages?.Add(response.AsToastMessage("Added calendar event"));
+            await OnSubmitCallback.InvokeAsync();
+        }
     }
 }
