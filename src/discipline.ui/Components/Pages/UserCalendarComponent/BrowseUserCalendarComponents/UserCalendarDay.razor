@@ -2,14 +2,15 @@
 @using BlazorBootstrap
 @using discipline.core.Dispatchers.Abstractions
 @using discipline.core.DTOs
-@using discipline.ui.Components.Common.ButtonsComponents
 @using discipline.ui.Components.Common.HeadersComponents
 @using discipline.ui.Components.Pages.UserCalendarComponent.BrowseUserCalendarComponents.CalendarComponents
+@using discipline.ui.Components.Pages.UserCalendarComponent.EventFromComponents
 @using discipline.ui.Dictionaries
 @using discipline.ui.Enums
 @inject IUserCalendarDispatcher UserCalendarDispatcher
+@rendermode InteractiveServer
 
-<PageTitle>@Title</PageTitle>
+ <PageTitle>@Title</PageTitle>
 <PageHeader Title=@Title/>
 
 <div class="row text-center">
@@ -63,10 +64,16 @@
     Options="EventTypeDictionary.Dictionary"
     OnClickCallback="ShowCreateNewFormAsync"/>
 
+<EventFormModal 
+    @ref="_formModal"
+    Day="_day"
+    OnHidingEventCallback="InitializeData"/>
+
 @code {
     private const string Title = "User Calendar";
     private DateOnly _day;
     private UserCalendarDto? _userCalendarDto;
+    private EventFormModal _formModal;
     
     [Parameter] 
     public string Day { get; set; }
@@ -90,8 +97,5 @@
     }
 
     private async Task ShowCreateNewFormAsync(EventType type)
-    {
-        
-    }
-    
+        => await _formModal.ShowModalAsync(type);
 }

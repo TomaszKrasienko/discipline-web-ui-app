@@ -8,9 +8,9 @@
             @foreach (var option in Options)
             {
                 <li>
-                    <a class="dropdown-item" @onclick="async () => await OnClick(option.Key)">
+                    <button class="dropdown-item" @onclick="async () => await OnClick(option.Key)">
                         @option.Value
-                    </a>
+                    </button>
                 </li>
             }
         </ul>

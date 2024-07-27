@@ -8,6 +8,6 @@ internal static class EventTypeDictionary
     {
         [EventType.CalendarEvent] = "Calendar event",
         [EventType.Meeting] = "Meeting",
-        [EventType.ImportantDate] = "ImportantDate"
+        [EventType.ImportantDate] = "Important date"
     };
 }
