@@ -1,13 +1,82 @@
 @page "/sign-up"
+@using discipline.core.Dispatchers.Abstractions
 @using discipline.core.Dispatchers.Models.Users
+@using BlazorBootstrap
+@using discipline.ui.Helpers
+@inject IUserDispatcher UserDispatcher
+
 <EditForm method="post" OnSubmit="Submit" Model="SignUpRequest">
-    
+    <div class="row" style="padding-top: 20px;">
+        <div class="col-md-6">
+            <label for="sign-up-email">Email: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-email"
+                placeholder="Email"
+                @bind-Value="SignUpRequest!.Email"/>
+        </div>
+        <div class="col-md-6">
+            <label for="sign-up-first-name">First name: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-first-name"
+                placeholder="Email"
+                @bind-Value="SignUpRequest!.FirstName"/>
+        </div>
+        <div class="col-md-6">
+            <label for="sign-up-last-name">Last name: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-last-name"
+                placeholder="Email"
+                @bind-Value="SignUpRequest!.LastName"/>
+        </div>
+        <div class="col-md-6">
+            <label for="sign-up-password">Password: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-password"
+                placeholder="Email"
+                type="password"
+                @bind-Value="SignUpRequest!.Password"/>
+        </div>
+        <div class="col-md-6">
+            <label for="sign-up-confirm-password">Confirm password: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-confirm-password"
+                placeholder="Email"
+                type="password"
+                @bind-Value="SignUpRequest!.Password"/>
+        </div>
+    </div>
 </EditForm>
 
+<Toasts
+    Class="p-3"
+    Messages="_messages"
+    AutoHide="true"
+    Delay="4000"
+    Placement="ToastsPlacement.TopRight"/>
+
 @code {
-    public SignUpRequest SignUpRequest { get; set; }
+    
+    public SignUpRequest? SignUpRequest { get; set; }
+    private List<ToastMessage> _messages;
+    
     private async Task Submit()
     {
-        
+        var response = await UserDispatcher.SignUp(SignUpRequest);
+        if (response.IsValid)
+        {
+            return;
+        }
+
+        _messages.Add(new ToastMessage()
+        {
+            Type = ToastType.Danger,
+            Message = response.Message
+        });
+
     }
 }
