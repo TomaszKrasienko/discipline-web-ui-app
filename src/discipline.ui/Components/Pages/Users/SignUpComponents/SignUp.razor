@@ -1,0 +1,13 @@
+@page "/sign-up"
+@using discipline.core.Dispatchers.Models.Users
+<EditForm method="post" OnSubmit="Submit" Model="SignUpRequest">
+    
+</EditForm>
+
+@code {
+    public SignUpRequest SignUpRequest { get; set; }
+    private async Task Submit()
+    {
+        
+    }
+}
