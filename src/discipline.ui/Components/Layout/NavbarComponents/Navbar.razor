@@ -5,26 +5,34 @@
 @rendermode InteractiveServer
 
 <nav class="navbar">
-  <div class="d-flex align-items-center">
-      <a class="navbar-brand" href="#">
-          <img 
-              src="discipline_logo.png" 
-              alt="Discipline." 
-              class="logo-navbar">
-      </a>
-      <NavbarButton
-          Text="Activity rules"
-          IconClass="bi-file-ruled"
-          OnButtonClick="NavigateToActivityRules"/>
-      <NavbarButton
-          Text="Activities"
-          IconClass="bi-list-task"
-          OnButtonClick="NavigateToActivities"/>
-      <NavbarButton
-          Text="User Calendar"
-          IconClass="bi-calendar-check"
-          OnButtonClick="NavigateToUserCalendar"/>
-  </div>
+    <div class="container-fluid">
+        <div class="d-flex align-items-center">
+            <a class="navbar-brand" href="#">
+                <img
+                    src="discipline_logo.png"
+                    alt="Discipline."
+                    class="logo-navbar">
+            </a>
+            <NavbarButton
+                Text="Activity rules"
+                IconClass="bi-file-ruled"
+                OnButtonClick="NavigateToActivityRules"/>
+            <NavbarButton
+                Text="Activities"
+                IconClass="bi-list-task"
+                OnButtonClick="NavigateToActivities"/>
+            <NavbarButton
+                Text="User Calendar"
+                IconClass="bi-calendar-check"
+                OnButtonClick="NavigateToUserCalendar"/>
+        </div>
+        <div class="d-flex ms-auto">
+            <NavbarButton
+                Text="Sign up"
+                IconClass="bi-file-person"
+                OnButtonClick="NavigateToSignUp"/>
+        </div>
+    </div>
 </nav>
 
 @code {
@@ -40,5 +48,8 @@
         var day = DateOnly.FromDateTime(DateTime.Now);
         NavigationManager.NavigateTo($"/user-calendar/{day:yyyy-MM-dd}");
     }
+
+    private void NavigateToSignUp()
+        => NavigationManager.NavigateTo("sign-up");
 
 }
