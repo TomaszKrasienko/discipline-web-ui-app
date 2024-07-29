@@ -1,7 +1,7 @@
 @namespace discipline.ui.Components.Common.ButtonsComponents
 @using BlazorBootstrap
 
-<div class="submit-btn-position">
+<div class="@_btnPosition">
     <Tooltip Class="me-4" Title="Submit">
         <button type="submit" class="btn btn-dark btn-sm submit-btn">
             <i class="bi bi-check-lg submit-btn-icon"></i>
@@ -9,5 +9,17 @@
     </Tooltip>
 </div>
 @code {
+    [Parameter] public SubmitButtonType Type { get; set; }
+    private string _btnPosition = string.Empty;
     
+    protected override void OnParametersSet()
+    {
+        _btnPosition = Type == SubmitButtonType.Page ? "submit-btn-position" : "submit-btn-position-modal";
+    }
+
+    public enum SubmitButtonType
+    {
+        Page, 
+        Modal
+    }
 }

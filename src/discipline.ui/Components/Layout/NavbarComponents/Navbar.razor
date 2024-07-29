@@ -29,7 +29,8 @@
         <div class="d-flex ms-auto">
             <NavbarButton
                 Text="Sign up"
-                IconClass="bi-file-person"/>
+                IconClass="bi-file-person"
+                OnButtonClick="NavigateToSignUp"/>
         </div>
     </div>
 </nav>
@@ -47,5 +48,8 @@
         var day = DateOnly.FromDateTime(DateTime.Now);
         NavigationManager.NavigateTo($"/user-calendar/{day:yyyy-MM-dd}");
     }
+
+    private void NavigateToSignUp()
+        => NavigationManager.NavigateTo("sign-up");
 
 }
