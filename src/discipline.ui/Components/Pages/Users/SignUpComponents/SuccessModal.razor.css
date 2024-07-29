@@ -1,0 +1,9 @@
+.success-card{
+    background-color: #222823;
+    border: 1px solid #3d5243;
+}
+
+.modal-content{
+    background-color: red !important;
+    color: green !important;
+}

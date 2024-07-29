@@ -54,7 +54,7 @@
     </div>
     <SubmitButton Type="SubmitButton.SubmitButtonType.Page"/>
 </EditForm>
-
+<button class="btn-primary" @onclick="async() => await Test()">Test</button>
 <Toasts
     Class="p-3"
     Messages="_messages"
@@ -62,10 +62,17 @@
     Delay="4000"
     Placement="ToastsPlacement.TopRight"/>
 
+<SuccessModal
+    @ref="_successModal">
+    <Body>
+    
+    </Body>
+</SuccessModal>
+
 @code {
     [SupplyParameterFromForm] public SignUpRequest SignUpRequest { get; set; } = new();
     private readonly List<ToastMessage> _messages = [];
-
+    private SuccessModal _successModal = default!;
     private async Task Submit()
     {
         var response = await UserDispatcher.SignUp(SignUpRequest);
@@ -81,5 +88,11 @@
             Message = response.Message
         });
 
+    }
+
+    private async Task Test()
+    {
+        // await _successModal.ShowModalAsync();
+        await Task.Delay(1);
     }
 }
