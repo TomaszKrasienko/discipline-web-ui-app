@@ -1,0 +1,13 @@
+<div>
+    <span class="discipline-text-btn" @onclick="OnClick">
+        
+    </span>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnClickCallback { get; set; }
+
+    private async Task OnClick()
+        => await OnClickCallback.InvokeAsync();
+}

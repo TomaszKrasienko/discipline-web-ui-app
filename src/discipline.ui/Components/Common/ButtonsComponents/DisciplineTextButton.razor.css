@@ -1,0 +1,13 @@
+.discipline-text-btn {
+    background-color: #DCE5DF;
+    color: #08090A;
+}
+
+.discipline-text-btn:hover {
+    cursor: pointer;
+}
+
+.cdiscipline-text-btn
+:active{
+    color: #F5F4F5;
+}

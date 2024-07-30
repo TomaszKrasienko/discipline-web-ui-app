@@ -3,9 +3,11 @@
 @using discipline.core.Dispatchers.Models.Users
 @using BlazorBootstrap
 @using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Components.Common.ModalComponent
 @inject IUserDispatcher UserDispatcher
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@inject ILogger<SignUp> logger; 
 
 <EditForm method="post" OnSubmit="Submit" Model="SignUpRequest" FormName="sing-up-form">
     <div class="row" style="padding-top: 20px;">
@@ -54,7 +56,6 @@
     </div>
     <SubmitButton Type="SubmitButton.SubmitButtonType.Page"/>
 </EditForm>
-<button class="btn-primary" @onclick="async() => await Test()">Test</button>
 <Toasts
     Class="p-3"
     Messages="_messages"
@@ -62,21 +63,27 @@
     Delay="4000"
     Placement="ToastsPlacement.TopRight"/>
 
-<SuccessModal
-    @ref="_successModal">
-</SuccessModal>
+<DisciplineModal
+    @ref="_successModal"
+    Title="Thank you for register.">
+    <Body>
+    Please, sign in and pick subscription.
+    </Body>
+    <Footer>
+        
+    </Footer>
+</DisciplineModal>
 
 @code {
     [SupplyParameterFromForm] public SignUpRequest SignUpRequest { get; set; } = new();
     private readonly List<ToastMessage> _messages = [];
-    private SuccessModal _successModal = default!;
+    private DisciplineModal _successModal = default!;
     private async Task Submit()
     {
         var response = await UserDispatcher.SignUp(SignUpRequest);
         if (response.IsValid)
         {
-            NavigationManager.NavigateTo("/sign-up/success");
-            return;
+            _successModal.Open();
         }
 
         _messages?.Add(new ToastMessage()
@@ -84,12 +91,5 @@
             Type = ToastType.Danger,
             Message = response.Message
         });
-
-    }
-
-    private async Task Test()
-    {
-        // await _successModal.ShowModalAsync();
-        await Task.Delay(1);
     }
 }
