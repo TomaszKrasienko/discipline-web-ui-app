@@ -7,7 +7,6 @@
 @inject IUserDispatcher UserDispatcher
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
-@inject ILogger<SignUp> logger; 
 
 <EditForm method="post" OnSubmit="Submit" Model="SignUpRequest" FormName="sing-up-form">
     <div class="row" style="padding-top: 20px;">
@@ -56,6 +55,7 @@
     </div>
     <SubmitButton Type="SubmitButton.SubmitButtonType.Page"/>
 </EditForm>
+
 <Toasts
     Class="p-3"
     Messages="_messages"
@@ -65,12 +65,19 @@
 
 <DisciplineModal
     @ref="_successModal"
-    Title="Thank you for register.">
+    Title="Thank you for register."
+    OnHidingCallback="NavigateToMainPage">
     <Body>
-    Please, sign in and pick subscription.
+        Please, sign in and pick subscription.
     </Body>
     <Footer>
-        
+        <div class="row">
+            <div class="text-center">
+                <DisciplineTextButton
+                    Text="Sign in"
+                    OnClickCallback="NavigateToSignIn"/>
+            </div>
+        </div>
     </Footer>
 </DisciplineModal>
 
@@ -85,11 +92,20 @@
         {
             _successModal.Open();
         }
-
-        _messages?.Add(new ToastMessage()
+        else
         {
-            Type = ToastType.Danger,
-            Message = response.Message
-        });
+            _messages?.Add(new ToastMessage()
+            {
+                Type = ToastType.Danger,
+                Message = response.Message
+            });
+        }
     }
+    
+    private void NavigateToSignIn()
+        => NavigationManager.NavigateTo("#");
+
+    private void NavigateToMainPage()
+        => NavigationManager.NavigateTo("#");
+
 }

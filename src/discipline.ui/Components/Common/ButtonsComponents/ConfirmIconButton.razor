@@ -1,12 +1,14 @@
 @namespace discipline.ui.Components.Common.ButtonsComponents
 
 <div>
-    <span class="confirm-icon-button" @onclick="OnClick">
-        <i class="bi bi-check-lg"></i>
+    <span class="discipline-text-btn" @onclick="OnClick">
+        @Text
     </span>
 </div>
 
 @code {
+    [Parameter] public string Text { get; set; }
+    
     [Parameter]
     public EventCallback<string> OnClickCallback { get; set; }
 

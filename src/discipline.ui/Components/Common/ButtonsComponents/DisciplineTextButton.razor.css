@@ -1,13 +1,15 @@
 .discipline-text-btn {
-    background-color: #DCE5DF;
-    color: #08090A;
+    background-color: transparent;
+    color: #f5f4f5;
+    border-color: #f5f4f5;
 }
 
 .discipline-text-btn:hover {
+    color: #C4D4C9;
+    border-color: #C4D4C9;
     cursor: pointer;
 }
 
-.cdiscipline-text-btn
-:active{
+.discipline-text-btn:active{
     color: #F5F4F5;
 }

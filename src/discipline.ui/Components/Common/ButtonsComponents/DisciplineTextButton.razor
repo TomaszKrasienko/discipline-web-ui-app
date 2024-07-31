@@ -1,10 +1,13 @@
 <div>
-    <span class="discipline-text-btn" @onclick="OnClick">
-        
-    </span>
+    <button class="btn discipline-text-btn" @onclick="OnClick">
+        @Text
+    </button>
 </div>
 
 @code {
+    [Parameter] 
+    public string Text { get; set; }
+    
     [Parameter]
     public EventCallback OnClickCallback { get; set; }
 

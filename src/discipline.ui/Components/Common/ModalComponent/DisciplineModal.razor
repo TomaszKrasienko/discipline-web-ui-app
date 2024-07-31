@@ -7,7 +7,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@Title</h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+                <button type="button" class="discipline-btn-close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+                    <i class="bi bi-x-lg"></i>
                 </button>
             </div>
             <div class="modal-body">
@@ -25,12 +26,11 @@
     <div class="modal-backdrop fade show"></div>
 }
 
-<button @onclick="Open">Modal test</button>
-
 @code {
-    [Parameter] public string Title { get; set; }
-    [Parameter] public RenderFragment Body { get; set; }
-    [Parameter] public RenderFragment Footer { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public RenderFragment? Body { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+    [Parameter] public EventCallback OnHidingCallback { get; set; }
     
     private string _modalDisplay = "none;";
     private string _modalClass = string.Empty;
@@ -44,11 +44,12 @@
         StateHasChanged();
     }
 
-    public void Close()
+    private async Task Close()
     {
         _modalDisplay = "none";
         _modalClass = string.Empty;
         _showBackdrop = false;
         StateHasChanged();
+        await OnHidingCallback.InvokeAsync();
     }
 }
