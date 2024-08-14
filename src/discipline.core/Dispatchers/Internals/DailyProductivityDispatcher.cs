@@ -1,16 +1,19 @@
 using discipline.core.Communication.HttpClients.Abstractions;
+using discipline.core.Communication.HttpClients.Facades;
 using discipline.core.Dispatchers.Abstractions;
 using discipline.core.Dispatchers.Models.DailyProductivity;
 using discipline.core.DTOs;
+using discipline.core.Helpers.Abstractions;
 
 namespace discipline.core.Dispatchers.Internals;
 
 internal sealed class DailyProductivityDispatcher(
-    IDisciplineAppClient disciplineAppClient) : IDailyProductivityDispatcher
+    IDisciplineAppClient disciplineAppClient,
+    IDisciplineClientFacade responseFacade) : IDailyProductivityDispatcher
 {
     public async Task<ResponseDto> CreateTodayActivity(ActivityRequest request)
-        => await (await disciplineAppClient.PostAsync(
-            $"/daily-productivity/{request.Day:yyyy-MM-dd}/add-activity", request)).ToResponseDto();
+        => await responseFacade.ToResponseDto(await disciplineAppClient.PostAsync(
+            $"/daily-productivity/{request.Day:yyyy-MM-dd}/add-activity", request));
 
     public async Task<ResponseDto> CreateFromActivityRule(ActivityFromRuleRequest request)
         => await (await disciplineAppClient.PostAsync(
@@ -25,8 +28,8 @@ internal sealed class DailyProductivityDispatcher(
             $"/daily-productivity/activity/{activityId}/change-check")).ToResponseDto();
 
     public async Task<DailyProductivityDto> GetDailyProductivityByDay(DateOnly day)
-        => await (await disciplineAppClient.GetAsync($"daily-productivity/{day:yyyy-MM-dd}"))
-            .ToResults<DailyProductivityDto>();
+        => await responseFacade.ToResult<DailyProductivityDto>(
+            await disciplineAppClient.GetAsync($"daily-productivity/{day:yyyy-MM-dd}"));
 
     public async Task<IEnumerable<ProgressDataDto>> GetProgressData()
         => await (await disciplineAppClient.GetAsync("progress/data")).ToResults<IEnumerable<ProgressDataDto>>();

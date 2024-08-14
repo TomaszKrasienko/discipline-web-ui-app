@@ -1,9 +1,37 @@
-<div class="discipline-card">
-    <div class="row text-center">
+@using discipline.core.DTOs
+<div class="row">
+    <div class="discipline-card">
+        <div class="row text-center">
+            <p class="discipline-h2">@Subscription?.Title</p>
+        </div>
+        <div class="col-md-10 offset-1 text-start">
+            <div class="row">
+                <span class="discipline-h3">
+                    @($"Per month: {@Subscription?.PricePerMonth}$")
+                </span>
+            </div>
+            <div class="row">
+                <span class="discipline-h3">
+                    @($"Per year: {Subscription?.PricePerYear}$")
+                </span>
+            </div>
+            <div class="row">
+                <span class="discipline-h3">
+                    Features:
+                </span>
+                @foreach (var feature in Subscription.Features)
+                {
+                    <div class="row">
+                        <span class="discipline-h3">
+                            <i class="bi bi-dot"></i>@($" {feature}")
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 
 @code {
-    [Parameter] public string Title { get; set; }
-    [Parameter] public string Price { get; set; }
+    [Parameter] public SubscriptionDto? Subscription { get; set; }
 }

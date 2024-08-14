@@ -19,7 +19,8 @@ internal static class Extensions
 
         if (options.TryGetValue(nameof(DisciplineAppClient), out var disciplineAppClientOptions))
         {
-            var policy = Policy.HandleResult<HttpResponseMessage>(x => !x.IsSuccessStatusCode && x.StatusCode is not (HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity))
+            var policy = Policy.HandleResult<HttpResponseMessage>(x => !x.IsSuccessStatusCode && x.StatusCode is not (
+                    HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity or HttpStatusCode.Unauthorized))
                 .WaitAndRetryAsync(disciplineAppClientOptions.Retries, attempts => attempts * disciplineAppClientOptions.WaitDuration);
             
             services.AddHttpClient<IDisciplineAppClient, DisciplineAppClient>(options =>

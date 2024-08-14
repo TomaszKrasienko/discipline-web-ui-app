@@ -25,6 +25,10 @@
                 Text="User Calendar"
                 IconClass="bi-calendar-check"
                 OnButtonClick="NavigateToUserCalendar"/>
+            <NavbarButton
+                Text="Subscriptions"
+                IconClass="bi-calendar-check"
+                OnButtonClick="NavigateToSubscriptions"/>
         </div>
         <div class="d-flex ms-auto">
             <NavbarButton
@@ -42,6 +46,9 @@
 
     private void NavigateToActivities()
         => NavigationManager.NavigateTo("/daily-productivity");
+
+    private void NavigateToSubscriptions()
+        => NavigationManager.NavigateTo("/subscription/show");
 
     private void NavigateToUserCalendar()
     {

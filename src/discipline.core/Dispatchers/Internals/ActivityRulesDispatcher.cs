@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using discipline.core.Communication.HttpClients.Abstractions;
+using discipline.core.Communication.HttpClients.Facades;
 using discipline.core.Dispatchers.Abstractions;
 using discipline.core.Dispatchers.Models;
 using discipline.core.Dispatchers.Models.ActivityRule;
@@ -10,27 +11,29 @@ using Newtonsoft.Json;
 namespace discipline.core.Dispatchers.Internals;
 
 internal sealed class ActivityRulesDispatcher(
-    IDisciplineAppClient disciplineAppClient,
-    IWeekdayTranslator weekdayTranslator) : IActivityRulesDispatcher
+    IWeekdayTranslator weekdayTranslator,
+    IDisciplineClientFacade disciplineClientFacade) : IActivityRulesDispatcher
 {
     public async Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request)
-        => await (await disciplineAppClient.PostAsync("/activity-rules/create", request)).ToResponseDto();
+        => await disciplineClientFacade.PostToResponseDtoAsync("/activity-rules/create", request);
 
     public async Task<ResponseDto> EditActivityRuleAsync(Guid activityRuleId, ActivityRuleRequest request)
-        => await (await disciplineAppClient.PutAsync($"/activity-rules/{activityRuleId}/edit", request)).ToResponseDto();
+        => await disciplineClientFacade.PutToResponseDtoAsync($"/activity-rules/{activityRuleId}/edit", request);
 
     public async Task<ResponseDto> DeleteActivityRuleAsync(Guid activityRuleId)
-        => await (await disciplineAppClient.DeleteAsync($"/activity-rules/{activityRuleId}/delete")).ToResponseDto();
+        => await disciplineClientFacade.DeleteToResponseDtoAsync($"/activity-rules/{activityRuleId}/delete");
 
     public async Task<ActivityRuleDto> GetCreateActivityRuleByIdAsync(Guid activityRuleId)
-        => await (await disciplineAppClient.GetAsync($"activity-rules/{activityRuleId}")).ToResults<ActivityRuleDto>();
+        => await disciplineClientFacade.GetAsResultAsync<ActivityRuleDto>($"activity-rules/{activityRuleId}");
      
     public async Task<PaginatedDataDto<List<ActivityRuleDto>>> BrowseActivityRules(PaginationRequest request)
     {
-        var response = await disciplineAppClient.GetAsync(
+        var response = await disciplineClientFacade.GetAsync(
                 $"activity-rules?pageNumber={request.PageNumber}&pageSize={request.PageSize}");
         
         var activities = await response.Content.ReadFromJsonAsync<List<ActivityRuleDto>>();
+        
+        
         foreach (var activity in activities)
         {
             activity.Weekdays = weekdayTranslator.Transform(activity.SelectedDays);
@@ -46,5 +49,5 @@ internal sealed class ActivityRulesDispatcher(
     }
 
     public async Task<List<ActivityRuleModeDto>> GetActivityRuleModesAsync()
-        => await (await disciplineAppClient.GetAsync("activity-rule-modes")).ToResults<List<ActivityRuleModeDto>>();
+        => await disciplineClientFacade.GetAsResultAsync<List<ActivityRuleModeDto>>("activity-rule-modes");
 }
