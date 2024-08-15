@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 using discipline.core.Communication.HttpClients.Abstractions;
-using discipline.core.Communication.HttpClients.Facades;
 using discipline.core.Dispatchers.Abstractions;
+using discipline.core.Dispatchers.Facades;
 using discipline.core.Dispatchers.Models;
 using discipline.core.Dispatchers.Models.ActivityRule;
 using discipline.core.DTOs;

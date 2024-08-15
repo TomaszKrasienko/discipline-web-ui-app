@@ -17,18 +17,18 @@ internal static class Extensions
     {
         var options = configuration.GetOptions<Dictionary<string, HttpClientOptions>>(SectionName);
 
-        if (options.TryGetValue(nameof(DisciplineAppClient), out var disciplineAppClientOptions))
+        if (!options.TryGetValue(nameof(DisciplineAppClient), out var disciplineAppClientOptions)) return services;
+        
+        var policy = Policy.HandleResult<HttpResponseMessage>(x => !x.IsSuccessStatusCode && x.StatusCode is not (
+                HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity or HttpStatusCode.Unauthorized))
+            .WaitAndRetryAsync(disciplineAppClientOptions.Retries, attempts => attempts * disciplineAppClientOptions.WaitDuration);
+        
+        services.AddHttpClient<IDisciplineAppClient, DisciplineAppClient>(clientOptions =>
         {
-            var policy = Policy.HandleResult<HttpResponseMessage>(x => !x.IsSuccessStatusCode && x.StatusCode is not (
-                    HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity or HttpStatusCode.Unauthorized))
-                .WaitAndRetryAsync(disciplineAppClientOptions.Retries, attempts => attempts * disciplineAppClientOptions.WaitDuration);
-            
-            services.AddHttpClient<IDisciplineAppClient, DisciplineAppClient>(options =>
-            {
-                options.Timeout = disciplineAppClientOptions.Timeout;
-                options.BaseAddress = new Uri(disciplineAppClientOptions.Url);
-            }).AddPolicyHandler(policy);
-        }
+            clientOptions.Timeout = disciplineAppClientOptions.Timeout;
+            clientOptions.BaseAddress = new Uri(disciplineAppClientOptions.Url);
+        }).AddPolicyHandler(policy);
+        
         return services;
     }
 }

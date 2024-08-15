@@ -1,5 +1,6 @@
 using discipline.core.Communication.HttpClients.Abstractions;
 using discipline.core.Dispatchers.Abstractions;
+using discipline.core.Dispatchers.Facades;
 using discipline.core.Dispatchers.Internals;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,5 +13,6 @@ internal static class Extensions
             .AddSingleton<IActivityRulesDispatcher, ActivityRulesDispatcher>()
             .AddSingleton<IDailyProductivityDispatcher, DailyProductivityDispatcher>()
             .AddSingleton<IUserCalendarDispatcher, UserCalendarDispatcher>()
-            .AddSingleton<IUserDispatcher, UserDispatcher>();
+            .AddSingleton<IUserDispatcher, UserDispatcher>()
+            .AddSingleton<IDisciplineClientFacade, DisciplineResponseFacade>();
 }

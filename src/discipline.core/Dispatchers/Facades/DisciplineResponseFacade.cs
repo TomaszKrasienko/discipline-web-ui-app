@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using discipline.core.Communication.HttpClients.Abstractions;
 using discipline.core.DTOs;
 
-namespace discipline.core.Communication.HttpClients.Facades;
+namespace discipline.core.Dispatchers.Facades;
 
 internal sealed class DisciplineResponseFacade(
     IDisciplineAppClient disciplineAppClient) : IDisciplineClientFacade
@@ -33,7 +33,7 @@ internal sealed class DisciplineResponseFacade(
     public async Task<ResponseDto> DeleteToResponseDtoAsync(string path)
         => await ToResponseDto(await disciplineAppClient.DeleteAsync(path));
     
-    public async Task<ResponseDto> ToResponseDto(HttpResponseMessage response)
+    private static async Task<ResponseDto> ToResponseDto(HttpResponseMessage response)
     {
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
@@ -49,17 +49,5 @@ internal sealed class DisciplineResponseFacade(
             _
                 => ResponseDto.GetInvalid()
         }; 
-    }
-
-    public async Task<T> ToResult<T>(HttpResponseMessage httpResponseMessage) where T : class
-    {
-        if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedException();
-        }
-        
-        return httpResponseMessage.StatusCode is HttpStatusCode.NoContent
-            ? null
-            : await httpResponseMessage.Content.ReadFromJsonAsync<T>();
     }
 }
