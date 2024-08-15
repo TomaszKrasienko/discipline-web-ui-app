@@ -7,5 +7,6 @@ namespace discipline.core.Helpers.Configuration;
 internal static class Extensions
 {
     internal static IServiceCollection AddHelpers(this IServiceCollection services)
-        => services.AddSingleton<IWeekdayTranslator, WeekdayTranslator>();
+        => services
+            .AddSingleton<IWeekdayTranslator, WeekdayTranslator>();
 }
