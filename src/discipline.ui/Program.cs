@@ -1,5 +1,6 @@
 using discipline.core;
 using discipline.core.Configuration;
+using discipline.core.Exceptions;
 using discipline.ui.Components;
 using discipline.ui.Components.Layout;
 using discipline.ui.Services.Configuration;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
@@ -18,14 +18,21 @@ var app = builder.Build();
 
 app.UseExceptionHandler(options =>
 {
-    options.Run(async context =>
+    options.Run(context =>
     {
         var ex = context.Features.Get<IExceptionHandlerFeature>();
-        var type = ex.Error.GetType();
+        var type = ex?.Error.GetType();
         if (type == typeof(UnauthorizedException))
         {
             context.Response.Redirect("/sign-in");
         }
+
+        if (type == typeof(ForbiddenException))
+        {
+            context.Response.Redirect("/pick-subscription-order");
+        }
+
+        return Task.CompletedTask;
     });
 });
 

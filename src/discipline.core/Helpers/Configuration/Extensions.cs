@@ -8,5 +8,6 @@ internal static class Extensions
 {
     internal static IServiceCollection AddHelpers(this IServiceCollection services)
         => services
-            .AddSingleton<IWeekdayTranslator, WeekdayTranslator>();
+            .AddSingleton<IWeekdayTranslator, WeekdayTranslator>()
+            .AddSingleton<ITokenStorage, TokenStorage>();
 }

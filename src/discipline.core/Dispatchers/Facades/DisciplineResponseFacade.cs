@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using discipline.core.Communication.HttpClients.Abstractions;
 using discipline.core.DTOs;
+using discipline.core.Exceptions;
 
 namespace discipline.core.Dispatchers.Facades;
 
@@ -10,12 +11,13 @@ internal sealed class DisciplineResponseFacade(
 {
     public async Task<HttpResponseMessage> GetAsync(string path)
     {
-        var response = await disciplineAppClient.GetAsync(path); 
-        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        var response = await disciplineAppClient.GetAsync(path);
+        return response.StatusCode switch
         {
-            throw new UnauthorizedException();
-        }
-        return response;
+            HttpStatusCode.Unauthorized => throw new UnauthorizedException(),
+            HttpStatusCode.Forbidden => throw new ForbiddenException(),
+            _ => response
+        };
     }
 
     public async Task<T> GetAsResultAsync<T>(string path)
@@ -34,20 +36,16 @@ internal sealed class DisciplineResponseFacade(
         => await ToResponseDto(await disciplineAppClient.DeleteAsync(path));
     
     private static async Task<ResponseDto> ToResponseDto(HttpResponseMessage response)
-    {
-        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        => response.StatusCode switch
         {
-            throw new UnauthorizedException();
-        }
-
-        return response.StatusCode switch
-        {
-            HttpStatusCode.OK or HttpStatusCode.Created
-                => ResponseDto.GetValid(),
-            HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity 
-                => ResponseDto.GetInvalid((await response.Content.ReadFromJsonAsync<ErrorResponseDto>()).Message),
-            _
-                => ResponseDto.GetInvalid()
-        }; 
-    }
+            HttpStatusCode.Unauthorized => throw new UnauthorizedException(),
+            HttpStatusCode.Forbidden => throw new ForbiddenException(),
+            _ => response.StatusCode switch
+            {
+                HttpStatusCode.OK or HttpStatusCode.Created => ResponseDto.GetValid(),
+                HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity => ResponseDto.GetInvalid(
+                    (await response.Content.ReadFromJsonAsync<ErrorResponseDto>()).Message),
+                _ => ResponseDto.GetInvalid()
+            }
+        };
 }

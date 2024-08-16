@@ -1,0 +1,25 @@
+@page "/pick-subscription-order"
+@using discipline.core.Dispatchers.Abstractions
+@using discipline.core.DTOs
+@using discipline.ui.Components.Common.HeadersComponents
+@using discipline.ui.Components.Pages.Users.Subscription
+@inject IUserDispatcher UserDispatcher
+
+<PageHeader Title="Pick subscription order"/>
+<div class="row">
+    @foreach (var subscription in Subscriptions)
+    {
+    <div class="col-md-4 mx-auto">
+        <SubscriptionCard 
+            Subscription="subscription"/>
+        
+    </div>
+    }
+</div>
+
+@code {
+    private List<SubscriptionDto> Subscriptions { get; set; } = [];
+    
+    protected override async Task OnInitializedAsync()
+        => Subscriptions = await UserDispatcher.BrowseSubscriptions();
+}
