@@ -30,4 +30,7 @@ internal sealed class UserDispatcher(
         var result = await response.Content.ReadFromJsonAsync<TokenDto>();
         return ResponseDto.GetValid(result.Token);
     }
+
+    public async Task<ResponseDto> CreateSubscriptionOrder(CreateSubscriptionOrderRequest request)
+        => await disciplineClientFacade.PostToResponseDtoAsync($"users/create-subscription-order", request);
 }

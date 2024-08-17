@@ -54,3 +54,5 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+//131613-1c211d-546357-c4d4c9-f5f4f5

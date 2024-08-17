@@ -1,0 +1,59 @@
+@using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Components.Common.ModalComponent
+@using discipline.ui.Enums
+
+<DisciplineModal
+    @ref="DisciplineModal"
+    Title="@Title"
+    Size="DisciplineModal.DisciplineModalSize.Small">
+    <Body>
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            <div class="row text-center">
+                @Content
+            </div>
+            <div class="row text-center">
+                @if (Type == DialogType.Ok)
+                {
+                    <DisciplineTextButton
+                        Color="DisciplineBtnColor.Light"
+                        Text="Ok"/>
+                }
+                else
+                {
+                    <DisciplineTextButton
+                        Color="DisciplineBtnColor.Light"
+                        Text="Yes"/>
+                    
+                    <DisciplineTextButton
+                        Color="DisciplineBtnColor.Light"
+                        Text="No"/>
+                }
+            </div>
+        </div>
+    </div>
+    </Body>
+</DisciplineModal>
+
+@code {
+    
+    [Parameter]
+    public string? Title { get; set; }
+    
+    [Parameter] 
+    public string? Content { get; set; }
+    
+    [Parameter]
+    public DialogType Type { get; set; }
+    
+    private DisciplineModal? DisciplineModal { get; set; }
+    
+    public enum DialogType
+    {
+        YesNo, 
+        Ok
+    }
+
+    public void Open()
+        => DisciplineModal?.Open();
+}

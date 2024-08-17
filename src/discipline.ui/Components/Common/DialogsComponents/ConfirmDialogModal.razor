@@ -3,9 +3,9 @@
 
 <Modal
     @ref="_dialogModal"
-    Title="Confirm">
+    Title="@Title">
     <BodyTemplate>
-        Are you sure you want delete item?
+        @Content
     </BodyTemplate>
     <FooterTemplate>
         <CancelIconButton OnClickCallback="CancelDialogAsync"/>

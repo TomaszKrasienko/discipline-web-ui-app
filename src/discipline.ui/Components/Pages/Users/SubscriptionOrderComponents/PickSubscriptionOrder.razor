@@ -1,25 +1,114 @@
 @page "/pick-subscription-order"
 @using discipline.core.Dispatchers.Abstractions
+@using discipline.core.Dispatchers.Models.Users
 @using discipline.core.DTOs
+@using discipline.core.Helpers.Enums
+@using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Components.Common.DialogsComponents
 @using discipline.ui.Components.Common.HeadersComponents
+@using discipline.ui.Components.Common.ModalComponent
 @using discipline.ui.Components.Pages.Users.Subscription
+@using discipline.ui.Enums
 @inject IUserDispatcher UserDispatcher
+@rendermode InteractiveServer
 
 <PageHeader Title="Pick subscription order"/>
 <div class="row">
     @foreach (var subscription in Subscriptions)
     {
-    <div class="col-md-4 mx-auto">
-        <SubscriptionCard 
-            Subscription="subscription"/>
-        
-    </div>
+        <div class="col-md-4 mx-auto">
+            <div class="row">
+                <SubscriptionCard 
+                    Subscription="subscription"/>
+            </div>
+            <div class="row pt-2 text-center">
+                <DisciplineTextButton 
+                    Color="DisciplineBtnColor.Dark"
+                    Text="Pick"
+                    OnClickCallback="() => SubscriptionPicked(subscription)"/>
+            </div> 
+        </div>
     }
 </div>
+<DisciplineModal
+    @ref="_paidSubscriptionModal"
+    Title="Fill order details"
+    Size="DisciplineModal.DisciplineModalSize.Large">
+    <Body>
+    <div class="col-md-6 offset-3">
+        <EditForm
+            OnSubmit="OrderSubscription"
+            Model="SubscriptionOrderRequest"
+            FormName="paid-subscription-order">
+            <div class="row">
+                <label for="order-frequency">Frequency:</label>
+                <InputSelect
+                    @bind-Value="SubscriptionOrderRequest.SubscriptionOrderFrequency"
+                    id="order-frequency"
+                    class="form-select">
+                    @foreach (var orderFrequency in _orderFrequencies)
+                    {
+                        <option>@orderFrequency</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="row">
+                <label for="order-card-number">Card number:</label>
+                <InputText
+                    class="form-control"
+                    id="order-card-number"
+                    placeholder="Card number"
+                    @bind-Value="SubscriptionOrderRequest.CardNumber"/>
+            </div>
+            <div class="row">
+                <label for="order-card-cvv-number">Card number:</label>
+                <InputText
+                    class="form-control"
+                    id="order-card-cvv-number"
+                    placeholder="Card cvv number"
+                    @bind-Value="SubscriptionOrderRequest.CardNumber"/>
+            </div>
+            <div class="row">
+                <SubmitButton Type="SubmitButton.SubmitButtonType.Modal"/>
+            </div>
+        </EditForm>
+    </div>
+    </Body>
+</DisciplineModal>
+<DisciplineConfirmationDialog
+    @ref="_freeSubscriptionDialog"
+    Title="Confirmation"
+    Content="You sure?"
+    Type="DisciplineConfirmationDialog.DialogType.YesNo">
+</DisciplineConfirmationDialog>
 
 @code {
     private List<SubscriptionDto> Subscriptions { get; set; } = [];
-    
+    private DisciplineModal? _paidSubscriptionModal;
+    private DisciplineConfirmationDialog? _freeSubscriptionDialog;
+    [SupplyParameterFromForm] public CreateSubscriptionOrderRequest SubscriptionOrderRequest { get; set; } = new();
+    private IEnumerable<SubscriptionOrderFrequency> _orderFrequencies = [];
+
     protected override async Task OnInitializedAsync()
-        => Subscriptions = await UserDispatcher.BrowseSubscriptions();
+    {
+        Subscriptions = await UserDispatcher.BrowseSubscriptions();
+        _orderFrequencies = Enum.GetValues<SubscriptionOrderFrequency>().Cast<SubscriptionOrderFrequency>();
+    }
+
+    private async Task SubscriptionPicked(SubscriptionDto subscription)
+    {
+        if (subscription.IsPaid)
+        {
+            _paidSubscriptionModal?.Open();
+        }
+        else
+        {
+            _freeSubscriptionDialog?.Open();
+        }
+    }
+
+    private async Task OrderSubscription()
+    {
+    }
+
 }
