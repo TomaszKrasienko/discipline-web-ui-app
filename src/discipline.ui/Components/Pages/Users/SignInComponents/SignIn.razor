@@ -4,41 +4,56 @@
 @using discipline.core.Helpers.Abstractions
 @using discipline.ui.Components.Common.ButtonsComponents
 @using discipline.ui.Components.Common.HeadersComponents
+@using BlazorBootstrap
 @inject IUserDispatcher UserDispatcher;
 @inject ITokenStorage TokenStorage;
 @inject NavigationManager NavigationManager;
 
-<PageHeader Title="Sign in"/>
-<div class="row pt-2">
-    <div class="col-md-6 offset-3">
-        <EditForm
-            method="post"
-            OnSubmit="Submit"
-            Model="SignInRequest"
-            FormName="sign-in-form">
-                <label for="sign-in-email">Email:</label>
-                <InputText
-                    class="form-control"
-                    id="sign-in-email"
-                    placeholder="Email"
-                    @bind-Value="SignInRequest.Email"/>
-                <label for="sign-in-password">Password:</label>
-                <InputText
-                    class="form-control"
-                    id="sign-in-password"
-                    type="password"
-                    placeholder="Password"
-                    @bind-Value="SignInRequest.Password"/>
-                <SubmitButton Type="SubmitButton.SubmitButtonType.Page"/>
-        </EditForm>
+@if (_isLoading)
+{
+    <div class="row text-center">
+        <Spinner Class="me-3" Type="SpinnerType.Dots" Color="SpinnerColor.Secondary" Size="SpinnerSize.Large"/>
     </div>
-</div>
+}
+else
+{
+    <PageHeader Title="Sign in"/>
+    <div class="row pt-2">
+        <div class="col-md-6 offset-3">
+            <EditForm
+                method="post"
+                OnSubmit="Submit"
+                Model="SignInRequest"
+                FormName="sign-in-form">
+                    <label for="sign-in-email">Email:</label>
+                    <InputText
+                        class="form-control"
+                        id="sign-in-email"
+                        placeholder="Email"
+                        @bind-Value="SignInRequest.Email"/>
+                    <label for="sign-in-password">Password:</label>
+                    <InputText
+                        class="form-control"
+                        id="sign-in-password"
+                        type="password"
+                        placeholder="Password"
+                        @bind-Value="SignInRequest.Password"/>
+                    <SubmitButton Type="SubmitButton.SubmitButtonType.Page"/>
+            </EditForm>
+        </div>
+    </div>
+}
+
 
 @code {
-    [SupplyParameterFromForm] public SignInRequest SignInRequest { get; set; } = new();
+    [SupplyParameterFromForm] 
+    public SignInRequest SignInRequest { get; set; } = new();
+
+    private bool _isLoading = false;
 
     private async Task Submit()
     {
+        _isLoading = true;
         var result = await UserDispatcher.SignIn(SignInRequest);
         if (result.IsValid)
         {
