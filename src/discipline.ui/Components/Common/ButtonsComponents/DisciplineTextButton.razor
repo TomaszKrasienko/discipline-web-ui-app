@@ -1,12 +1,18 @@
+@using discipline.ui.Enums
 <div>
-    <button class="btn discipline-text-btn" @onclick="OnClick">
+    <button
+        class="btn @(Color == DisciplineBtnColor.Light ? "discipline-text-btn-light" : "discipline-text-btn-dark")" 
+        @onclick="OnClick">
         @Text
     </button>
 </div>
 
 @code {
-    [Parameter] 
-    public string Text { get; set; }
+    [Parameter, EditorRequired] 
+    public string? Text { get; set; }
+    
+    [Parameter, EditorRequired] 
+    public DisciplineBtnColor Color { get; set; }
     
     [Parameter]
     public EventCallback OnClickCallback { get; set; }

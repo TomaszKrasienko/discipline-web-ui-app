@@ -14,6 +14,9 @@ public class ResponseDto
     public static ResponseDto GetValid()
         => new ResponseDto(true);
 
+    public static ResponseDto GetValid(string message)
+        => new ResponseDto(true, message);
+
     public static ResponseDto GetInvalid(string message)
         => new ResponseDto(false, message);
 

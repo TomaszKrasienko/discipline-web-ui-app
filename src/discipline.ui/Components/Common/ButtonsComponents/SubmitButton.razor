@@ -3,8 +3,8 @@
 
 <div class="@_btnPosition">
     <Tooltip Class="me-4" Title="Submit">
-        <button type="submit" class="btn btn-dark btn-sm submit-btn">
-            <i class="bi bi-check-lg submit-btn-icon"></i>
+        <button type="submit" class="discipline-submit-button">
+            <i class="bi bi-check-lg discipline-submit-btn-icon"></i>
         </button>
     </Tooltip>
 </div>
@@ -14,7 +14,9 @@
     
     protected override void OnParametersSet()
     {
-        _btnPosition = Type == SubmitButtonType.Page ? "submit-btn-position" : "submit-btn-position-modal";
+        _btnPosition = Type == SubmitButtonType.Page 
+            ? "discipline-submit-btn-position" 
+            : "discipline-submit-btn-position-modal";
     }
 
     public enum SubmitButtonType

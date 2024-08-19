@@ -1,5 +1,14 @@
+.discipline-modal-lg{
+    width: 60vw;
+    height: 60vh;
+}
+.discipline-modal-sm{
+    width: 25vw;
+    height: 25vh;
+}
+
 .modal-content {
-    background-color: #222823;
+    background-color: #1C211D;
     color: #C4D4C9;
 }
 
