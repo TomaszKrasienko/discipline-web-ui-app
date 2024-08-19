@@ -20,8 +20,15 @@ internal sealed class DisciplineResponseFacade(
         };
     }
 
-    public async Task<T> GetAsResultAsync<T>(string path)
-        => await (await GetAsync(path)).Content.ReadFromJsonAsync<T>();
+    public async Task<T> GetAsResultAsync<T>(string path) where T : class
+    {
+        var result = await GetAsync(path);
+        if (result.StatusCode == HttpStatusCode.NoContent)
+        {
+            return null;
+        }
+        return await result?.Content?.ReadFromJsonAsync<T>();
+    }
 
     public async Task<ResponseDto> PostToResponseDtoAsync<T>(string path, T t) where T : class
         => await ToResponseDto(await disciplineAppClient.PostAsync(path, t));
