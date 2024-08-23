@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using discipline.core.Communication.HttpClients.Abstractions;
@@ -9,10 +10,18 @@ internal sealed class DisciplineAppClient(
     HttpClient httpClient,
     ITokenStorage tokenStorage) : IDisciplineAppClient
 {
-    public Task<HttpResponseMessage> GetAsync(string path)
+    public async Task<HttpResponseMessage> GetAsync(string path)
     {
         Authorize();
-        return httpClient.GetAsync(path);
+        var result = await httpClient.GetAsync(path);
+        
+    }
+
+    private async Task<HttpResponseMessage> Refresh(HttpResponseMessage httpResponseMessage)
+    {
+        if (httpResponseMessage.StatusCode is not HttpStatusCode.Unauthorized)
+            return httpResponseMessage;
+        
     }
 
     public Task<HttpResponseMessage> PostAsync<T>(string path, T t) where T : class
