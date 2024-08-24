@@ -1,9 +1,9 @@
-using discipline.core;
-using discipline.core.Configuration;
-using discipline.core.Exceptions;
+using discipline.ui.Communication.Exceptions;
 using discipline.ui.Components;
 using discipline.ui.Components.Layout;
+using discipline.ui.Configuration;
 using discipline.ui.Services.Configuration;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +14,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddCore(builder.Configuration);
 builder.Services.AddServices();
 builder.Services.AddBlazorBootstrap();
+builder.Services.AddScoped<ProtectedSessionStorage>();
 var app = builder.Build();
 
 app.UseExceptionHandler(options =>

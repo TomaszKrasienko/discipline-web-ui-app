@@ -3,10 +3,10 @@
 @using discipline.ui.Components.Common.HeadersComponents
 @using discipline.ui.Components.Pages.ActivityRulesComponents.ActivityRuleFormComponents
 @using discipline.ui.Components.Pages.ActivityRulesComponents.BrowseActivityRulesComponents.TableComponents
-@using discipline.core.Dispatchers.Abstractions
-@using discipline.core.Dispatchers.Models
-@using discipline.core.DTOs
 @using BlazorBootstrap
+@using discipline.ui.Communication.Dispatchers.Abstractions
+@using discipline.ui.Communication.Dispatchers.Models
+@using discipline.ui.Communication.DTOs
 @using discipline.ui.Components.Pages.ActivityRulesComponents.DeleteActivityRuleComponents
 @inject IActivityRulesDispatcher DisciplineAppDispatcher;
 @rendermode InteractiveServer
@@ -62,9 +62,14 @@
     private int _totalPages = 1;
     private int _pageSize = 10;
 
-    protected override async Task OnInitializedAsync()
-        => await InitializeData();
-    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeData();
+        }
+    }
+
     private async Task RefreshAfterDeleteAsync()
         => await InitializeData();
 

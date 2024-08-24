@@ -1,5 +1,5 @@
 using BlazorBootstrap;
-using discipline.core.DTOs;
+using discipline.ui.Communication.DTOs;
 
 namespace discipline.ui.Helpers;
 

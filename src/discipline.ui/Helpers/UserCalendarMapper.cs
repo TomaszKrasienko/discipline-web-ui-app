@@ -1,4 +1,4 @@
-using discipline.core.Dispatchers.Models.UserCalendar;
+using discipline.ui.Communication.Dispatchers.Models.UserCalendar;
 using discipline.ui.Models;
 
 namespace discipline.ui.Helpers;

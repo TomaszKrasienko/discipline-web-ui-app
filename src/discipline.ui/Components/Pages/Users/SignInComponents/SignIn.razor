@@ -1,14 +1,17 @@
 @page "/sign-in"
-@using discipline.core.Dispatchers.Abstractions
-@using discipline.core.Dispatchers.Models.Users
-@using discipline.core.Helpers.Abstractions
 @using discipline.ui.Components.Common.ButtonsComponents
 @using discipline.ui.Components.Common.HeadersComponents
 @using BlazorBootstrap
-@using discipline.core.DTOs
+@using discipline.ui.Communication.Dispatchers.Abstractions
+@using discipline.ui.Communication.Dispatchers.Models.Users
+@using discipline.ui.Communication.DTOs
+@using discipline.ui.Communication.Helpers.Abstractions
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject IUserDispatcher UserDispatcher;
 @inject ITokenStorage TokenStorage;
 @inject NavigationManager NavigationManager;
+@inject ProtectedSessionStorage ProtectedSessionStorage;
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 
 @if (_isLoading)
 {
@@ -24,8 +27,7 @@ else
             <EditForm
                 method="post"
                 OnSubmit="Submit"
-                Model="SignInRequest"
-                FormName="sign-in-form">
+                Model="SignInRequest">
                     <label for="sign-in-email">Email:</label>
                     <InputText
                         class="form-control"
@@ -51,15 +53,16 @@ else
     public SignInRequest SignInRequest { get; set; } = new();
 
     private bool _isLoading = false;
-
+    
     private async Task Submit()
     {
         _isLoading = true;
         var result = await UserDispatcher.SignIn(SignInRequest);
         if (result.IsValid)
         {
-            TokenStorage.Set((TokensDto)result.Result);
-            NavigationManager.NavigateTo("/");
+            await TokenStorage.Set((TokensDto)result.Result);
+            // await ProtectedSessionStorage.SetAsync("test", (TokensDto)result.Result);
+            NavigationManager.NavigateTo("/activity-rules-list");
         }
     }
 }
