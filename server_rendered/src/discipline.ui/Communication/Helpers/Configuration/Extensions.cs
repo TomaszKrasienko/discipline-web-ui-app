@@ -8,8 +8,7 @@ internal static class Extensions
     internal static IServiceCollection AddHelpers(this IServiceCollection services)
         => services
             .AddSingleton<IWeekdayTranslator, WeekdayTranslator>()
-            .AddScoped<ITokenStorage, TokenStorage>()
-            .AddCache();
+            .AddScoped<ITokenStorage, TokenStorage>();
 
     private static IServiceCollection AddCache(this IServiceCollection services)
         => services

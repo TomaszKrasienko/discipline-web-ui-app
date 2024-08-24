@@ -48,7 +48,7 @@ internal sealed class UserDispatcher(
         if (response.StatusCode is HttpStatusCode.OK)
         {
             var refreshedTokens = await response.Content.ReadFromJsonAsync<TokensDto>();
-            tokenStorage.Set(refreshedTokens);
+            await tokenStorage.Set(refreshedTokens);
             return ResponseDto.GetValid();
         }
         return ResponseDto.GetInvalid();

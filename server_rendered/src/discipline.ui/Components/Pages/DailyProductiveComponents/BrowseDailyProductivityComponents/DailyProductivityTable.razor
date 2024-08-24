@@ -9,7 +9,7 @@
 @using discipline.ui.Components.Pages.DailyProductiveComponents.ActivityFormComponents
 @inject IDailyProductivityDispatcher DailyProductivityDisciplineAppDispatcher
 @inject ILogger<DailyProductivityTable> Logger;
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(false))
 
 <PageTitle>Daily productivity</PageTitle>
 @if (IsTitleVisible)
@@ -58,8 +58,14 @@
     private DailyProductivityDto? _dailyProductivity;
     private ActivityFormModal _activityFormModal = default!;
 
-    protected override async Task OnInitializedAsync()
-        => await InitializeDailyProductivityAsync();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeDailyProductivityAsync();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
     private async Task InitializeDailyProductivityAsync()
         => _dailyProductivity = await DailyProductivityDisciplineAppDispatcher.GetDailyProductivityByDay(_day);
