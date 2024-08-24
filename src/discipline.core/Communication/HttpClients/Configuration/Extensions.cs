@@ -3,6 +3,7 @@ using discipline.core.Communication.HttpClients.Abstractions;
 using discipline.core.Communication.HttpClients.Configuration.Models;
 using discipline.core.Communication.HttpClients.Internals;
 using discipline.core.Configuration;
+using discipline.core.Dispatchers.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
@@ -19,15 +20,29 @@ internal static class Extensions
 
         if (!options.TryGetValue(nameof(DisciplineAppClient), out var disciplineAppClientOptions)) return services;
         
-        var policy = Policy.HandleResult<HttpResponseMessage>(x => x.StatusCode is not (
+        var retryPolicy = Policy.HandleResult<HttpResponseMessage>(x => x.StatusCode is not (
                 HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity))
             .WaitAndRetryAsync(disciplineAppClientOptions.Retries, attempts => attempts * disciplineAppClientOptions.WaitDuration);
+
+        var refreshPolicy = Policy.HandleResult<HttpResponseMessage>(x => x.StatusCode is
+                HttpStatusCode.Unauthorized)
+            .RetryAsync(1, onRetryAsync: async (response, i, context) =>
+            {
+                var serviceProvider = services.BuildServiceProvider();
+                using var scope = serviceProvider.CreateScope();
+                var userDispatcher = scope.ServiceProvider.GetRequiredService<IUserDispatcher>();
+                await userDispatcher.Refresh();
+            });
+            
+
         
         services.AddHttpClient<IDisciplineAppClient, DisciplineAppClient>(clientOptions =>
         {
             clientOptions.Timeout = disciplineAppClientOptions.Timeout;
             clientOptions.BaseAddress = new Uri(disciplineAppClientOptions.Url);
-        }).AddPolicyHandler(policy);
+        })
+        .AddPolicyHandler(refreshPolicy)
+        .AddPolicyHandler(retryPolicy);
         
         return services;
     }

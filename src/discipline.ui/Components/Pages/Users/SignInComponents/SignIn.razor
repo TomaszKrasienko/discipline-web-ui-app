@@ -5,6 +5,7 @@
 @using discipline.ui.Components.Common.ButtonsComponents
 @using discipline.ui.Components.Common.HeadersComponents
 @using BlazorBootstrap
+@using discipline.core.DTOs
 @inject IUserDispatcher UserDispatcher;
 @inject ITokenStorage TokenStorage;
 @inject NavigationManager NavigationManager;
@@ -57,7 +58,7 @@ else
         var result = await UserDispatcher.SignIn(SignInRequest);
         if (result.IsValid)
         {
-            TokenStorage.Set(result.Message);
+            TokenStorage.Set((TokensDto)result.Result);
             NavigationManager.NavigateTo("/");
         }
     }

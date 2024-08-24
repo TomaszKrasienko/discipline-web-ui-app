@@ -1,14 +1,15 @@
+using discipline.core.DTOs;
 using discipline.core.Helpers.Abstractions;
 
 namespace discipline.core.Helpers.Internals;
 
 internal sealed class TokenStorage : ITokenStorage
 {
-    private string _token;
+    private TokensDto _tokens;
 
-    public void Set(string token)
-        => _token = token;
+    public void Set(TokensDto tokens)
+        => _tokens = tokens;
 
-    public string Get()
-        => _token;
+    public TokensDto Get()
+        => _tokens;
 }

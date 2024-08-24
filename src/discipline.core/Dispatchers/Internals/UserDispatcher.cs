@@ -5,12 +5,14 @@ using discipline.core.Dispatchers.Abstractions;
 using discipline.core.Dispatchers.Facades;
 using discipline.core.Dispatchers.Models.Users;
 using discipline.core.DTOs;
+using discipline.core.Helpers.Abstractions;
 
 namespace discipline.core.Dispatchers.Internals;
 
 internal sealed class UserDispatcher(
     IDisciplineClientFacade disciplineClientFacade,
-    IDisciplineAppClient disciplineAppClient) : IUserDispatcher
+    IDisciplineAppClient disciplineAppClient,
+    ITokenStorage tokenStorage) : IUserDispatcher
 {
     public async Task<List<SubscriptionDto>> BrowseSubscriptions()
         => await disciplineClientFacade.GetAsResultAsync<List<SubscriptionDto>>("users/subscriptions");
@@ -27,8 +29,30 @@ internal sealed class UserDispatcher(
             return ResponseDto.GetInvalid(invalidResult.Message);
         }
 
-        var result = await response.Content.ReadFromJsonAsync<TokenDto>();
-        return ResponseDto.GetValid(result.Token);
+        var result = await response.Content.ReadFromJsonAsync<TokensDto>();
+        return ResponseDto.GetValid(result);
+    }
+
+    public async Task<ResponseDto> Refresh()
+    {
+        var tokens = tokenStorage.Get();
+        if (tokens is null || string.IsNullOrWhiteSpace(tokens.RefreshToken))
+        {
+            return null;
+        }
+
+        var request = new RefreshTokenRequest()
+        {
+            RefreshToken = tokens.RefreshToken
+        };
+        var response = await disciplineAppClient.PostAsync("users/refresh-token", request);
+        if (response.StatusCode is HttpStatusCode.OK)
+        {
+            var refreshedTokens = await response.Content.ReadFromJsonAsync<TokensDto>();
+            tokenStorage.Set(refreshedTokens);
+            return ResponseDto.GetValid();
+        }
+        return ResponseDto.GetInvalid();
     }
 
     public async Task<ResponseDto> CreateSubscriptionOrder(CreateSubscriptionOrderRequest request)

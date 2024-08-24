@@ -3,12 +3,14 @@ namespace discipline.core.DTOs;
 public class ResponseDto
 {
     public bool IsValid { get; }
-    public string Message { get; } 
+    public string Message { get; }
+    public object Result { get; set; }
 
-    private ResponseDto(bool isValid, string message = null)
+    private ResponseDto(bool isValid, string message = null, object result = null)
     {
         IsValid = isValid;
         Message = message;
+        Result = result;
     }
 
     public static ResponseDto GetValid()
@@ -16,6 +18,9 @@ public class ResponseDto
 
     public static ResponseDto GetValid(string message)
         => new ResponseDto(true, message);
+    
+    public static ResponseDto GetValid(object t)
+        => new ResponseDto(true, null, t);
 
     public static ResponseDto GetInvalid(string message)
         => new ResponseDto(false, message);
