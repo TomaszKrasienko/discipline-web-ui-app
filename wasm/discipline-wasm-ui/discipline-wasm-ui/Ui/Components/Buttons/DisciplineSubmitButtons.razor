@@ -1,0 +1,28 @@
+@using BootstrapBlazor.Components
+<div class="@_btnPosition">
+    <Tooltip Class="me-4" Title="Submit">
+        <button type="submit" class="discipline-submit-button">
+            <i class="bi bi-check-lg discipline-submit-btn-icon"></i>
+        </button>
+    </Tooltip>
+</div>
+
+@code {
+    private string _btnPosition = string.Empty;
+    
+    [Parameter] 
+    public SubmitButtonType Type { get; set; }
+    
+    protected override void OnParametersSet()
+    {
+        _btnPosition = Type == SubmitButtonType.Page 
+            ? "discipline-submit-btn-position" 
+            : "discipline-submit-btn-position-modal";
+    }
+    
+    public enum SubmitButtonType
+    {
+        Page, 
+        Modal
+    }
+}
