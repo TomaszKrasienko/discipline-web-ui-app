@@ -23,11 +23,11 @@ internal sealed class DisciplineUserDispatcher(
         if (response.StatusCode is HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity)
         {
             var invalidResult = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
-            return ResponseDto.GetInvalid(invalidResult.Message);
+            return ResponseDto.GetInvalid(invalidResult!.Message!);
         }
 
         var result = await response.Content.ReadFromJsonAsync<TokensDto>();
-        return ResponseDto.GetValid(result);
+        return ResponseDto.GetValid(result!);
     }
 
     public async Task<ResponseDto> Refresh()
