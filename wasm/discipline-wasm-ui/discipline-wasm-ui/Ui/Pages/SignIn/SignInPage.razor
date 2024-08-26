@@ -1,6 +1,11 @@
 @page "/sign-in"
+@using discipline_wasm_ui.Services.DTOs
 @using discipline_wasm_ui.Services.Models.Users
+@using discipline_wasm_ui.Storage.Abstractions
 @using discipline_wasm_ui.Ui.Components.Buttons
+@inject IUserDispatcher UserDispatcher;
+@inject ILocalStorageAccessor LocalStorageAccessor;
+
 
 <div class="row pt-2">
     <div class="col-md-6 offset-3">
@@ -27,13 +32,17 @@
     </div>
 </div>
 
-
 @code {
     [SupplyParameterFromForm] 
     public SignInRequest SignInRequest { get; set; } = new ();
     
     private async Task Submit()
     {
-        
+        var result = await UserDispatcher.SignIn(SignInRequest);
+        if (result.IsValid)
+        {
+            var tokens = (TokensDto)result.Result;
+            await LocalStorageAccessor.SetItemAsync(tokens);
+        }
     }
 }
