@@ -1,5 +1,6 @@
 using System.Net;
 using discipline_wasm_ui.Services.Client.Abstractions;
+using discipline_wasm_ui.Services.Client.Configuration.Models;
 using discipline_wasm_ui.Services.Client.Internals;
 using Polly;
 
@@ -7,7 +8,12 @@ namespace discipline_wasm_ui.Services.Client.Configuration;
 
 internal static class Extensions
 {
-    internal static IServiceCollection AddClients(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddClients(this IServiceCollection services)
+        => services
+            .AddHttp()
+            .AddFacades();
+    
+    private static IServiceCollection AddHttp(this IServiceCollection services)
     {
         var refreshPolicy = Policy.HandleResult<HttpResponseMessage>(x => x.StatusCode is
                 HttpStatusCode.Unauthorized)
@@ -15,7 +21,7 @@ internal static class Extensions
             {
                 var serviceProvider = services.BuildServiceProvider();
                 using var scope = serviceProvider.CreateScope();
-                //todo: dokończyć
+                //TODO: To finish
                 //var userDispatcher = scope.ServiceProvider.GetRequiredService<IUserDispatcher>();
                 //await userDispatcher.Refresh();
                 
@@ -23,6 +29,7 @@ internal static class Extensions
 
         services.AddHttpClient<IDisciplineClient, DisciplineClient>(clientOptions =>
             {
+                var disciplineAppClientOptions = new ClientOptions();
                 clientOptions.Timeout = disciplineAppClientOptions.Timeout;
                 clientOptions.BaseAddress = new Uri(disciplineAppClientOptions.Url);
             })
@@ -30,4 +37,8 @@ internal static class Extensions
         
         return services;
     }
+
+    private static IServiceCollection AddFacades(this IServiceCollection services)
+        => services.AddSingleton<IDisciplineClientFacade, DisciplineResponseFacade>();
+
 }
