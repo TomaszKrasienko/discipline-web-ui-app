@@ -3,10 +3,10 @@ namespace discipline_wasm_ui.Services.DTOs;
 public class ResponseDto
 {
     public bool IsValid { get; }
-    public string Message { get; }
-    public object Result { get; set; }
+    public string? Message { get; }
+    public object? Result { get; set; }
 
-    private ResponseDto(bool isValid, string message = null, object result = null)
+    private ResponseDto(bool isValid, string? message = null, object? result = null)
     {
         IsValid = isValid;
         Message = message;

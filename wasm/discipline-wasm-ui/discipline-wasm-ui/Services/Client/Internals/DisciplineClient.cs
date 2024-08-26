@@ -1,10 +1,14 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using discipline_wasm_ui.Services.Client.Abstractions;
+using discipline_wasm_ui.Services.DTOs;
+using discipline_wasm_ui.Storage.Abstractions;
 
 namespace discipline_wasm_ui.Services.Client.Internals;
 
 internal sealed class DisciplineClient(
-    HttpClient httpClient) : IDisciplineClient
+    HttpClient httpClient,
+    ILocalStorageAccessor localStorageAccessor) : IDisciplineClient
 {
     public async Task<HttpResponseMessage> GetAsync(string path)
     {
@@ -36,13 +40,12 @@ internal sealed class DisciplineClient(
         return await httpClient.DeleteAsync(path);
     }
 
-    private Task Authorize()
+    private async Task Authorize()
     {
-        return Task.CompletedTask;
-        // var tokens = await tokenStorage.Get();
-        // if (tokens is not null)
-        // {
-        //     httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokens.Token);
-        // }
+        var tokens = await localStorageAccessor.GetItemAsync<TokensDto>();
+        if (tokens is not null)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokens.Token);
+        }
     }
 }

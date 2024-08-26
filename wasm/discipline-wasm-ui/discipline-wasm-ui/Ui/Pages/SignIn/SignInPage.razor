@@ -1,10 +1,14 @@
 @page "/sign-in"
+@using BlazorBootstrap
+@using discipline_wasm_ui.Helpers
 @using discipline_wasm_ui.Services.DTOs
 @using discipline_wasm_ui.Services.Models.Users
 @using discipline_wasm_ui.Storage.Abstractions
 @using discipline_wasm_ui.Ui.Components.Buttons
 @inject IUserDispatcher UserDispatcher;
 @inject ILocalStorageAccessor LocalStorageAccessor;
+@inject ToastService ToastService
+@inject NavigationManager NavigationManager
 
 
 <div class="row pt-2">
@@ -41,8 +45,13 @@
         var result = await UserDispatcher.SignIn(SignInRequest);
         if (result.IsValid)
         {
-            var tokens = (TokensDto)result.Result;
+            var tokens = (TokensDto)result.Result!;
             await LocalStorageAccessor.SetItemAsync(tokens);
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            ToastService.Notify(result.Message!.ToDangerToastMessage());
         }
     }
 }
