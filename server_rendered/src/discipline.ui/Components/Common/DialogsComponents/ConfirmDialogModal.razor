@@ -1,0 +1,38 @@
+@using discipline.ui.Components.Common.ButtonsComponents
+@using BlazorBootstrap
+
+<Modal
+    @ref="_dialogModal"
+    Title="@Title">
+    <BodyTemplate>
+        @Content
+    </BodyTemplate>
+    <FooterTemplate>
+        <CancelIconButton OnClickCallback="CancelDialogAsync"/>
+        <ConfirmIconButton OnClickCallback="ConfirmDialogAsync"/>
+    </FooterTemplate>
+</Modal>
+
+@code {
+    [Parameter] public string Title { get; set; } = default!;
+    [Parameter] public string Content { get; set; } = default!;
+    [Parameter] public EventCallback OnCancelDialogCallback { get; set; }
+    [Parameter] public EventCallback OnConfirmDialogCallback { get; set; }
+    
+    private Modal _dialogModal = default!;
+
+    private async Task CancelDialogAsync()
+    {
+        await OnCancelDialogCallback.InvokeAsync();
+        await _dialogModal.HideAsync();
+    }
+
+    private async Task ConfirmDialogAsync()
+    {
+        await OnConfirmDialogCallback.InvokeAsync();
+        await _dialogModal.HideAsync();
+    }
+
+    internal async Task ShowModalAsync()
+        => await _dialogModal.ShowAsync();
+}

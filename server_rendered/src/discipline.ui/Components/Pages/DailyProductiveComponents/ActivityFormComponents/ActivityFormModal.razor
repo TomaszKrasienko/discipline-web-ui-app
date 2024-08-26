@@ -1,0 +1,46 @@
+@using BlazorBootstrap
+@using discipline.ui.Communication.Dispatchers.Models.DailyProductivity
+
+<Modal 
+    @ref="_modal" 
+    title="Create new activity" 
+    UseStaticBackdrop="true" 
+    CloseOnEscape="false"
+    OnHiding="OnHidingModalAsync">
+    <BodyTemplate>
+        <div class="row">
+            <div class="col-md-10 offset-1">
+                <ActivityForm
+                    ActivityRequest="ActivityRequest"
+                    Day="Day"
+                    Messages="_messages"
+                    OnSubmitCallback="OnHidingModalAsync"/>
+            </div>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+<Toasts
+    Class="p-3"
+    Messages="_messages"
+    AutoHide="true"
+    Delay="4000"
+    Placement="ToastsPlacement.TopRight"/>
+
+@code {
+    [Parameter] public ActivityRequest? ActivityRequest { get; set; }
+    [Parameter] public DateOnly Day { get; set; }
+    [Parameter] public EventCallback OnHidingEventCallback { get; set; }
+    private Modal _modal = default!;
+    private List<ToastMessage> _messages = [];
+
+    private async Task OnHidingModalAsync()
+    {
+        await OnHidingEventCallback.InvokeAsync();
+        await _modal.HideAsync();
+    }
+
+    internal async Task ShowModalAsync()
+        => await _modal.ShowAsync();
+    
+}

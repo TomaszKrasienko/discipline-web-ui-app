@@ -1,0 +1,25 @@
+<nav class="navbar justify-content-between discipline-nav">
+    <a class="navbar-brand" href="#">
+        <img
+            src="discipline_logo.png"
+            alt="Discipline."
+            class="logo-navbar">
+    </a>
+    <DisciplineNavButton
+        Text="Activity rules"
+        IconClass="bi-file-ruled"
+        OnClickButtonCallback="NavigateToActivityRules"/>
+    <form class="form-inline">
+        <div class="row">
+            <DisciplineNavAccount/>
+        </div>
+    </form>
+</nav>
+
+@code {
+
+    private void NavigateToActivityRules()
+    {
+        
+    }
+}

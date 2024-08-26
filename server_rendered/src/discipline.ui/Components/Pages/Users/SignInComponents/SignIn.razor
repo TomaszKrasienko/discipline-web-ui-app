@@ -1,0 +1,68 @@
+@page "/sign-in"
+@using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Components.Common.HeadersComponents
+@using BlazorBootstrap
+@using discipline.ui.Communication.Dispatchers.Abstractions
+@using discipline.ui.Communication.Dispatchers.Models.Users
+@using discipline.ui.Communication.DTOs
+@using discipline.ui.Communication.Helpers.Abstractions
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject IUserDispatcher UserDispatcher;
+@inject ITokenStorage TokenStorage;
+@inject NavigationManager NavigationManager;
+@inject ProtectedSessionStorage ProtectedSessionStorage;
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@if (_isLoading)
+{
+    <div class="row text-center">
+        <Spinner Class="me-3" Type="SpinnerType.Dots" Color="SpinnerColor.Secondary" Size="SpinnerSize.Large"/>
+    </div>
+}
+else
+{
+    <PageHeader Title="Sign in"/>
+    <div class="row pt-2">
+        <div class="col-md-6 offset-3">
+            <EditForm
+                method="post"
+                OnSubmit="Submit"
+                Model="SignInRequest">
+                    <label for="sign-in-email">Email:</label>
+                    <InputText
+                        class="form-control"
+                        id="sign-in-email"
+                        placeholder="Email"
+                        @bind-Value="SignInRequest.Email"/>
+                    <label for="sign-in-password">Password:</label>
+                    <InputText
+                        class="form-control"
+                        id="sign-in-password"
+                        type="password"
+                        placeholder="Password"
+                        @bind-Value="SignInRequest.Password"/>
+                    <SubmitButton Type="SubmitButton.SubmitButtonType.Page"/>
+            </EditForm>
+        </div>
+    </div>
+}
+
+
+@code {
+    [SupplyParameterFromForm] 
+    public SignInRequest SignInRequest { get; set; } = new();
+
+    private bool _isLoading = false;
+    
+    private async Task Submit()
+    {
+        _isLoading = true;
+        var result = await UserDispatcher.SignIn(SignInRequest);
+        if (result.IsValid)
+        {
+            await TokenStorage.Set((TokensDto)result.Result);
+            // await ProtectedSessionStorage.SetAsync("test", (TokensDto)result.Result);
+            NavigationManager.NavigateTo("/activity-rules-list");
+        }
+    }
+}

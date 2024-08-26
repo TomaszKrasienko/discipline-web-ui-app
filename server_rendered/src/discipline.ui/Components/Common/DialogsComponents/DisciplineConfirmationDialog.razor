@@ -1,0 +1,93 @@
+@using discipline.ui.Components.Common.ButtonsComponents
+@using discipline.ui.Components.Common.ModalComponent
+@using discipline.ui.Enums
+
+<DisciplineModal
+    @ref="DisciplineModal"
+    Title="@Title"
+    Size="DisciplineModal.DisciplineModalSize.Small">
+    <Body>
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            <div class="row text-center p-2">
+                @Content
+            </div>
+            <div class="row text-center pt-2">
+                @if (Type == DialogType.Ok)
+                {
+                    <DisciplineTextButton
+                        Color="DisciplineBtnColor.Light"
+                        Text="Ok"
+                        OnClickCallback="OkClicked"/>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <DisciplineTextButton
+                                Color="DisciplineBtnColor.Light"
+                                Text="Yes"
+                                OnClickCallback="YesClicked"/>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <DisciplineTextButton
+                                Color="DisciplineBtnColor.Light"
+                                Text="No"
+                                OnClickCallback="NoClicked"/>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    </Body>
+</DisciplineModal>
+
+@code {
+    
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter] 
+    public string? Content { get; set; }
+    [Parameter, EditorRequired]
+    public DialogType Type { get; set; }
+    [Parameter] 
+    public EventCallback OnYesClickCallback { get; set; }
+    [Parameter]
+    public EventCallback OnNoClickCallback { get; set; }
+    [Parameter]
+    public EventCallback OnOkClickCallback { get; set; }
+    
+    private DisciplineModal? DisciplineModal { get; set; }
+    
+    public enum DialogType
+    {
+        YesNo, 
+        Ok
+    }
+
+    public async Task YesClicked()
+    {
+        await OnYesClickCallback.InvokeAsync();
+        await Close();
+    }
+
+    public async Task NoClicked()
+    {
+        await OnNoClickCallback.InvokeAsync();
+        await Close();
+    }
+
+    public async Task OkClicked()
+    {
+        await OnOkClickCallback.InvokeAsync();
+        await Close();
+    }
+    
+    public void Open()
+        => DisciplineModal?.Open();
+
+    private async Task Close()
+        =>  await DisciplineModal!.CloseAsync();
+
+}
