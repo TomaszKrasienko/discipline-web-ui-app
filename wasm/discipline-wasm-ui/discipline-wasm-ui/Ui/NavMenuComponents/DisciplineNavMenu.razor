@@ -1,3 +1,6 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
 <nav class="navbar justify-content-between discipline-nav">
     <a class="navbar-brand" href="#">
         <img
@@ -9,6 +12,13 @@
         Text="Activity rules"
         IconClass="bi-file-ruled"
         OnClickButtonCallback="NavigateToActivityRules"/>
+    @if (_isAuthenticated)
+    {
+        <DisciplineNavButton
+            Text="Calendar"
+            IconClass="bi-calendar-check"
+            OnClickButtonCallback="NavigateToActivityRules"/>
+    }
     <form class="form-inline">
         <div class="row">
             <DisciplineNavAccount/>
@@ -17,9 +27,16 @@
 </nav>
 
 @code {
+    private bool _isAuthenticated = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isAuthenticated = authenticationState?.User?.Identity?.IsAuthenticated ?? false;
+    }
 
     private void NavigateToActivityRules()
     {
         
     }
-}
+}  

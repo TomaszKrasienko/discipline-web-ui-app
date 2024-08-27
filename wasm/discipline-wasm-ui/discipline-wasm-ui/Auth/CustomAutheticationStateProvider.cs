@@ -13,7 +13,7 @@ internal sealed class CustomAuthenticationStateProvider(
         var token = await tokenProvider.GetToken();
         var identity = string.IsNullOrWhiteSpace(token)
             ? new ClaimsIdentity()
-            : new ClaimsIdentity(ParseClaimsFromJwt(token));
+            : new ClaimsIdentity(ParseClaimsFromJwt(token), "authentication");
         var user = new ClaimsPrincipal(identity);
         return new AuthenticationState(user);
     }
@@ -23,7 +23,6 @@ internal sealed class CustomAuthenticationStateProvider(
         var payload = jwt.Split('.')[1];
         var jsonBytes = ParseBase64WithoutPadding(payload);
         var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
-
         return keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()));
     }
 
