@@ -7,5 +7,6 @@ internal static class Extensions
 {
     internal static IServiceCollection AddDispatchers(this IServiceCollection services)
         => services
-            .AddSingleton<IUserDispatcher, DisciplineUserDispatcher>();
+            .AddSingleton<IUserDispatcher, DisciplineUserDispatcher>()
+            .AddSingleton<IActivityRulesDispatcher, DisciplineActivityRulesDispatcher>();
 }

@@ -1,4 +1,5 @@
 using discipline_wasm_ui.Auth.Configuration;
+using discipline_wasm_ui.Helpers.Configuration;
 using discipline_wasm_ui.Services.Configuration;
 using discipline_wasm_ui.Storage.Configuration;
 
@@ -10,5 +11,6 @@ internal static class Extensions
         => services
             .AddServices()
             .AddStorage()
-            .AddAuth();
+            .AddAuth()
+            .AddHelpers();
 }

@@ -1,0 +1,19 @@
+.discipline-icon-button{
+    font-size: large;
+}
+
+.discipline-icon-red {
+    color: darkred;
+}
+
+.discipline-icon-primary {
+    color: #1C211D;
+}
+
+.delete-icon-button:hover{
+    cursor: pointer;
+}
+
+.delete-icon-button:active{
+    color: white;
+}
