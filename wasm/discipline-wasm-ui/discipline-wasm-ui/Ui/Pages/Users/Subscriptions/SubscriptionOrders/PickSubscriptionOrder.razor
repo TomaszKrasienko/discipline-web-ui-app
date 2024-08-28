@@ -1,0 +1,34 @@
+@page "/pick-subscription-order"
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Ui.Components.Headers
+@using discipline.ui.Infrastructure.Communication.DTOs
+@inject IUserDispatcher UserDispatcher;
+
+<DisciplinePageHeader Title="Pick subscription order"/>
+<div class="row">
+    @foreach (var subscription in Subscriptions)
+    {
+    <div class="col-md-4 mx-auto">
+        <div class="row">
+            <DisciplineSubscriptionCard
+                Subscription="subscription"/>
+        </div>
+        <div class="row pt-2 text-center">
+            <DisciplineTextButton
+                Color="DisciplineBtnColor.Dark"
+                Text="Pick"
+                OnClickCallback="() => SubscriptionPicked(subscription)"/>
+        </div>
+    </div>
+    }
+</div>
+
+@code {
+    private List<SubscriptionDto> Subscriptions { get; set; } = [];
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Subscriptions = await UserDispatcher.BrowseSubscriptions();
+    }
+
+}

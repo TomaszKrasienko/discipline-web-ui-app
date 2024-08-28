@@ -2,8 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using discipline_wasm_ui.Infrastructure.Services.Client.Abstractions;
 using discipline_wasm_ui.Infrastructure.Services.DTOs;
-using discipline_wasm_ui.Infrastructure.Services.Exceptions;
-using discipline_wasm_ui.Services.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Components;
 
 namespace discipline_wasm_ui.Infrastructure.Services.Client.Internals;
@@ -50,18 +48,25 @@ internal sealed class DisciplineResponseFacade(
 
     public async Task<ResponseDto> DeleteToResponseDtoAsync(string path)
         => await ToResponseDto(await disciplineAppClient.DeleteAsync(path));
-    
-    private static async Task<ResponseDto> ToResponseDto(HttpResponseMessage response)
-        => response.StatusCode switch
+
+    private async Task<ResponseDto> ToResponseDto(HttpResponseMessage response)
+    {
+        switch (response.StatusCode)
         {
-            HttpStatusCode.Unauthorized => throw new UnauthorizedException(),
-            HttpStatusCode.Forbidden => throw new ForbiddenException(),
-            _ => response.StatusCode switch
-            {
-                HttpStatusCode.OK or HttpStatusCode.Created => ResponseDto.GetValid(),
-                HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity => ResponseDto.GetInvalid(
-                    (await response?.Content?.ReadFromJsonAsync<ErrorResponseDto>()!)!.Message!),
-                _ => ResponseDto.GetInvalid()
-            }
+            case HttpStatusCode.Unauthorized:
+            case HttpStatusCode.Forbidden:
+                var tcs = new TaskCompletionSource<bool>();
+                navigationManager.NavigateTo("/sign-in");
+                await tcs.Task;
+                break;
+        }
+
+        return response.StatusCode switch
+        {
+            HttpStatusCode.OK or HttpStatusCode.Created => ResponseDto.GetValid(),
+            HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity => ResponseDto.GetInvalid(
+                (await response?.Content?.ReadFromJsonAsync<ErrorResponseDto>()!)!.Message!),
+            _ => ResponseDto.GetInvalid()
         };
+    }
 }

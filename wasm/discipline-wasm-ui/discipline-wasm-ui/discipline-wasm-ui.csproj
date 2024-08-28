@@ -19,6 +19,7 @@
     <ItemGroup>
       <AdditionalFiles Include="Ui\Layout\MainLayout.razor" />
       <AdditionalFiles Include="Ui\Pages\Home.razor" />
+      <AdditionalFiles Include="Ui\Pages\Users\SignIn\SignInPage.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,6 +29,7 @@
 
     <ItemGroup>
       <Folder Include="Infrastructure\" />
+      <Folder Include="Ui\Pages\Users\" />
     </ItemGroup>
 
 </Project>
