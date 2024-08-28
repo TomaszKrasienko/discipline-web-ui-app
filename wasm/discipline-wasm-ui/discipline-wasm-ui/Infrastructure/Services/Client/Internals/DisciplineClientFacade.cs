@@ -4,21 +4,29 @@ using discipline_wasm_ui.Infrastructure.Services.Client.Abstractions;
 using discipline_wasm_ui.Infrastructure.Services.DTOs;
 using discipline_wasm_ui.Infrastructure.Services.Exceptions;
 using discipline_wasm_ui.Services.Infrastructure.Exceptions;
+using Microsoft.AspNetCore.Components;
 
 namespace discipline_wasm_ui.Infrastructure.Services.Client.Internals;
 
 internal sealed class DisciplineResponseFacade(
-    IDisciplineClient disciplineAppClient) : IDisciplineClientFacade
+    IDisciplineClient disciplineAppClient,
+    NavigationManager navigationManager) : IDisciplineClientFacade
 {
     public async Task<HttpResponseMessage> GetAsync(string path)
     {
         var response = await disciplineAppClient.GetAsync(path);
-        return response.StatusCode switch
+
+        switch (response.StatusCode)
         {
-            HttpStatusCode.Unauthorized => throw new UnauthorizedException(),
-            HttpStatusCode.Forbidden => throw new ForbiddenException(),
-            _ => response
-        };
+            case HttpStatusCode.Unauthorized:
+            case HttpStatusCode.Forbidden:
+                var tcs = new TaskCompletionSource<bool>();
+                navigationManager.NavigateTo("/sign-in");
+                await tcs.Task;
+                break;
+        }
+
+        return response;
     }
 
     public async Task<T> GetAsResultAsync<T>(string path) where T : class

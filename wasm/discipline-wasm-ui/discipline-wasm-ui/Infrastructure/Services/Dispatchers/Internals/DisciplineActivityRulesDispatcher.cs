@@ -28,9 +28,8 @@ internal sealed class DisciplineActivityRulesDispatcher(
     {
         var response = await disciplineClientFacade.GetAsync(
             $"activity-rules?pageNumber={request.PageNumber}&pageSize={request.PageSize}");
-        
-        var activities = await response.Content.ReadFromJsonAsync<List<ActivityRuleDto>>();
-        
+
+        var activities = await response?.Content?.ReadFromJsonAsync<List<ActivityRuleDto>>();
         
         foreach (var activity in activities)
         {
