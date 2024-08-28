@@ -1,5 +1,5 @@
-@using discipline_wasm_ui.Helpers
-@using discipline_wasm_ui.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.Infrastructure.Weekdays.Extensions
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using discipline_wasm_ui.Ui.Components.Buttons
 <span class="activity-rule-table-row"
       @onmouseover="OnMouseOver"
@@ -27,7 +27,7 @@
 
 @code {
     [Parameter] 
-    public ActivityRuleDto? ActivityRule { get; set; }
+    public ActivityRuleDto ActivityRule { get; set; }
     
     [Parameter] 
     public EventCallback<ActivityRuleDto> OnActivityRuleEditCallback { get; set; }
