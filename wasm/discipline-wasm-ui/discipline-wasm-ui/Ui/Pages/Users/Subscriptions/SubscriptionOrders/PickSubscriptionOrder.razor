@@ -1,6 +1,10 @@
 @page "/pick-subscription-order"
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
 @using discipline_wasm_ui.Ui.Components.Headers
+@using discipline_wasm_ui.Ui.Components.Modals
+@using discipline_wasm_ui.Ui.Pages.Users.Subscriptions.Components
 @using discipline.ui.Infrastructure.Communication.DTOs
 @inject IUserDispatcher UserDispatcher;
 
@@ -15,20 +19,40 @@
         </div>
         <div class="row pt-2 text-center">
             <DisciplineTextButton
-                Color="DisciplineBtnColor.Dark"
+                Color="DisciplineButtonColor.Dark"
                 Text="Pick"
-                OnClickCallback="() => SubscriptionPicked(subscription)"/>
+                OnClickButtonCallback="() => SubscriptionPicked(subscription)"/>
         </div>
     </div>
     }
 </div>
+<DisciplineModal
+    @ref="_paidSubscriptionModal"
+    Size="DisciplineModalSize.Large">
+    <Body>
+    <div class="row">
+        <div class="col-md-10 offset-1">
+            <PaidSubscriptionForm/>  
+        </div>
+    </div>
+    </Body>
+</DisciplineModal>
 
 @code {
     private List<SubscriptionDto> Subscriptions { get; set; } = [];
+    private DisciplineModal _paidSubscriptionModal;
     
     protected override async Task OnInitializedAsync()
     {
         Subscriptions = await UserDispatcher.BrowseSubscriptions();
+    }
+
+    private void SubscriptionPicked(SubscriptionDto subscription)
+    {
+        if (subscription.IsPaid)
+        {
+            _paidSubscriptionModal.Open();
+        }
     }
 
 }

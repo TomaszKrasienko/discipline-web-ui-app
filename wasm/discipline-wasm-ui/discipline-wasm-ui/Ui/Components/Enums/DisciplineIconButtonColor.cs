@@ -1,7 +1,6 @@
 namespace discipline_wasm_ui.Ui.Components.Enums;
 
-public enum DisciplineButtonColor
+public enum DisciplineIconButtonColor
 {
-    Dark,
-    Light
+    Red
 }

@@ -1,17 +1,24 @@
+@using discipline_wasm_ui.Ui.Components.Enums
 <div>
     <button
-        class="btn @(Color == DisciplineBtnColor.Light ? "discipline-text-btn-light" : "discipline-text-btn-dark")"
-        @onclick="OnClick">
+        class="btn @(Color == DisciplineButtonColor.Light ? "discipline-text-btn-light" : "discipline-text-btn-dark")"
+        @onclick="ButtonClickedAsync">
         @Text
     </button>
 </div>
 
 @code {
     [Parameter, EditorRequired] 
-    public string? Text { get; set; }
-    
+    public string Text { get; set; }
+
     [Parameter, EditorRequired] 
-    public DisciplineBtnColor Color { get; set; }
+    public EventCallback OnClickButtonCallback { get; set; }
+
+    [Parameter]
+    public DisciplineButtonColor Color { get; set; }
     
-    
+    private async Task ButtonClickedAsync()
+    {
+        await OnClickButtonCallback.InvokeAsync();
+    }
 }

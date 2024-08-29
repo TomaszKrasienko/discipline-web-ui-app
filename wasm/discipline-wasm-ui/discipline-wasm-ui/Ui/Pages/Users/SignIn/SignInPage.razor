@@ -5,6 +5,7 @@
 @using discipline_wasm_ui.Infrastructure.Storage.Abstractions
 @using discipline_wasm_ui.Services.Models.Users
 @using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
 @inject IUserDispatcher UserDispatcher;
 @inject ILocalStorageAccessor LocalStorageAccessor;
 @inject ToastService ToastService
@@ -30,8 +31,8 @@
                 type="password"
                 placeholder="Password"
                 @bind-Value="SignInRequest.Password"/>
-            <DisciplineSubmitButtons 
-                Type="DisciplineSubmitButtons.SubmitButtonType.Page"/>
+            <DisciplineSubmitButton 
+                Type="DisciplineSubmitButtonType.Page"/>
         </EditForm>
     </div>
 </div>

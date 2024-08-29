@@ -17,11 +17,19 @@ internal sealed class DisciplineResponseFacade(
         switch (response.StatusCode)
         {
             case HttpStatusCode.Unauthorized:
-            case HttpStatusCode.Forbidden:
+            {
                 var tcs = new TaskCompletionSource<bool>();
                 navigationManager.NavigateTo("/sign-in");
                 await tcs.Task;
                 break;
+            }
+            case HttpStatusCode.Forbidden:
+            {
+                var tcs = new TaskCompletionSource<bool>();
+                navigationManager.NavigateTo("/pick-subscription-order");
+                await tcs.Task;
+                break;
+            }
         }
 
         return response;
@@ -54,13 +62,20 @@ internal sealed class DisciplineResponseFacade(
         switch (response.StatusCode)
         {
             case HttpStatusCode.Unauthorized:
-            case HttpStatusCode.Forbidden:
+            {
                 var tcs = new TaskCompletionSource<bool>();
                 navigationManager.NavigateTo("/sign-in");
                 await tcs.Task;
                 break;
+            }
+            case HttpStatusCode.Forbidden:
+            {
+                var tcs = new TaskCompletionSource<bool>();
+                navigationManager.NavigateTo("/pick-subscription-order");
+                await tcs.Task;
+                break;
+            }
         }
-
         return response.StatusCode switch
         {
             HttpStatusCode.OK or HttpStatusCode.Created => ResponseDto.GetValid(),

@@ -1,4 +1,5 @@
 @using BlazorBootstrap
+@using discipline_wasm_ui.Ui.Components.Enums
 <div class="@_btnPosition">
     <Tooltip Class="me-4" Title="Submit">
         <button type="submit" class="discipline-submit-button">
@@ -11,18 +12,12 @@
     private string _btnPosition = string.Empty;
     
     [Parameter] 
-    public SubmitButtonType Type { get; set; }
+    public DisciplineSubmitButtonType Type { get; set; }
     
     protected override void OnParametersSet()
     {
-        _btnPosition = Type == SubmitButtonType.Page 
+        _btnPosition = Type == DisciplineSubmitButtonType.Page 
             ? "discipline-submit-btn-position" 
             : "discipline-submit-btn-position-modal";
-    }
-    
-    public enum SubmitButtonType
-    {
-        Page, 
-        Modal
     }
 }

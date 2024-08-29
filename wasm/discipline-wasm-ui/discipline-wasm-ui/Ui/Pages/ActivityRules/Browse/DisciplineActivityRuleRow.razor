@@ -1,6 +1,7 @@
 @using discipline_wasm_ui.Infrastructure.Infrastructure.Weekdays.Extensions
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
 <span class="activity-rule-table-row"
       @onmouseover="OnMouseOver"
       @onmouseout="OnMouseOut">
@@ -18,7 +19,7 @@
             {
                 <DisciplineIconButton
                     IconClass="bi-trash-fill"
-                    Color="DisciplineIconButton.DisciplineIconButtonColor.Red"
+                    Color="DisciplineIconButtonColor.Red"
                     OnClickButtonCallback="DeleteActivityRuleAsync"/>
             }
         </div>
