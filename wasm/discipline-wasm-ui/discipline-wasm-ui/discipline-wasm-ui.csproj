@@ -32,4 +32,10 @@
       <Folder Include="Ui\Pages\Users\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="wwwroot\discipline_logo.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
