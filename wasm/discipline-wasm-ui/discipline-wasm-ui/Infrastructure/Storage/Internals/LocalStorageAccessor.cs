@@ -17,4 +17,9 @@ internal sealed class LocalStorageAccessor(
         var item = await storageService.GetItemAsync<T>(typeof(T).Name);
         return item;
     }
+
+    public async Task RemoveAsync<T>() where T : class
+    {
+        await storageService.RemoveItemAsync(typeof(T).Name);
+    }
 }

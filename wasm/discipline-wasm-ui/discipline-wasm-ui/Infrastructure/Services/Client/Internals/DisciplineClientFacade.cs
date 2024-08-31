@@ -2,13 +2,15 @@ using System.Net;
 using System.Net.Http.Json;
 using discipline_wasm_ui.Infrastructure.Services.Client.Abstractions;
 using discipline_wasm_ui.Infrastructure.Services.DTOs;
+using discipline_wasm_ui.Infrastructure.Storage.Abstractions;
 using Microsoft.AspNetCore.Components;
 
 namespace discipline_wasm_ui.Infrastructure.Services.Client.Internals;
 
 internal sealed class DisciplineResponseFacade(
     IDisciplineClient disciplineAppClient,
-    NavigationManager navigationManager) : IDisciplineClientFacade
+    NavigationManager navigationManager,
+    ILocalStorageAccessor localStorageAccessor) : IDisciplineClientFacade
 {
     public async Task<HttpResponseMessage> GetAsync(string path)
     {
@@ -59,7 +61,8 @@ internal sealed class DisciplineResponseFacade(
             case HttpStatusCode.Unauthorized:
             {
                 var tcs = new TaskCompletionSource<bool>();
-                navigationManager.NavigateTo("/sign-in");
+                await localStorageAccessor.RemoveAsync<TokensDto>();
+                navigationManager.NavigateTo("/sign-in", forceLoad: true);
                 await tcs.Task;
                 break;
             }
