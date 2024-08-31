@@ -1,7 +1,9 @@
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using discipline_wasm_ui.Infrastructure.Services.Enums
 @using discipline_wasm_ui.Services.Models.Users
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Enums
+@inject IUserDispatcher UserDispatcher;
 <EditForm
     OnSubmit="OrderSubscriptionConfirmed"
     Model="SubscriptionOrderRequest"
@@ -41,6 +43,9 @@
 </EditForm>
 
 @code {
+    [Parameter] 
+    public Guid SubscriptionId { get; set; }
+    
     [SupplyParameterFromForm]
     public CreateSubscriptionOrderRequest SubscriptionOrderRequest { get; set; } = new();
     
@@ -51,5 +56,8 @@
 
     private async Task OrderSubscriptionConfirmed()
     {
+        SubscriptionOrderRequest.SubscriptionId = SubscriptionId;
+        await UserDispatcher.CreateSubscriptionOrder(SubscriptionOrderRequest);
+        //TODO: Toast
     }
 }

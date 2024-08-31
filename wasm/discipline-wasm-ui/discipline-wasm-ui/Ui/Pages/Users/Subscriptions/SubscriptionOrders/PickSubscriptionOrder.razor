@@ -41,6 +41,7 @@
 @code {
     private List<SubscriptionDto> Subscriptions { get; set; } = [];
     private DisciplineModal _paidSubscriptionModal;
+    private PaidSubscriptionForm _paidSubscriptionForm;
     
     protected override async Task OnInitializedAsync()
     {
@@ -51,6 +52,7 @@
     {
         if (subscription.IsPaid)
         {
+            _paidSubscriptionForm.SubscriptionId = subscription.Id;
             _paidSubscriptionModal.Open();
         }
     }
