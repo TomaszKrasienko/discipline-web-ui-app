@@ -13,24 +13,7 @@ internal sealed class DisciplineResponseFacade(
     public async Task<HttpResponseMessage> GetAsync(string path)
     {
         var response = await disciplineAppClient.GetAsync(path);
-
-        switch (response.StatusCode)
-        {
-            case HttpStatusCode.Unauthorized:
-            {
-                var tcs = new TaskCompletionSource<bool>();
-                navigationManager.NavigateTo("/sign-in");
-                await tcs.Task;
-                break;
-            }
-            case HttpStatusCode.Forbidden:
-            {
-                var tcs = new TaskCompletionSource<bool>();
-                navigationManager.NavigateTo("/pick-subscription-order");
-                await tcs.Task;
-                break;
-            }
-        }
+        await CheckAuth(response);
 
         return response;
     }
@@ -59,6 +42,18 @@ internal sealed class DisciplineResponseFacade(
 
     private async Task<ResponseDto> ToResponseDto(HttpResponseMessage response)
     {
+        await CheckAuth(response);
+        return response.StatusCode switch
+        {
+            HttpStatusCode.OK or HttpStatusCode.Created => ResponseDto.GetValid(),
+            HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity => ResponseDto.GetInvalid(
+                (await response?.Content?.ReadFromJsonAsync<ErrorResponseDto>()!)!.Message!),
+            _ => ResponseDto.GetInvalid()
+        };
+    }
+
+    private async Task CheckAuth(HttpResponseMessage response)
+    {
         switch (response.StatusCode)
         {
             case HttpStatusCode.Unauthorized:
@@ -76,12 +71,6 @@ internal sealed class DisciplineResponseFacade(
                 break;
             }
         }
-        return response.StatusCode switch
-        {
-            HttpStatusCode.OK or HttpStatusCode.Created => ResponseDto.GetValid(),
-            HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity => ResponseDto.GetInvalid(
-                (await response?.Content?.ReadFromJsonAsync<ErrorResponseDto>()!)!.Message!),
-            _ => ResponseDto.GetInvalid()
-        };
     }
+    
 }
