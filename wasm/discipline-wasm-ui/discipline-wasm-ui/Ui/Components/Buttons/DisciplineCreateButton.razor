@@ -1,0 +1,22 @@
+@using discipline_wasm_ui.Ui.Components.Enums
+@using BlazorBootstrap
+
+<Tooltip 
+    Placement="TooltipPlacement.Top"
+    Title="Create new">
+    <div class="discipline-create-btn-position">
+        <DisciplineIconButton
+            IconClass="bi-plus"
+            OnClickButtonCallback="ButtonClicked"
+            Color="DisciplineIconButtonColor.Dark"/>
+    </div>
+</Tooltip>
+
+@code {
+    [Parameter, EditorRequired]
+    public EventCallback OnClickButtonCallback { get; set; }
+
+    private async Task ButtonClicked()
+        => await OnClickButtonCallback.InvokeAsync();
+
+}

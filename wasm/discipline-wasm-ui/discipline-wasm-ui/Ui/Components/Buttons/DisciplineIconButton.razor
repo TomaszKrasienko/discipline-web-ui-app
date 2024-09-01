@@ -18,13 +18,12 @@
     public DisciplineIconButtonColor Color { get; set; }
 
     private async Task ButtonClickedAsync()
-    {
-        await OnClickButtonCallback.InvokeAsync();
-    }
+        => await OnClickButtonCallback.InvokeAsync();
 
     private string GetColor() => Color switch
     {
-        DisciplineIconButtonColor.Red => ".discipline-icon-red",
-        _ => ".discipline-icon-primary"
+        DisciplineIconButtonColor.Red => "discipline-icon-red",
+        DisciplineIconButtonColor.Dark => "discipline-icon-dark", 
+        _ => "discipline-icon-primary"
     };
 }

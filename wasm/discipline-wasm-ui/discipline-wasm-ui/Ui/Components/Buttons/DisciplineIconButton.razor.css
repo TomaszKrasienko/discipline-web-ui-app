@@ -1,9 +1,20 @@
 .discipline-icon-button{
-    font-size: large;
+    font-size: x-large;
+    border-radius: 5px;
 }
 
 .discipline-icon-red {
     color: darkred;
+}
+
+.discipline-icon-dark {
+    color: #C4D4C9;
+    background-color: #1C211D;   
+}
+
+.discipline-icon-dark:hover {
+    color: #F5F4F5;
+    background-color: #546357;
 }
 
 .discipline-icon-primary {
@@ -17,3 +28,4 @@
 .delete-icon-button:active{
     color: white;
 }
+

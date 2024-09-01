@@ -30,18 +30,20 @@ internal sealed class DisciplineActivityRulesDispatcher(
             $"activity-rules?pageNumber={request.PageNumber}&pageSize={request.PageSize}");
 
         var activities = await response?.Content?.ReadFromJsonAsync<List<ActivityRuleDto>>();
-        
         foreach (var activity in activities)
         {
             activity.Weekdays = weekdayTranslator.Transform(activity.SelectedDays);
         }
 
-        response.Headers.TryGetValues("x-pagination", out var pagination);
-
+        var metaData = new MetaDataDto();
+        if (response?.Headers.TryGetValues("x-pagination", out var pagination) ?? false)
+        {
+            metaData = JsonConvert.DeserializeObject<MetaDataDto>(pagination!.Single());
+        };
         return new PaginatedDataDto<List<ActivityRuleDto>>()
         {
             Data = activities,
-            MetaData = JsonConvert.DeserializeObject<MetaDataDto>(pagination!.Single())
+            MetaData = metaData
         };
     }
 

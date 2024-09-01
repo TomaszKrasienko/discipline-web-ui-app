@@ -2,6 +2,9 @@
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using discipline_wasm_ui.Infrastructure.Services.Models
 @using discipline_wasm_ui.Ui.Components.Headers
+@using BlazorBootstrap
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Pages.ActivityRules.Components
 @inject IActivityRulesDispatcher DisciplineAppDispatcher;
 
 <PageTitle>Activity rules list</PageTitle>
@@ -9,16 +12,36 @@
 <div class="row">
     @foreach (var activityRule in _activityRules)
     {
-    <DisciplineActivityRuleRow
-        ActivityRule="activityRule"/>
+        <DisciplineActivityRuleRow
+            ActivityRule="activityRule"/>
     }
 </div>
+<div class="row discipline-pagination-position">
+    <Pagination
+        TotalPages="_totalPages"
+        ActivePageNumber="_pageNumber"
+        Size="PaginationSize.Small"
+        Alignment="Alignment.Center"
+        FirstLinkIcon="IconName.ChevronDoubleLeft"
+        PreviousLinkIcon="IconName.ChevronLeft"
+        NextLinkIcon="IconName.ChevronRight"
+        LastLinkIcon="IconName.ChevronDoubleRight"
+        Class="discipline-pagination-colors"
+        PageChanged="ChangePageAsync"/>
+</div>
+
+<DisciplineCreateButton
+    OnClickButtonCallback="OpenCreateFormModal"/>
+
+<ActivityRuleModalForm
+    @ref="_formModal"/>
 
 @code {
     private List<ActivityRuleDto> _activityRules = [];
     private int _pageNumber = 1;
     private int _totalPages = 1;
     private int _pageSize = 10;
+    private ActivityRuleModalForm _formModal;
 
     protected override async Task OnInitializedAsync()
         => await InitializeDataAsync();
@@ -34,4 +57,14 @@
         _pageNumber = data.MetaData.CurrentPage;
         _totalPages = data.MetaData.TotalPages;
     }
+    
+    private async Task ChangePageAsync(int newPageNumber)
+    {
+        _pageNumber = newPageNumber;
+        await InitializeDataAsync();
+    }
+
+    private void OpenCreateFormModal()
+        => _formModal.Open();
+    
 }
