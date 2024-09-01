@@ -29,7 +29,6 @@
 
     <ItemGroup>
       <Folder Include="Infrastructure\" />
-      <Folder Include="Ui\Pages\Users\" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,0 +1,109 @@
+@page "/sign-up"
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Services.Models.Users
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
+@using discipline_wasm_ui.Ui.Components.Headers
+@using discipline_wasm_ui.Ui.Components.Modals
+@inject IUserDispatcher UserDispatcher
+@inject NavigationManager NavigationManager
+@inject ToastService ToastService
+
+<DisciplinePageHeader Title="Sign in"/>
+<EditForm method="post" OnSubmit="Submit" Model="SignUpRequest" FormName="sing-up-form">
+    <div class="row">
+        <div class="col-md-6 offset-3">
+            <label for="sign-up-email">Email: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-email"
+                placeholder="Email"
+                @bind-Value="SignUpRequest!.Email"/>
+        </div>
+        <div class="col-md-6 offset-3">
+            <label for="sign-up-first-name">First name: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-first-name"
+                placeholder="First name"
+                @bind-Value="SignUpRequest!.FirstName"/>
+        </div>
+        <div class="col-md-6 offset-3">
+            <label for="sign-up-last-name">Last name: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-last-name"
+                placeholder="Last name"
+                @bind-Value="SignUpRequest!.LastName"/>
+        </div>
+        <div class="col-md-6 offset-3">
+            <label for="sign-up-password">Password: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-password"
+                placeholder="Password"
+                type="password"
+                @bind-Value="SignUpRequest!.Password"/>
+        </div>
+        <div class="col-md-6 offset-3">
+            <label for="sign-up-confirm-password">Confirm password: </label>
+            <InputText
+                class="form-control"
+                id="sign-up-confirm-password"
+                placeholder="Confirm password"
+                type="password"
+                @bind-Value="SignUpRequest!.Password"/>
+        </div>
+    </div>
+    <DisciplineSubmitButton 
+        Type="DisciplineSubmitButtonType.Page"/>
+</EditForm>
+
+<DisciplineModal
+    @ref="_disciplineModal"
+    Title="Thank you for register!"
+    Size="DisciplineModalSize.Small"
+    OnHidingCallback="NavigateToMainPage">
+    <Body>
+        Please, sign in and pick subscription.
+    </Body>
+    <Footer>
+        <div class="row">
+            <div class="text-center">
+                <DisciplineTextButton
+                    Text="Sign in"
+                    Color="DisciplineButtonColor.Light"
+                    OnClickButtonCallback="NavigateToSignIn"/>
+            </div>
+        </div>
+    </Footer>
+</DisciplineModal>
+
+@code {
+    private DisciplineModal _disciplineModal;
+    
+    [SupplyParameterFromForm]
+    public SignUpRequest SignUpRequest { get; set; } = new();
+    
+    private async Task Submit()
+    {
+        var response = await UserDispatcher.SignUp(SignUpRequest);
+        if (response.IsValid)
+        {
+            _disciplineModal.Open();
+        }
+        else
+        {
+            ToastService.Notify(response.Message.ToDangerToastMessage());
+        }
+    }
+
+    private void NavigateToMainPage()
+        => NavigationManager.NavigateTo("/");
+
+    private void NavigateToSignIn()
+        => NavigationManager.NavigateTo("sign-in");
+
+}

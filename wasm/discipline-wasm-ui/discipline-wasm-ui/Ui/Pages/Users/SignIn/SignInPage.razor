@@ -6,12 +6,13 @@
 @using discipline_wasm_ui.Services.Models.Users
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Enums
+@using discipline_wasm_ui.Ui.Components.Headers
 @inject IUserDispatcher UserDispatcher;
 @inject ILocalStorageAccessor LocalStorageAccessor;
 @inject ToastService ToastService
 @inject NavigationManager NavigationManager
 
-
+<DisciplinePageHeader Title="Sign in"/>
 <div class="row pt-2">
     <div class="col-md-6 offset-3">
         <EditForm
