@@ -54,5 +54,6 @@ internal sealed class DisciplineUserDispatcher(
     }
 
     public async Task<ResponseDto> CreateSubscriptionOrder(CreateSubscriptionOrderRequest request)
-        => await disciplineClientFacade.PostToResponseDtoAsync($"/users/create-subscription-order", request);
+        => await disciplineClientFacade.PostToResponseDtoAsync($"/users/create-subscription-order", request, 
+            "Subscription order created");
 }

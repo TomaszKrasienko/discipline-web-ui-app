@@ -1,9 +1,14 @@
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using discipline_wasm_ui.Infrastructure.Services.Enums
 @using discipline_wasm_ui.Services.Models.Users
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Enums
 @inject IUserDispatcher UserDispatcher;
+@inject ToastService ToastService;
+@inject NavigationManager NavigationManager;
+
 <EditForm
     OnSubmit="OrderSubscriptionConfirmed"
     Model="SubscriptionOrderRequest"
@@ -34,7 +39,7 @@
             class="form-control"
             id="order-card-cvv-number"
             placeholder="Card cvv number"
-            @bind-Value="SubscriptionOrderRequest.CardNumber"/>
+            @bind-Value="SubscriptionOrderRequest.CardCvvNumber"/>
     </div>
     <div class="row">
         <DisciplineSubmitButton 
@@ -57,7 +62,11 @@
     private async Task OrderSubscriptionConfirmed()
     {
         SubscriptionOrderRequest.SubscriptionId = SubscriptionId;
-        await UserDispatcher.CreateSubscriptionOrder(SubscriptionOrderRequest);
-        //TODO: Toast
+        var response = await UserDispatcher.CreateSubscriptionOrder(SubscriptionOrderRequest);
+        response.ToToastMessage();
+        if (response.IsValid)
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }

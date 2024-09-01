@@ -1,4 +1,9 @@
 @using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Auth.Token
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ITokenProvider TokenProvider
+
 <Tooltip
     Class="me-4"
     Placement="TooltipPlacement.Bottom"
@@ -13,12 +18,32 @@
             aria-expanded="false">
             <i class="bi bi-file-person"></i>
         </button>
-        <div class="dropdown-menu dropdown-menu-dark me-5" aria-labelledby="dropdownMenuButton"> 
-            <a class="dropdown-item" href="sign-in">Sign-in</a>
-        </div>
+        @if (!_isAuthenticated)
+        {
+            <div class="dropdown-menu dropdown-menu-dark me-5" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="sign-in">Sign-in</a>
+            </div>
+        }
+        else
+        {
+            <div class="dropdown-menu dropdown-menu-dark me-5" aria-labelledby="dropdownMenuButton">
+                <button class="dropdown-item" @onclick="SignOut">Sign-out</button>
+            </div>
+        }
     </div>
 </Tooltip>
 
 @code {
+    private bool _isAuthenticated;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isAuthenticated = state?.User?.Identity?.IsAuthenticated ?? false;
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task SignOut()
+        => await TokenProvider.RemoveToken();
     
 }

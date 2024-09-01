@@ -48,7 +48,8 @@
         {
             var tokens = (TokensDto)result.Result!;
             await LocalStorageAccessor.SetItemAsync(tokens);
-            NavigationManager.NavigateTo("/", forceLoad:true);
+            StateHasChanged();
+            NavigationManager.NavigateTo("/", forceLoad: true);
         }
         else
         {

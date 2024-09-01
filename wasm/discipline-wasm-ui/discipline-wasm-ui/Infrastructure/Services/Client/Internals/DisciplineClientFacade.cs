@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
+using discipline_wasm_ui.Infrastructure.Auth.Token;
 using discipline_wasm_ui.Infrastructure.Services.Client.Abstractions;
 using discipline_wasm_ui.Infrastructure.Services.DTOs;
-using discipline_wasm_ui.Infrastructure.Storage.Abstractions;
 using Microsoft.AspNetCore.Components;
 
 namespace discipline_wasm_ui.Infrastructure.Services.Client.Internals;
@@ -10,7 +10,7 @@ namespace discipline_wasm_ui.Infrastructure.Services.Client.Internals;
 internal sealed class DisciplineResponseFacade(
     IDisciplineClient disciplineAppClient,
     NavigationManager navigationManager,
-    ILocalStorageAccessor localStorageAccessor) : IDisciplineClientFacade
+    ITokenProvider tokenProvider) : IDisciplineClientFacade
 {
     public async Task<HttpResponseMessage> GetAsync(string path)
     {
@@ -30,19 +30,19 @@ internal sealed class DisciplineResponseFacade(
         return await result?.Content?.ReadFromJsonAsync<T>()!;
     }
 
-    public async Task<ResponseDto> PostToResponseDtoAsync<T>(string path, T t) where T : class
-        => await ToResponseDto(await disciplineAppClient.PostAsync(path, t));
+    public async Task<ResponseDto> PostToResponseDtoAsync<T>(string path, T t, string successMessage = null) where T : class
+        => await ToResponseDto(await disciplineAppClient.PostAsync(path, t), successMessage);
 
-    public async Task<ResponseDto> PutToResponseDtoAsync<T>(string path, T t) where T : class
-        => await ToResponseDto(await disciplineAppClient.PutAsync(path, t));
+    public async Task<ResponseDto> PutToResponseDtoAsync<T>(string path, T t, string successMessage = null) where T : class
+        => await ToResponseDto(await disciplineAppClient.PutAsync(path, t), successMessage);
 
-    public async Task<ResponseDto> PatchToResponseDtoAsync(string path)
-        => await ToResponseDto(await disciplineAppClient.PatchAsync(path));
+    public async Task<ResponseDto> PatchToResponseDtoAsync(string path, string successMessage = null)
+        => await ToResponseDto(await disciplineAppClient.PatchAsync(path), successMessage);
 
-    public async Task<ResponseDto> DeleteToResponseDtoAsync(string path)
-        => await ToResponseDto(await disciplineAppClient.DeleteAsync(path));
+    public async Task<ResponseDto> DeleteToResponseDtoAsync(string path, string successMessage = null)
+        => await ToResponseDto(await disciplineAppClient.DeleteAsync(path), successMessage);
 
-    private async Task<ResponseDto> ToResponseDto(HttpResponseMessage response)
+    private async Task<ResponseDto> ToResponseDto(HttpResponseMessage response, string successMessage)
     {
         await CheckAuth(response);
         return response.StatusCode switch
@@ -61,7 +61,7 @@ internal sealed class DisciplineResponseFacade(
             case HttpStatusCode.Unauthorized:
             {
                 var tcs = new TaskCompletionSource<bool>();
-                await localStorageAccessor.RemoveAsync<TokensDto>();
+                await tokenProvider.RemoveToken();
                 navigationManager.NavigateTo("/sign-in", forceLoad: true);
                 await tcs.Task;
                 break;

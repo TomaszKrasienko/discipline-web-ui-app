@@ -11,4 +11,7 @@ internal sealed class TokenProvider(
         var tokens = await localStorageAccessor.GetItemAsync<TokensDto>();
         return tokens?.Token;
     }
+
+    public async Task RemoveToken()
+        => await localStorageAccessor.RemoveAsync<TokensDto>();
 }
