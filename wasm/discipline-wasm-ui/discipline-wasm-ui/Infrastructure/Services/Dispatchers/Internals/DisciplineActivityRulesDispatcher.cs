@@ -13,7 +13,8 @@ internal sealed class DisciplineActivityRulesDispatcher(
     IWeekdayTranslator weekdayTranslator) : IActivityRulesDispatcher
 {
     public async Task<ResponseDto> CreateActivityRuleAsync(ActivityRuleRequest request)
-        => await disciplineClientFacade.PostToResponseDtoAsync("/activity-rules/create", request);
+        => await disciplineClientFacade.PostToResponseDtoAsync("/activity-rules/create", request,
+            "Activity rule created");
 
     public async Task<ResponseDto> EditActivityRuleAsync(Guid activityRuleId, ActivityRuleRequest request)
         => await disciplineClientFacade.PutToResponseDtoAsync($"/activity-rules/{activityRuleId}/edit", request);

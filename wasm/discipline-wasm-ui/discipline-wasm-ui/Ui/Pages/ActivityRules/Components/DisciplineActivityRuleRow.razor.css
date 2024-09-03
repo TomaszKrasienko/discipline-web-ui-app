@@ -1,0 +1,21 @@
+.discipline-row {
+    border-bottom: 1px solid #C4D4C9;
+}
+
+.discipline-row:hover {
+    background-color: #F5F4F5;
+}
+
+.discipline-row-header {
+    font-size: x-large;
+}
+
+.discipline-row-mode {
+    font-size: larger;
+}
+
+.discipline-vertical-center-align {
+    display: flex; 
+    justify-content: center; 
+    align-items: center
+}

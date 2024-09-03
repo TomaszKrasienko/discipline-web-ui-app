@@ -5,14 +5,17 @@
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Enums
 @using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
 @using discipline_wasm_ui.Ui.Components.Modals
 @inject IWeekdayTranslator WeekdayTranslator
 @inject IActivityRulesDispatcher ActivityRulesDispatcher
+@inject ToastService ToastService
 
 <DisciplineModal
     @ref="_formModal"
     Title="@(ActivityRuleId is null ? "New activity rule" : "Edit activity rule")"
-    Size="DisciplineModalSize.Large">
+    Size="DisciplineModalSize.Large"
+    OnHidingCallback="HideAsync">
     <Body>
     <div class="row">
         <div class="col-md-8 offset-2">
@@ -43,25 +46,26 @@
                 </div>
                 @if (ActivityRuleRequest.Mode == ModeWithDays)
                 {
-
-                    <Dropdown Color="DropdownColor.Secondary" AutoClose="false">
-                        <DropdownToggleButton>Days</DropdownToggleButton>
-                        <DropdownMenu>
-                            @foreach (var weekday in _weekdays)
-                            {
-                                <span @onclick="() => OnWeekdayCheckChanged(weekday)">
-                                    <div class="form-check">
-                                        <InputCheckbox
-                                            @bind-Value="weekday!.IsChecked">
-                                        </InputCheckbox>
-                                        <label class="form-check-label">
-                                            @weekday.Name
-                                        </label>
-                                    </div>
-                                </span>
-                            }
-                        </DropdownMenu>
-                    </Dropdown>
+                    <div class="text-center pt-2">
+                        <Dropdown AutoClose="false" Color="DropdownColor.Light">
+                            <DropdownToggleButton>Days</DropdownToggleButton>
+                            <DropdownMenu>
+                                @foreach (var weekday in _weekdays)
+                                {
+                                    <span @onclick="() => OnWeekdayCheckChanged(weekday)">
+                                        <div class="form-check">
+                                            <InputCheckbox
+                                                @bind-Value="weekday!.IsChecked">
+                                            </InputCheckbox>
+                                            <label class="form-check-label">
+                                                @weekday.Name
+                                            </label>
+                                        </div>
+                                    </span>
+                                }
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
                 }
                 <DisciplineSubmitButton
                     Type="DisciplineSubmitButtonType.Modal"/>
@@ -77,16 +81,20 @@
     private List<ActivityRuleModeDto> _activityRuleModes = [];
     private List<WeekdayDto> _weekdays = [];
     private DisciplineModal _formModal = default;
-
+    
     [SupplyParameterFromForm] 
     public ActivityRuleRequest ActivityRuleRequest { get; set; } = new();
     
     [Parameter] 
     public Guid? ActivityRuleId { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnHidingCallback { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         _activityRuleModes = await ActivityRulesDispatcher.GetActivityRuleModesAsync();
+        ActivityRuleRequest.Mode = _activityRuleModes[0].Key;
     }
 
     public void Open()
@@ -106,6 +114,15 @@
 
     private async Task Submit()
     {
-        
+        var response = await ActivityRulesDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            await _formModal.CloseAsync();
+        }
     }
+
+    private async Task HideAsync()
+        => await OnHidingCallback.InvokeAsync();
+
 }

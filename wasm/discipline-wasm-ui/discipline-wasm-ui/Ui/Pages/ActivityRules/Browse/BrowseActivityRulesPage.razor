@@ -8,13 +8,16 @@
 @inject IActivityRulesDispatcher DisciplineAppDispatcher;
 
 <PageTitle>Activity rules list</PageTitle>
-<DisciplinePageHeader Title="Activity rules list"/>
+<DisciplinePageHeader 
+    Title="Activity rules list"/>
 <div class="row">
+    <div class="col-md-8 offset-2">
     @foreach (var activityRule in _activityRules)
     {
         <DisciplineActivityRuleRow
             ActivityRule="activityRule"/>
     }
+    </div>
 </div>
 <div class="row discipline-pagination-position">
     <Pagination
@@ -34,7 +37,8 @@
     OnClickButtonCallback="OpenCreateFormModal"/>
 
 <ActivityRuleModalForm
-    @ref="_formModal"/>
+    @ref="_formModal"
+    OnHidingCallback="ModalFormHidden"/>
 
 @code {
     private List<ActivityRuleDto> _activityRules = [];
@@ -66,5 +70,7 @@
 
     private void OpenCreateFormModal()
         => _formModal.Open();
-    
+
+    private async Task ModalFormHidden()
+        => await InitializeDataAsync();
 }

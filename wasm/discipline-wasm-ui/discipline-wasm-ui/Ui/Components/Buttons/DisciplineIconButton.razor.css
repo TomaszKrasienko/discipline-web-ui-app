@@ -4,7 +4,15 @@
 }
 
 .discipline-icon-red {
-    color: darkred;
+    color: #391010;
+}
+
+.discipline-icon-red:hover {
+    color: #967371;
+}
+
+.discipline-icon-red:active {
+    color: #967371;
 }
 
 .discipline-icon-dark {
@@ -21,11 +29,4 @@
     color: #1C211D;
 }
 
-.delete-icon-button:hover{
-    cursor: pointer;
-}
-
-.delete-icon-button:active{
-    color: white;
-}
 

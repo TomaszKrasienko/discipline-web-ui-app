@@ -1,0 +1,61 @@
+@using discipline_wasm_ui.Infrastructure.Infrastructure.Weekdays.Extensions
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
+
+<div class="row discipline-row">
+    <span class="pb-1"
+        @onmouseover="OnMouseOver"
+        @onmouseout="OnMouseOut">
+        <div class="row">
+            <div class="col-md-1 discipline-vertical-center-align">
+                <i class="bi bi-arrow-right-circle-fill"></i>
+            </div>
+            <div class="col-md-9" @onclick="ShowEditActivityRuleAsync">
+                <div class="row">
+                    <span class="discipline-row-header">
+                        @ActivityRule?.Title
+                    </span>
+                    <span class="discipline-row-mode">
+                        @ActivityRule?.Mode @ActivityRule.AsCheckedWeekdaysString("-")
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-2 text-center discipline-vertical-center-align">
+                @if (_isHover)
+                {
+                    <DisciplineIconButton
+                        IconClass="bi-trash-fill"
+                        Color="DisciplineIconButtonColor.Red"
+                        OnClickButtonCallback="DeleteActivityRuleAsync"/>
+                }
+            </div>
+        </div>
+    </span>
+</div>
+
+@code {
+    [Parameter] 
+    public ActivityRuleDto ActivityRule { get; set; }
+    
+    [Parameter] 
+    public EventCallback<ActivityRuleDto> OnActivityRuleEditCallback { get; set; }
+    
+    [Parameter] 
+    public EventCallback<Guid> OnActivityRuleDeleteCallback { get; set; }
+    
+    private bool _isHover = false;
+
+    private void OnMouseOver()
+        => _isHover = true;
+
+    private void OnMouseOut()
+        => _isHover = false;
+
+    private async Task ShowEditActivityRuleAsync()
+        => await OnActivityRuleEditCallback.InvokeAsync(ActivityRule);
+
+    private async Task DeleteActivityRuleAsync()
+        => await OnActivityRuleDeleteCallback.InvokeAsync(ActivityRule!.Id);
+
+}
