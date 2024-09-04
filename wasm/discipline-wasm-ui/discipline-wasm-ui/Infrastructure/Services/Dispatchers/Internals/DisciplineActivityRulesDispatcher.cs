@@ -17,10 +17,12 @@ internal sealed class DisciplineActivityRulesDispatcher(
             "Activity rule created");
 
     public async Task<ResponseDto> EditActivityRuleAsync(Guid activityRuleId, ActivityRuleRequest request)
-        => await disciplineClientFacade.PutToResponseDtoAsync($"/activity-rules/{activityRuleId}/edit", request);
+        => await disciplineClientFacade.PutToResponseDtoAsync($"/activity-rules/{activityRuleId}/edit", request,
+            "Activity rule updated");
 
     public async Task<ResponseDto> DeleteActivityRuleAsync(Guid activityRuleId)
-        => await disciplineClientFacade.DeleteToResponseDtoAsync($"/activity-rules/{activityRuleId}/delete");
+        => await disciplineClientFacade.DeleteToResponseDtoAsync($"/activity-rules/{activityRuleId}/delete",
+            "Activity rule deleted");
 
     public async Task<ActivityRuleDto> GetCreateActivityRuleByIdAsync(Guid activityRuleId)
         => await disciplineClientFacade.GetAsResultAsync<ActivityRuleDto>($"activity-rules/{activityRuleId}");

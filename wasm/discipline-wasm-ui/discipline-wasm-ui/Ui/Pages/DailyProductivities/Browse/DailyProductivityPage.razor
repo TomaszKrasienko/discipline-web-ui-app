@@ -1,0 +1,61 @@
+@page "/daily-productivity"
+@using discipline_wasm_ui.Ui.Components.Headers
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Pages.DailyProductivities.Components
+@inject IDailyProductivityDispatcher DailyProductivityDispatcher;
+
+<PageTitle>Daily productivity</PageTitle>
+<DisciplinePageHeader
+    Title="Daily productivity"/>
+<div class="row">
+    <div class="col-md-4 offset-4">
+        <div class="text-center">
+            <DateInput
+                TValue="DateOnly"
+                Id="daily-productive-day"
+                Value="_day"
+                ValueExpression="() => _day"
+                ValueChanged="async (value) => await OnDateChanged(value)"/>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8 offset-2">
+        @foreach (var activity in _dailyProductivity.Activities)
+        {
+            <DisciplineActivityRow
+                Activity="activity"/>        
+        }
+    </div>
+</div>
+
+<DisciplineCreateButton
+    OnClickButtonCallback="OpenCreateFormModal"/>
+
+<DisciplineActivityModalForm
+    @ref="_formModal"
+    Day="_day"/>
+
+@code {
+    private DateOnly _day = DateOnly.FromDateTime(DateTime.Now);
+    private DailyProductivityDto _dailyProductivity = new DailyProductivityDto();
+    private DisciplineActivityModalForm _formModal;
+    
+    private async Task OnDateChanged(DateOnly date)
+    {
+        if (!(_day == date))
+        {
+            _day = date;
+            await InitializeDataAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task InitializeDataAsync()
+        => _dailyProductivity = await DailyProductivityDispatcher.GetDailyProductivityByDay(_day);
+
+    private void OpenCreateFormModal()
+        => _formModal.Open();
+}

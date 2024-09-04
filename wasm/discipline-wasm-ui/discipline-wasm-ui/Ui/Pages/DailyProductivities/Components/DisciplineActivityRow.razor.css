@@ -1,0 +1,11 @@
+.discipline-row {
+    border-bottom: 1px solid #C4D4C9;
+}
+
+.discipline-row:hover {
+    background-color: #F5F4F5;
+}
+
+.discipline-row {
+    font-size: x-large;
+}

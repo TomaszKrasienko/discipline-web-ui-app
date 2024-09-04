@@ -38,8 +38,12 @@
 <DisciplineCreateButton
     OnClickButtonCallback="OpenCreateFormModal"/>
 
-<ActivityRuleModalForm
-    @ref="_formModal"
+<DisciplineActivityRuleModalForm
+    @ref="_createFormModal"
+    OnHidingCallback="ModalFormHidden"/>
+
+<DisciplineActivityRuleModalForm
+    @ref="_editFromModal"
     OnHidingCallback="ModalFormHidden"/>
 
 @code {
@@ -47,7 +51,8 @@
     private int _pageNumber = 1;
     private int _totalPages = 1;
     private int _pageSize = 10;
-    private ActivityRuleModalForm _formModal;
+    private DisciplineActivityRuleModalForm _createFormModal;
+    private DisciplineActivityRuleModalForm _editFromModal;
 
     protected override async Task OnInitializedAsync()
         => await InitializeDataAsync();
@@ -71,12 +76,12 @@
     }
 
     private void OpenCreateFormModal()
-        => _formModal.Open();
+        => _createFormModal.Open();
 
     private void OpenEditFormModal(Guid activityRuleId)
     {
-        _formModal.ActivityRuleId = activityRuleId;
-        _formModal.Open();
+        _editFromModal.ActivityRuleId = activityRuleId;
+        _editFromModal.Open();
     }
 
     private async Task DeleteActivityRule(Guid activityRuleId)

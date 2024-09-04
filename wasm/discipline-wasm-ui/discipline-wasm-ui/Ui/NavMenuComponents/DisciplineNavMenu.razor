@@ -17,6 +17,10 @@
             IconClass="bi-file-ruled"
             OnClickButtonCallback="NavigateToActivityRules"/>
         <DisciplineNavButton
+            Text="Daily productivity"
+            IconClass="bi-list-task"
+            OnClickButtonCallback="NavigateToDailyProductivity"/>
+        <DisciplineNavButton
             Text="Calendar"
             IconClass="bi-calendar-check"
             OnClickButtonCallback="NavigateToActivityRules"/>
@@ -38,7 +42,9 @@
     }
 
     private void NavigateToActivityRules()
-    {
-        NavigationManager.NavigateTo("/activity-rules-list");
-    }
+        => NavigationManager.NavigateTo("/activity-rules-list");
+
+    private void NavigateToDailyProductivity()
+        => NavigationManager.NavigateTo("/daily-productivity");
+
 }  

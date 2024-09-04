@@ -47,7 +47,7 @@ internal sealed class DisciplineResponseFacade(
         await CheckAuth(response);
         return response.StatusCode switch
         {
-            HttpStatusCode.OK or HttpStatusCode.Created => ResponseDto.GetValid(),
+            HttpStatusCode.OK or HttpStatusCode.Created => ResponseDto.GetValid(successMessage),
             HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity => ResponseDto.GetInvalid(
                 (await response?.Content?.ReadFromJsonAsync<ErrorResponseDto>()!)!.Message!),
             _ => ResponseDto.GetInvalid()

@@ -22,19 +22,19 @@
         <div class="col-md-8 offset-2">
             <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
                 <div class="pt-2">
-                    <label for="new-activity-title">Title: </label>
+                    <label for="new-activity-rule-title">Title: </label>
                     <InputText
                         class="form-control"
-                        id="new-activity-title"
+                        id="new-activity-rule-title"
                         placeholder="Title"
-                        @bind-Value="ActivityRuleRequest!.Title"/>
+                        @bind-Value="ActivityRuleRequest.Title"/>
                 </div>
                 <div class="pt-2">
-                    <label class="form-label" for="new-activity-mode">Mode: </label>
+                    <label class="form-label" for="new-activity-rule-mode">Mode: </label>
                     <InputSelect
                         class="form-control"
-                        id="new-activity-mode"
-                        Value="ActivityRuleRequest!.Mode"
+                        id="new-activity-rule-mode"
+                        Value="ActivityRuleRequest.Mode"
                         ValueExpression="() => ActivityRuleRequest.Mode"
                         ValueChanged="(string mode) => OnModeChanged(mode)">
                         @foreach (var mode in _activityRuleModes)
@@ -129,13 +129,34 @@
 
     private async Task Submit()
     {
-        var response = await ActivityRulesDispatcher.CreateActivityRuleAsync(ActivityRuleRequest);
+        ActivityRuleRequest.SelectedDays = null;
+        ActivityRuleRequest.SelectedDays = _weekdays
+            .Where(x => x.IsChecked)
+            .Select(x => x.Id)
+            .ToList();
+        ResponseDto response;
+        if (ActivityRuleId is null)
+        {
+            response = await AddAsync();
+        }
+        else
+        {
+            response = await EditAsync();
+        }
         ToastService.Notify(response.ToToastMessage());
         if (response.IsValid)
         {
             await _formModal.CloseAsync();
         }
     }
+
+    private async Task<ResponseDto> AddAsync()
+        => await ActivityRulesDispatcher
+            .CreateActivityRuleAsync(ActivityRuleRequest);
+
+    private async Task<ResponseDto> EditAsync()
+        => await ActivityRulesDispatcher
+            .EditActivityRuleAsync(ActivityRuleId.Value, ActivityRuleRequest);
 
     private async Task HideAsync()
         => await OnHidingCallback.InvokeAsync();
