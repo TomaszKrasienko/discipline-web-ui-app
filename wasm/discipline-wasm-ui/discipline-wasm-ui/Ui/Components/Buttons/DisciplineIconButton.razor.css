@@ -1,6 +1,7 @@
 .discipline-icon-button{
     font-size: x-large;
     border-radius: 5px;
+    background-color: transparent;
 }
 
 .discipline-icon-red {
@@ -8,7 +9,8 @@
 }
 
 .discipline-icon-red:hover {
-    color: #967371;
+    color: #967371!important;
+    background-color: green;
 }
 
 .discipline-icon-red:active {

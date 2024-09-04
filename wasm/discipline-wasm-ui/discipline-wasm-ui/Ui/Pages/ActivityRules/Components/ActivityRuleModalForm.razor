@@ -6,6 +6,7 @@
 @using discipline_wasm_ui.Ui.Components.Enums
 @using BlazorBootstrap
 @using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Mappers
 @using discipline_wasm_ui.Ui.Components.Modals
 @inject IWeekdayTranslator WeekdayTranslator
 @inject IActivityRulesDispatcher ActivityRulesDispatcher
@@ -95,6 +96,20 @@
     {
         _activityRuleModes = await ActivityRulesDispatcher.GetActivityRuleModesAsync();
         ActivityRuleRequest.Mode = _activityRuleModes[0].Key;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ActivityRuleId is not null)
+        {
+            await InitializeActivityRuleAsync();
+        }
+    }
+
+    private async Task InitializeActivityRuleAsync()
+    {
+        var activityRuleDto = await ActivityRulesDispatcher.GetCreateActivityRuleByIdAsync(ActivityRuleId.Value);
+        ActivityRuleRequest = activityRuleDto.AsRequest();
     }
 
     public void Open()

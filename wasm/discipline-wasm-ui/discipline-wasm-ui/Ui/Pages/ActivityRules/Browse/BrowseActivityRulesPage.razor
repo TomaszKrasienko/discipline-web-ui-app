@@ -15,7 +15,9 @@
     @foreach (var activityRule in _activityRules)
     {
         <DisciplineActivityRuleRow
-            ActivityRule="activityRule"/>
+            ActivityRule="activityRule"
+            OnActivityRuleRowClickCallback="() => OpenEditFormModal(activityRule.Id)"
+            OnActivityRuleDeleteClickCallback="async () => await DeleteActivityRule(activityRule.Id)"/>
     }
     </div>
 </div>
@@ -70,6 +72,18 @@
 
     private void OpenCreateFormModal()
         => _formModal.Open();
+
+    private void OpenEditFormModal(Guid activityRuleId)
+    {
+        _formModal.ActivityRuleId = activityRuleId;
+        _formModal.Open();
+    }
+
+    private async Task DeleteActivityRule(Guid activityRuleId)
+    {
+        await DisciplineAppDispatcher.DeleteActivityRuleAsync(activityRuleId);
+        await InitializeDataAsync();
+    }
 
     private async Task ModalFormHidden()
         => await InitializeDataAsync();

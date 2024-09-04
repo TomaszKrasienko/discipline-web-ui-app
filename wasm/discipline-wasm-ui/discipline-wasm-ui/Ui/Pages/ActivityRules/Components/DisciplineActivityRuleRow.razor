@@ -4,14 +4,12 @@
 @using discipline_wasm_ui.Ui.Components.Enums
 
 <div class="row discipline-row">
-    <span class="pb-1"
-        @onmouseover="OnMouseOver"
-        @onmouseout="OnMouseOut">
+    <span class="pb-1">
         <div class="row">
             <div class="col-md-1 discipline-vertical-center-align">
                 <i class="bi bi-arrow-right-circle-fill"></i>
             </div>
-            <div class="col-md-9" @onclick="ShowEditActivityRuleAsync">
+            <div class="col-md-9" @onclick="RowClickedAsync">
                 <div class="row">
                     <span class="discipline-row-header">
                         @ActivityRule?.Title
@@ -22,13 +20,10 @@
                 </div>
             </div>
             <div class="col-md-2 text-center discipline-vertical-center-align">
-                @if (_isHover)
-                {
-                    <DisciplineIconButton
-                        IconClass="bi-trash-fill"
-                        Color="DisciplineIconButtonColor.Red"
-                        OnClickButtonCallback="DeleteActivityRuleAsync"/>
-                }
+                <DisciplineIconButton
+                    IconClass="bi-trash-fill"
+                    Color="DisciplineIconButtonColor.Red"
+                    OnClickButtonCallback="DeleteClickedAsync"/>
             </div>
         </div>
     </span>
@@ -39,23 +34,14 @@
     public ActivityRuleDto ActivityRule { get; set; }
     
     [Parameter] 
-    public EventCallback<ActivityRuleDto> OnActivityRuleEditCallback { get; set; }
+    public EventCallback OnActivityRuleRowClickCallback { get; set; }
     
     [Parameter] 
-    public EventCallback<Guid> OnActivityRuleDeleteCallback { get; set; }
-    
-    private bool _isHover = false;
+    public EventCallback OnActivityRuleDeleteClickCallback { get; set; }
 
-    private void OnMouseOver()
-        => _isHover = true;
+    private async Task RowClickedAsync()
+        => await OnActivityRuleRowClickCallback.InvokeAsync(ActivityRule);
 
-    private void OnMouseOut()
-        => _isHover = false;
-
-    private async Task ShowEditActivityRuleAsync()
-        => await OnActivityRuleEditCallback.InvokeAsync(ActivityRule);
-
-    private async Task DeleteActivityRuleAsync()
-        => await OnActivityRuleDeleteCallback.InvokeAsync(ActivityRule!.Id);
-
+    private async Task DeleteClickedAsync()
+        => await OnActivityRuleDeleteClickCallback.InvokeAsync(ActivityRule!.Id);
 }

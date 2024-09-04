@@ -11,3 +11,5 @@ builder.Services.AddConfiguration();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();
+
+//https://coolors.co/967371-391010-131613-1c211d-546357-c4d4c9-f5f4f5
