@@ -26,8 +26,16 @@
     background-color: #546357;
 }
 
-.discipline-icon-primary {
+.discipline-icon-light {
     color: #1C211D;
+    background-color: transparent;
 }
+
+.discipline-icon-light:hover {
+    color: #546357;
+    background-color: transparent;
+}
+
+
 
 

@@ -23,7 +23,8 @@
                 <DisciplineIconButton
                     IconClass="bi-file-earmark"
                     Color="DisciplineIconButtonColor.Light"
-                    OnClickButtonCallback="DeleteClickedAsync"/>
+                    OnClickButtonCallback="AddActivityFromRuleAsync"
+                    TooltipText="Add activity from rule"/>
             </div>
             <div class="col-md-1 text-center discipline-vertical-center-align">
                 <DisciplineIconButton
@@ -43,11 +44,18 @@
     public EventCallback OnActivityRuleRowClickCallback { get; set; }
     
     [Parameter] 
-    public EventCallback OnActivityRuleDeleteClickCallback { get; set; }
+    public EventCallback OnActivityRuleDeleteClickCallback { get; set; } 
+    
+    [Parameter]
+    public EventCallback OnActivityRuleAddFromRuleCallback { get; set; }
 
     private async Task RowClickedAsync()
-        => await OnActivityRuleRowClickCallback.InvokeAsync(ActivityRule);
+        => await OnActivityRuleRowClickCallback.InvokeAsync();
 
     private async Task DeleteClickedAsync()
-        => await OnActivityRuleDeleteClickCallback.InvokeAsync(ActivityRule!.Id);
+        => await OnActivityRuleDeleteClickCallback.InvokeAsync();
+
+    private async Task AddActivityFromRuleAsync()
+        => await OnActivityRuleAddFromRuleCallback.InvokeAsync();
+
 }
