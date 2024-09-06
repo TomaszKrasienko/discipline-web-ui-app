@@ -11,10 +11,11 @@
 <DisciplineModal
     @ref="_formModal"
     Title="New activity"
-    Size="DisciplineModalSize.Large">
+    Size="DisciplineModalSize.Large" 
+    OnHidingCallback="HideAsync">
     <Body>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8 offset-2">
             <EditForm method="post" OnSubmit="Submit" Model="ActivityRequest">
                 <div class="pt-2">
                     <label for="new-activity-day">Day: </label>
@@ -47,10 +48,13 @@
     
     [Parameter] 
     public DateOnly? Day { get; set; }
+    
+    [Parameter]
+    public EventCallback OnHidingCallback { get; set; }
 
     protected override void OnInitialized()
     {
-        if (Day is null)
+        if (Day is not null)
         {
             ActivityRequest.Day = Day.Value;
         }
@@ -68,4 +72,8 @@
             await _formModal.CloseAsync();
         }
     }
+
+    private async Task HideAsync()
+        => await OnHidingCallback.InvokeAsync();
+
 }

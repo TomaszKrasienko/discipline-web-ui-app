@@ -6,15 +6,17 @@
 @inject ToastService ToastService
 
 <div class="row discipline-row">
-    <span class="pb-1">
+    <span class="pb-1 pt-1">
         <div class="row">
-            <div class="col-md-10 discipline-row" @onclick="RowClickedAsync">
-                <div class="col-md-2">
-                    <DisciplineCheckbox
-                        IsChecked="Activity.IsChecked"/>
-                </div>
-                <div class="col-md-10 discipline-row">
-                    @Activity.Title
+            <div class="col-md-10" @onclick="RowClickedAsync">
+                <div class="row">
+                    <div class="col-md-2">
+                        <DisciplineCheckbox
+                            IsChecked="Activity.IsChecked"/>
+                    </div>
+                    <div class="col-md-10">
+                        @Activity.Title
+                    </div>
                 </div>
             </div>
         </div>

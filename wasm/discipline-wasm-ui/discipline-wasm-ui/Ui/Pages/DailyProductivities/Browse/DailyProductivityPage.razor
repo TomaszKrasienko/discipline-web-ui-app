@@ -9,7 +9,7 @@
 <PageTitle>Daily productivity</PageTitle>
 <DisciplinePageHeader
     Title="Daily productivity"/>
-<div class="row">
+<div class="row pb-3">
     <div class="col-md-4 offset-4">
         <div class="text-center">
             <DateInput
@@ -23,10 +23,13 @@
 </div>
 <div class="row">
     <div class="col-md-8 offset-2">
-        @foreach (var activity in _dailyProductivity.Activities)
+        @if (_dailyProductivity is not null)
         {
-            <DisciplineActivityRow
-                Activity="activity"/>        
+            @foreach (var activity in _dailyProductivity.Activities)
+            {
+                <DisciplineActivityRow
+                    Activity="activity"/>
+            }
         }
     </div>
 </div>
@@ -36,20 +39,30 @@
 
 <DisciplineActivityModalForm
     @ref="_formModal"
-    Day="_day"/>
+    Day="_day"
+    OnHidingCallback="OnHideFormModalAsync"/>
 
 @code {
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now);
-    private DailyProductivityDto _dailyProductivity = new DailyProductivityDto();
+    private DailyProductivityDto _dailyProductivity;
     private DisciplineActivityModalForm _formModal;
-    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeDataAsync();
+            StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
     private async Task OnDateChanged(DateOnly date)
     {
         if (!(_day == date))
         {
             _day = date;
             await InitializeDataAsync();
-            StateHasChanged();
         }
     }
 
@@ -58,4 +71,7 @@
 
     private void OpenCreateFormModal()
         => _formModal.Open();
+
+    private async Task OnHideFormModalAsync()
+        => await InitializeDataAsync();
 }
