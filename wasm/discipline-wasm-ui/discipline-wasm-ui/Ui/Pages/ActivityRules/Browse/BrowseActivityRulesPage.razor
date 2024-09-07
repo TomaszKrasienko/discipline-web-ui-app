@@ -3,9 +3,13 @@
 @using discipline_wasm_ui.Infrastructure.Services.Models
 @using discipline_wasm_ui.Ui.Components.Headers
 @using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.Models.ActivityRules
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Pages.ActivityRules.Components
-@inject IActivityRulesDispatcher DisciplineAppDispatcher;
+@inject IActivityRulesDispatcher ActivityRulesDispatcher;
+@inject IDailyProductivityDispatcher DailyProductivityDispatcher;
+@inject ToastService ToastService;
 
 <PageTitle>Activity rules list</PageTitle>
 <DisciplinePageHeader 
@@ -17,7 +21,8 @@
         <DisciplineActivityRuleRow
             ActivityRule="activityRule"
             OnActivityRuleRowClickCallback="() => OpenEditFormModal(activityRule.Id)"
-            OnActivityRuleDeleteClickCallback="async () => await DeleteActivityRule(activityRule.Id)"/>
+            OnActivityRuleDeleteClickCallback="async() => await DeleteActivityRule(activityRule.Id)"
+            OnActivityRuleAddFromRuleCallback="async() => await AddActivityFromRuleAsync(activityRule.Id)"/>
     }
     </div>
 </div>
@@ -59,7 +64,7 @@
 
     private async Task InitializeDataAsync()
     {
-        var data = await DisciplineAppDispatcher.BrowseActivityRules(new PaginationRequest()
+        var data = await ActivityRulesDispatcher.BrowseActivityRules(new PaginationRequest()
         {
             PageNumber = _pageNumber,
             PageSize = _pageSize
@@ -86,8 +91,18 @@
 
     private async Task DeleteActivityRule(Guid activityRuleId)
     {
-        await DisciplineAppDispatcher.DeleteActivityRuleAsync(activityRuleId);
+        var response = await ActivityRulesDispatcher.DeleteActivityRuleAsync(activityRuleId);
+        ToastService.Notify(response.ToToastMessage());
         await InitializeDataAsync();
+    }
+
+    private async Task AddActivityFromRuleAsync(Guid activityRuleId)
+    {
+        var response = await DailyProductivityDispatcher.CreateFromActivityRule(new ActivityFromRuleRequest()
+        {
+            ActivityRuleId = activityRuleId
+        });
+        ToastService.Notify(response.ToToastMessage());
     }
 
     private async Task ModalFormHidden()

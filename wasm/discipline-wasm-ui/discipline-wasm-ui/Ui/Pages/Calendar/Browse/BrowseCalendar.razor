@@ -1,0 +1,94 @@
+@page "/browse-calendar"
+@using discipline_wasm_ui.Ui.Components.Headers
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Services.Dispatchers.Internals
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.UserCalendar.Enums
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Pages.Calendar.Components
+@inject IUserCalendarDispatcher UserCalendarDispatcher;
+
+<PageTitle>Calendar</PageTitle>
+<DisciplinePageHeader
+    Title="Calendar"/>
+<div class="row pb-3">
+    <div class="col-md-4 offset-4">
+        <DateInput
+            TValue="DateOnly"
+            Value="_day"
+            ValueExpression="() => _day"
+            ValueChanged="async (value) => await OnDateChanged(value)"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <DisciplineSubHeader Text="Important events"/>
+        @if (_userCalendar?.ImportantDates is not null)
+        {
+            @foreach (var item in _userCalendar.ImportantDates)
+            {
+                <EventCard
+                    ImportantDateDto="item"/>
+            }
+        }
+        <DisciplineSubHeader Text="Calendar events"/>
+        @if (_userCalendar?.CalendarEvents is not null)
+        {
+            @foreach (var item in _userCalendar.CalendarEvents)
+            {
+                <EventCard
+                    CalendarEventDto="item"/>
+            }
+        }
+        <DisciplineSubHeader Text="Meetings"/>
+        @if (_userCalendar?.Meetings is not null)
+        {
+            @foreach (var item in _userCalendar.Meetings)
+            {
+                <EventCard
+                    MeetingDto="item"/>
+            }
+        }
+    </div>
+</div>
+<DisciplineCreateDropUpButton
+    Options="_eventTypesDictionary"
+    OnClickCallback="CreateEventTypeClicked"/>
+
+@code {
+    private DateOnly _day = DateOnly.FromDateTime(DateTime.Now);
+    private UserCalendarDto _userCalendar;
+    private Dictionary<string, string> _eventTypesDictionary = new Dictionary<string, string>()
+    {
+        [EventType.CalendarEvent.ToString()] = "Calendar event",
+        [EventType.Meeting.ToString()] = "Meeting",
+        [EventType.ImportantDate.ToString()] = "Important date"
+    };
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeDataAsync();
+            StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }    
+
+    private async Task OnDateChanged(DateOnly date)
+    {
+        if (!(_day == date))
+        {
+            _day = date;
+            await InitializeDataAsync();
+        }
+    }
+
+    private async Task InitializeDataAsync()
+        => _userCalendar = await UserCalendarDispatcher.GetUserCalendarByDayAsync(_day);
+
+    private async Task CreateEventTypeClicked(string key)
+    {
+        Console.WriteLine(key);
+    }
+
+}

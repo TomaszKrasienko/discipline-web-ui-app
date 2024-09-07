@@ -9,5 +9,6 @@ internal static class Extensions
         => services
             .AddSingleton<IUserDispatcher, DisciplineUserDispatcher>()
             .AddSingleton<IActivityRulesDispatcher, DisciplineActivityRulesDispatcher>()
-            .AddSingleton<IDailyProductivityDispatcher, DailyProductivityDispatcher>();
+            .AddSingleton<IDailyProductivityDispatcher, DailyProductivityDispatcher>()
+            .AddSingleton<IUserCalendarDispatcher, UserCalendarDispatcher>();
 }

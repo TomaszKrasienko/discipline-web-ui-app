@@ -1,16 +1,13 @@
 @using discipline_wasm_ui.Ui.Components.Enums
-@using BlazorBootstrap
 
-<Tooltip 
-    Placement="TooltipPlacement.Auto"
-    Title="Create new">
-    <div class="discipline-create-btn-position">
-        <DisciplineIconButton
-            IconClass="bi-plus"
-            OnClickButtonCallback="ButtonClicked"
-            Color="DisciplineIconButtonColor.Dark"/>
-    </div>
-</Tooltip>
+
+<div class="discipline-create-btn-position">
+    <DisciplineIconButton
+        IconClass="bi-plus"
+        OnClickButtonCallback="ButtonClicked"
+        Color="DisciplineIconButtonColor.Dark"
+        TooltipText="Create new"/>
+</div>
 
 @code {
     [Parameter, EditorRequired]

@@ -9,7 +9,7 @@
             <div class="col-md-1 discipline-vertical-center-align">
                 <i class="bi bi-arrow-right-circle-fill"></i>
             </div>
-            <div class="col-md-9" @onclick="RowClickedAsync">
+            <div class="col-md-10" @onclick="RowClickedAsync">
                 <div class="row">
                     <span class="discipline-row-header">
                         @ActivityRule?.Title
@@ -19,18 +19,21 @@
                     </span>
                 </div>
             </div>
-            <div class="col-md-1 text-center discipline-vertical-center-align">
-                <DisciplineIconButton
-                    IconClass="bi-file-earmark"
-                    Color="DisciplineIconButtonColor.Light"
-                    OnClickButtonCallback="AddActivityFromRuleAsync"
-                    TooltipText="Add activity from rule"/>
-            </div>
-            <div class="col-md-1 text-center discipline-vertical-center-align">
-                <DisciplineIconButton
-                    IconClass="bi-trash-fill"
-                    Color="DisciplineIconButtonColor.Red"
-                    OnClickButtonCallback="DeleteClickedAsync"/>
+            <div class="col-md-1 text-end discipline-vertical-center-align">
+                <div class="pe-1">
+                    <DisciplineIconButton
+                        IconClass="bi-file-earmark"
+                        Color="DisciplineIconButtonColor.Light"
+                        OnClickButtonCallback="AddActivityFromRuleAsync"
+                        TooltipText="Add activity from rule"/>
+                </div>
+                <div class="pe-1">
+                    <DisciplineIconButton
+                        IconClass="bi-trash-fill"
+                        Color="DisciplineIconButtonColor.Red"
+                        OnClickButtonCallback="DeleteClickedAsync"
+                        TooltipText="Delete"/>
+                </div>
             </div>
         </div>
     </span>

@@ -1,7 +1,11 @@
 .discipline-icon-button{
     font-size: x-large;
-    border-radius: 5px;
+    width: 30px;
+    height: 30px;
     background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .discipline-icon-red {
