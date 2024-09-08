@@ -54,6 +54,10 @@
 <DisciplineCreateDropUpButton
     Options="_eventTypesDictionary"
     OnClickCallback="CreateEventTypeClicked"/>
+<CalendarEventModalForm
+    @ref="_calendarEventModalForm"
+    Day="_day"
+    OnHidingCallback="RefreshDataAsync"/>
 
 @code {
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now);
@@ -64,6 +68,8 @@
         [EventType.Meeting.ToString()] = "Meeting",
         [EventType.ImportantDate.ToString()] = "Important date"
     };
+    private CalendarEventModalForm _calendarEventModalForm;
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -86,9 +92,18 @@
     private async Task InitializeDataAsync()
         => _userCalendar = await UserCalendarDispatcher.GetUserCalendarByDayAsync(_day);
 
-    private async Task CreateEventTypeClicked(string key)
+    private void CreateEventTypeClicked(string key)
     {
-        Console.WriteLine(key);
+        EventType type;
+        switch (key)
+        {
+            case EventType.CalendarEvent.ToString():
+                
+        }
+        _calendarEventModalForm.Open();   
     }
+
+    private async Task RefreshDataAsync()
+        => await InitializeDataAsync();
 
 }
