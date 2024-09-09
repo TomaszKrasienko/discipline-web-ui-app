@@ -1,11 +1,24 @@
-.important-date-card-color {
+.discipline-card-title{
+    font-size: larger
+}
+
+.discipline-card-content {
+}
+
+.discipline-event-card {
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px
+}
+
+.discipline-important-date-card-color {
     border-color: #80805b;
 }
 
-.calendar-event-card-color {
+.discipline-calendar-event-card-color {
     border-color: #805b5b;
 }
 
-.meeting-card-color {
+.discipline-meeting-card-color {
     border-color: #5b5b80;
 }

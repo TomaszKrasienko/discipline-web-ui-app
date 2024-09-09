@@ -10,7 +10,7 @@ internal sealed class CustomAuthenticationStateProvider(
 {
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await tokenProvider.GetToken();
+        var token = await tokenProvider.GetTokenAsync();
         var identity = string.IsNullOrWhiteSpace(token)
             ? new ClaimsIdentity()
             : new ClaimsIdentity(ParseClaimsFromJwt(token), "authentication");

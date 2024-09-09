@@ -1,28 +1,30 @@
 @using System.Text
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
-<div class="event-card-border @GetEventCardColorClass() event-card-content">
-    <div class="card-title">
-        <div class="row">
-            <div class="col-md-8 text-start">
-                <span class="card-title">
-                    @GetTitle()
+<div class="pt-2">
+    <div class="discipline-event-card @GetEventCardColorClass()">
+        <div class="col-md-10 offset-1">
+            <div class="row">
+                <div class="col-md-8 text-start">
+                    <span class="discipline-card-title">
+                        @GetTitle()
+                    </span>
+                </div>
+                <div class="col-md-4 text-end">
+                    @GetMeetingTimeSpan()
+                </div>
+            </div>
+            <div class="row text-start discipline-card-content">
+                <span>
+                    @if (CalendarEventDto is not null)
+                    {
+                        @CalendarEventDto.Action
+                    }
+                    @if (MeetingDto is not null)
+                    {
+                        @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
+                    }
                 </span>
             </div>
-            <div class="col-md-4 text-end">
-                @GetMeetingTimeSpan()
-            </div>
-        </div>
-        <div class="row text-start card-content">
-            <span>
-                @if (CalendarEventDto is not null)
-                {
-                @CalendarEventDto.Action
-                }
-                @if (MeetingDto is not null)
-                {
-                @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
-                }
-            </span>
         </div>
     </div>
 </div>
@@ -59,9 +61,9 @@
     
     private string GetEventCardColorClass()
     {
-        if (ImportantDateDto is not null) return "important-date-card-color";
-        if (CalendarEventDto is not null) return "calendar-event-card-color";
-        if (MeetingDto is not null) return "meeting-card-color";
+        if (ImportantDateDto is not null) return "discipline-important-date-card-color";
+        if (CalendarEventDto is not null) return "discipline-calendar-event-card-color";
+        if (MeetingDto is not null) return "discipline-meeting-card-color";
         return string.Empty;
     }
     

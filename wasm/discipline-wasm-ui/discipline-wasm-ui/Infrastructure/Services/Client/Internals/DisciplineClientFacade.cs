@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using discipline_wasm_ui.Infrastructure.Auth.Token;
 using discipline_wasm_ui.Infrastructure.Services.Client.Abstractions;
 using discipline_wasm_ui.Infrastructure.Services.DTOs;
+using discipline_wasm_ui.Services.Models.Users;
 using Microsoft.AspNetCore.Components;
 
 namespace discipline_wasm_ui.Infrastructure.Services.Client.Internals;
@@ -60,8 +61,12 @@ internal sealed class DisciplineResponseFacade(
         {
             case HttpStatusCode.Unauthorized:
             {
+                if (await TryRefreshToken())
+                {
+                    break;
+                }
                 var tcs = new TaskCompletionSource<bool>();
-                await tokenProvider.RemoveToken();
+                await tokenProvider.RemoveTokenAsync();
                 navigationManager.NavigateTo("/sign-in", forceLoad: true);
                 await tcs.Task;
                 break;
@@ -75,5 +80,27 @@ internal sealed class DisciplineResponseFacade(
             }
         }
     }
-    
+
+    private async Task<bool> TryRefreshToken()
+    {
+        var refreshToken = await tokenProvider.GetRefreshTokenAsync();
+        if (refreshToken is null)
+        {
+            return false;
+        }
+
+        var request = new RefreshTokenRequest()
+        {
+            RefreshToken = refreshToken
+        };
+        var response = await disciplineAppClient.PostAsync("/users/refresh-token", request);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var tokens = await response.Content.ReadFromJsonAsync<TokensDto>();
+            await tokenProvider.SetAsync(tokens);
+            return true;
+        }
+
+        return false;
+    }
 }

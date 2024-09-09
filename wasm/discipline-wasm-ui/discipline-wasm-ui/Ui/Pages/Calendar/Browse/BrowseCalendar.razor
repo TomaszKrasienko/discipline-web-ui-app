@@ -22,33 +22,39 @@
 </div>
 <div class="row">
     <div class="col-md-8 offset-2">
-        <DisciplineSubHeader Text="Important events"/>
-        @if (_userCalendar?.ImportantDates is not null)
-        {
-            @foreach (var item in _userCalendar.ImportantDates)
+        <div class="discipline-events-type-section pt-3">
+            <DisciplineSubHeader Text="Important events:"/>
+            @if (_userCalendar?.ImportantDates is not null)
             {
-                <EventCard
-                    ImportantDateDto="item"/>
+                @foreach (var item in _userCalendar.ImportantDates)
+                {
+                    <EventCard
+                        ImportantDateDto="item"/>
+                }
             }
-        }
-        <DisciplineSubHeader Text="Calendar events"/>
-        @if (_userCalendar?.CalendarEvents is not null)
-        {
-            @foreach (var item in _userCalendar.CalendarEvents)
+        </div>
+        <div class="discipline-events-type-section pt-3">
+            <DisciplineSubHeader Text="Calendar events:"/>
+            @if (_userCalendar?.CalendarEvents is not null)
             {
-                <EventCard
-                    CalendarEventDto="item"/>
+                @foreach (var item in _userCalendar.CalendarEvents)
+                {
+                    <EventCard
+                        CalendarEventDto="item"/>
+                }
             }
-        }
-        <DisciplineSubHeader Text="Meetings"/>
-        @if (_userCalendar?.Meetings is not null)
-        {
-            @foreach (var item in _userCalendar.Meetings)
+        </div>
+        <div class="discipline-events-type-section pt-3">
+            <DisciplineSubHeader Text="Meetings:"/>
+            @if (_userCalendar?.Meetings is not null)
             {
-                <EventCard
-                    MeetingDto="item"/>
+                @foreach (var item in _userCalendar.Meetings)
+                {
+                    <EventCard
+                        MeetingDto="item"/>
+                }
             }
-        }
+        </div>
     </div>
 </div>
 <DisciplineCreateDropUpButton
@@ -62,7 +68,7 @@
 @code {
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now);
     private UserCalendarDto _userCalendar;
-    private Dictionary<string, string> _eventTypesDictionary = new Dictionary<string, string>()
+    private readonly Dictionary<string, string> _eventTypesDictionary = new Dictionary<string, string>()
     {
         [EventType.CalendarEvent.ToString()] = "Calendar event",
         [EventType.Meeting.ToString()] = "Meeting",
@@ -94,12 +100,11 @@
 
     private void CreateEventTypeClicked(string key)
     {
-        EventType type;
-        switch (key)
+        if(!Enum.TryParse(key,true, out EventType keyEventType))
         {
-            case EventType.CalendarEvent.ToString():
-                
+            throw new ArgumentException($"Key: {key} is not recognized as EventType");
         }
+        _calendarEventModalForm.EventType = keyEventType;
         _calendarEventModalForm.Open();   
     }
 

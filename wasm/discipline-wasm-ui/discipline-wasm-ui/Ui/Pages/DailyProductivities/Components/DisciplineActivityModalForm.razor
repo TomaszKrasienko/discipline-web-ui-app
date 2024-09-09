@@ -14,29 +14,29 @@
     Size="DisciplineModalSize.Large" 
     OnHidingCallback="HideAsync">
     <Body>
-    <div class="row">
-        <div class="col-md-8 offset-2">
-            <EditForm method="post" OnSubmit="Submit" Model="ActivityRequest">
-                <div class="pt-2">
-                    <label for="new-activity-day">Day: </label>
-                    <DateInput
-                        TValue="DateOnly"
-                        Id="new-activity-day"
-                        @bind-Value="ActivityRequest.Day"/>
+        <EditForm method="post" OnSubmit="Submit" Model="ActivityRequest">
+            <div class="row">
+                <div class="col-md-8 offset-2">
+                    <div class="pt-2">
+                        <label for="new-activity-day">Day: </label>
+                        <DateInput
+                            TValue="DateOnly"
+                            Id="new-activity-day"
+                            @bind-Value="ActivityRequest.Day"/>
+                    </div>
+                    <div class="pt-2">
+                        <label for="new-activity-title">Title: </label>
+                        <InputText
+                            class="form-control"
+                            id="new-activity-title"
+                            placeholder="Title"
+                            @bind-Value="ActivityRequest.Title"/>
+                    </div>
                 </div>
-                <div class="pt-2">
-                    <label for="new-activity-title">Title: </label>
-                    <InputText
-                        class="form-control"
-                        id="new-activity-title"
-                        placeholder="Title"
-                        @bind-Value="ActivityRequest.Title"/>
-                </div>
-                <DisciplineSubmitButton
-                    Type="DisciplineSubmitButtonType.Modal"/>
-            </EditForm>
-        </div>
-    </div>
+            </div>
+            <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Modal"/>
+        </EditForm>
     </Body>
 </DisciplineModal>
 

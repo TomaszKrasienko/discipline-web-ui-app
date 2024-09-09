@@ -30,29 +30,6 @@ internal sealed class DisciplineUserDispatcher(
         return ResponseDto.GetValid(result!);
     }
 
-    public async Task<ResponseDto> Refresh()
-    {
-        // var tokens = await tokenStorage.Get();
-        // if (tokens is null || string.IsNullOrWhiteSpace(tokens.RefreshToken))
-        // {
-        //     return null;
-        // }
-        //
-        // var request = new RefreshTokenRequest()
-        // {
-        //     RefreshToken = tokens.RefreshToken
-        // };
-        // var response = await disciplineAppClient.PostAsync("users/refresh-token", request);
-        // if (response.StatusCode is HttpStatusCode.OK)
-        // {
-        //     var refreshedTokens = await response.Content.ReadFromJsonAsync<TokensDto>();
-        //     await tokenStorage.Set(refreshedTokens);
-        //     return ResponseDto.GetValid();
-        // }
-        // return ResponseDto.GetInvalid();
-        return null;
-    }
-
     public async Task<ResponseDto> CreateSubscriptionOrder(CreateSubscriptionOrderRequest request)
         => await disciplineClientFacade.PostToResponseDtoAsync($"/users/create-subscription-order", request, 
             "Subscription order created");

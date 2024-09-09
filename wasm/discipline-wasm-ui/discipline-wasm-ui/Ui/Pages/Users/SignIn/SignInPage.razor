@@ -1,14 +1,14 @@
 @page "/sign-in"
 @using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Auth.Token
 @using discipline_wasm_ui.Infrastructure.Helpers
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
-@using discipline_wasm_ui.Infrastructure.Storage.Abstractions
 @using discipline_wasm_ui.Services.Models.Users
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Enums
 @using discipline_wasm_ui.Ui.Components.Headers
 @inject IUserDispatcher UserDispatcher;
-@inject ILocalStorageAccessor LocalStorageAccessor;
+@inject ITokenProvider TokenProvider;
 @inject ToastService ToastService
 @inject NavigationManager NavigationManager
 
@@ -48,7 +48,7 @@
         if (result.IsValid)
         {
             var tokens = (TokensDto)result.Result!;
-            await LocalStorageAccessor.SetItemAsync(tokens);
+            await TokenProvider.SetAsync(tokens);
             StateHasChanged();
             NavigationManager.NavigateTo("/", forceLoad: true);
         }

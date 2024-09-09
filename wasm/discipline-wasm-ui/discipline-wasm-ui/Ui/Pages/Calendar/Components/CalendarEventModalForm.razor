@@ -16,89 +16,89 @@
     Size="DisciplineModalSize.Large"
     OnHidingCallback="HideAsync">
     <Body>
-    <div class="row">
-        <div class="col-md-8 offset-2">
-            <EditForm
-                method="post"
-                Model="EventDto"
-                OnSubmit="SubmitAsync">
-                <div class="pt-2">
-                    <label for="user-calendar-day">Day: </label>
-                    <InputDate
-                        class="form-control"
-                        id="user-calendar-day"
-                        @bind-Value="EventDto.Day"/>
-                </div>
-                <div class="pt-2">
-                    <label for="user-calendar-event-title">Title:</label>
-                    <InputText
-                        class="form-control"
-                        id="user-calendar-event-title"
-                        placeholder="Title"
-                        @bind-Value="EventDto!.Title"/>
-                </div>
-                @if (EventType is EventType.CalendarEvent or EventType.Meeting)
-                {                
+        <EditForm
+            method="post"
+            Model="EventDto"
+            OnSubmit="SubmitAsync">
+            <div class="row">
+                <div class="col-md-8 offset-2">
                     <div class="pt-2">
-                        <label for="user-calendar-event-time-from">Time from:</label>
-                        <TimeInput
+                        <label for="user-calendar-day">Day: </label>
+                        <InputDate
                             class="form-control"
-                            id="user-calendar-event-time-from"
-                            TValue="TimeOnly"
-                            @bind-Value="EventDto!.TimeFrom"/>
+                            id="user-calendar-day"
+                            @bind-Value="EventDto.Day"/>
                     </div>
                     <div class="pt-2">
-                        <label for="user-calendar-event-time-to">Time to:</label>
-                        <TimeInput
-                            class="form-control"
-                            id="user-calendar-event-time-to"
-                            TValue="TimeOnly?"
-                            @bind-Value="EventDto!.TimeTo"/>
-                    </div>
-                }
-                @if (EventType is EventType.CalendarEvent)
-                {
-                    <div class="pt-2">
-                        <label for="user-calendar-event-action">Action:</label>
+                        <label for="user-calendar-event-title">Title:</label>
                         <InputText
                             class="form-control"
-                            id="user-calendar-event-action"
-                            placeholder="Action"
-                            @bind-Value="EventDto!.Action"/>
+                            id="user-calendar-event-title"
+                            placeholder="Title"
+                            @bind-Value="EventDto!.Title"/>
                     </div>
-                }
-                @if (EventType is EventType.Meeting)
-                {
-                <div class="row">
-                    <label for="user-calendar-event-platform">Platform:</label>
-                    <InputText
-                        class="form-control"
-                        id="user-calendar-event-platform"
-                        placeholder="Platform"
-                        @bind-Value="EventDto!.Platform"/>
+                    @if (EventType is EventType.CalendarEvent or EventType.Meeting)
+                    {                
+                        <div class="pt-2">
+                            <label for="user-calendar-event-time-from">Time from:</label>
+                            <TimeInput
+                                class="form-control"
+                                id="user-calendar-event-time-from"
+                                TValue="TimeOnly"
+                                @bind-Value="EventDto!.TimeFrom"/>
+                        </div>
+                        <div class="pt-2">
+                            <label for="user-calendar-event-time-to">Time to:</label>
+                            <TimeInput
+                                class="form-control"
+                                id="user-calendar-event-time-to"
+                                TValue="TimeOnly?"
+                                @bind-Value="EventDto!.TimeTo"/>
+                        </div>
+                    }
+                    @if (EventType is EventType.CalendarEvent)
+                    {
+                        <div class="pt-2">
+                            <label for="user-calendar-event-action">Action:</label>
+                            <InputText
+                                class="form-control"
+                                id="user-calendar-event-action"
+                                placeholder="Action"
+                                @bind-Value="EventDto!.Action"/>
+                        </div>
+                    }
+                    @if (EventType is EventType.Meeting)
+                    {
+                    <div class="pt-2">
+                        <label for="user-calendar-event-platform">Platform:</label>
+                        <InputText
+                            class="form-control"
+                            id="user-calendar-event-platform"
+                            placeholder="Platform"
+                            @bind-Value="EventDto!.Platform"/>
+                    </div>
+                    <div class="pt-2">
+                        <label for="user-calendar-event-uri">Uri:</label>
+                        <InputText
+                            class="form-control"
+                            id="user-calendar-event-uri"
+                            placeholder="Uri"
+                            @bind-Value="EventDto!.Uri"/>
+                    </div>
+                    <div class="pt-2">
+                        <label for="user-calendar-event-place">Place:</label>
+                        <InputText
+                            class="form-control"
+                            id="user-calendar-event-place"
+                            placeholder="Place"
+                            @bind-Value="EventDto!.Place"/>
+                    </div>
+                    }
                 </div>
-                <div class="row">
-                    <label for="user-calendar-event-uri">Uri:</label>
-                    <InputText
-                        class="form-control"
-                        id="user-calendar-event-uri"
-                        placeholder="Uri"
-                        @bind-Value="EventDto!.Uri"/>
-                </div>
-                <div class="row">
-                    <label for="user-calendar-event-place">Place:</label>
-                    <InputText
-                        class="form-control"
-                        id="user-calendar-event-place"
-                        placeholder="Place"
-                        @bind-Value="EventDto!.Place"/>
-                </div>
-                }
-                <DisciplineSubmitButton
-                    Type="DisciplineSubmitButtonType.Modal"/>
-            </EditForm>
-        </div>
-    </div>
+            </div>
+            <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Modal"/>
+        </EditForm>
     </Body>
 </DisciplineModal>
 

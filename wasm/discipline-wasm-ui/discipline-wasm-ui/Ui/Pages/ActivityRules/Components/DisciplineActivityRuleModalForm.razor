@@ -18,61 +18,61 @@
     Size="DisciplineModalSize.Large"
     OnHidingCallback="HideAsync">
     <Body>
-    <div class="row">
-        <div class="col-md-8 offset-2">
-            <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
-                <div class="pt-2">
-                    <label for="new-activity-rule-title">Title: </label>
-                    <InputText
-                        class="form-control"
-                        id="new-activity-rule-title"
-                        placeholder="Title"
-                        @bind-Value="ActivityRuleRequest.Title"/>
-                </div>
-                <div class="pt-2">
-                    <label class="form-label" for="new-activity-rule-mode">Mode: </label>
-                    <InputSelect
-                        class="form-control"
-                        id="new-activity-rule-mode"
-                        Value="ActivityRuleRequest.Mode"
-                        ValueExpression="() => ActivityRuleRequest.Mode"
-                        ValueChanged="(string mode) => OnModeChanged(mode)">
-                        @foreach (var mode in _activityRuleModes)
-                        {
-                            <option value="@mode.Key">
-                                @mode.Name
-                            </option>
-                        }
-                    </InputSelect>
-                </div>
-                @if (ActivityRuleRequest.Mode == ModeWithDays)
-                {
-                    <div class="text-center pt-2">
-                        <Dropdown AutoClose="false" Color="DropdownColor.Light">
-                            <DropdownToggleButton>Days</DropdownToggleButton>
-                            <DropdownMenu>
-                                @foreach (var weekday in _weekdays)
-                                {
-                                    <span @onclick="() => OnWeekdayCheckChanged(weekday)">
-                                        <div class="form-check">
-                                            <InputCheckbox
-                                                @bind-Value="weekday!.IsChecked">
-                                            </InputCheckbox>
-                                            <label class="form-check-label">
-                                                @weekday.Name
-                                            </label>
-                                        </div>
-                                    </span>
-                                }
-                            </DropdownMenu>
-                        </Dropdown>
+        <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
+            <div class="row">
+                <div class="col-md-8 offset-2">
+                    <div class="pt-2">
+                        <label for="new-activity-rule-title">Title: </label>
+                        <InputText
+                            class="form-control"
+                            id="new-activity-rule-title"
+                            placeholder="Title"
+                            @bind-Value="ActivityRuleRequest.Title"/>
                     </div>
-                }
-                <DisciplineSubmitButton
-                    Type="DisciplineSubmitButtonType.Modal"/>
-            </EditForm>
-        </div>
-    </div>
+                    <div class="pt-2">
+                        <label class="form-label" for="new-activity-rule-mode">Mode: </label>
+                        <InputSelect
+                            class="form-control"
+                            id="new-activity-rule-mode"
+                            Value="ActivityRuleRequest.Mode"
+                            ValueExpression="() => ActivityRuleRequest.Mode"
+                            ValueChanged="(string mode) => OnModeChanged(mode)">
+                            @foreach (var mode in _activityRuleModes)
+                            {
+                                <option value="@mode.Key">
+                                    @mode.Name
+                                </option>
+                            }
+                        </InputSelect>
+                    </div>
+                    @if (ActivityRuleRequest.Mode == ModeWithDays)
+                    {
+                        <div class="text-center pt-2">
+                            <Dropdown AutoClose="false" Color="DropdownColor.Light">
+                                <DropdownToggleButton>Days</DropdownToggleButton>
+                                <DropdownMenu>
+                                    @foreach (var weekday in _weekdays)
+                                    {
+                                        <span @onclick="() => OnWeekdayCheckChanged(weekday)">
+                                            <div class="form-check">
+                                                <InputCheckbox
+                                                    @bind-Value="weekday!.IsChecked">
+                                                </InputCheckbox>
+                                                <label class="form-check-label">
+                                                    @weekday.Name
+                                                </label>
+                                            </div>
+                                        </span>
+                                    }
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    }
+                </div>
+            </div>
+            <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Modal"/>
+        </EditForm>
     </Body>
 </DisciplineModal>
 
@@ -95,7 +95,6 @@
     protected override async Task OnInitializedAsync()
     {
         _activityRuleModes = await ActivityRulesDispatcher.GetActivityRuleModesAsync();
-        ActivityRuleRequest.Mode = _activityRuleModes[0].Key;
     }
 
     protected override async Task OnParametersSetAsync()
@@ -113,8 +112,12 @@
     }
 
     public void Open()
-        => _formModal.Open();
-    
+    {
+        ActivityRuleRequest = new ActivityRuleRequest();
+        ActivityRuleRequest.Mode = _activityRuleModes[0].Key;
+        _formModal.Open();
+    }
+
     private void OnModeChanged(string mode)
     {
         ActivityRuleRequest.Mode = mode;
