@@ -7,8 +7,20 @@
     Title="Keep your discipline."/>
 
 <div class="row pb-3">
-    <DisciplineDailyProductivityActivities/>
+    <DisciplineDailyProductivityActivities
+        OnActivityChangedCallback="RefreshChar"/>
 </div>
 
+<div>
+    <DisciplineProductivityChart
+        @ref="_disciplineProductivityChart"/>
+</div>
 
-<DisciplineProductivityChart/>
+@code
+{
+    private DisciplineProductivityChart _disciplineProductivityChart = default!;
+
+    private async Task RefreshChar()
+        => await _disciplineProductivityChart.RefreshChart();
+    
+}

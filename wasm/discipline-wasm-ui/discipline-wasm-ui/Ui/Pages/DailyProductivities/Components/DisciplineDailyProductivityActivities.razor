@@ -18,11 +18,12 @@
     <div class="col-md-8 offset-2">
         @if (_dailyProductivity is not null)
         {
-        @foreach (var activity in _dailyProductivity.Activities)
-        {
-        <DisciplineActivityRow
-            Activity="activity"/>
-        }
+            @foreach (var activity in _dailyProductivity.Activities)
+            {
+                <DisciplineActivityRow
+                    Activity="activity"
+                    OnActivityChangedCallback="OnActivityChangedAsync"/>
+            }
         }
     </div>
 </div>
@@ -40,6 +41,9 @@
     private DailyProductivityDto _dailyProductivity;
     private DisciplineActivityModalForm _formModal;
 
+    [Parameter]
+    public EventCallback OnActivityChangedCallback { get; set; }
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -68,4 +72,8 @@
 
     private async Task OnHideFormModalAsync()
         => await InitializeDataAsync();
+
+    private async Task OnActivityChangedAsync()
+        => await OnActivityChangedCallback.InvokeAsync();
+
 }

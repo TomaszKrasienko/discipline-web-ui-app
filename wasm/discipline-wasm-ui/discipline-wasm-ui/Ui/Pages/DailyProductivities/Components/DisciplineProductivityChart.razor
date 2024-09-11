@@ -2,10 +2,10 @@
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
 @inject IDailyProductivityDispatcher DailyProductivityDispatcher;
 
-
+<div class="col-md-8 offset-2">
 <LineChart
     @ref="_lineChart"/>
-
+</div>
 @code {
     private List<ProgressDataDto> Data { get; set; } = [];
     private LineChart _lineChart = default;
@@ -28,6 +28,13 @@
             await _lineChart.InitializeAsync(_chartData, _lineChartOptions);
         }
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    internal async Task RefreshChart()
+    {
+        await InitializeAsync();
+        InitializeChart();
+        await _lineChart.UpdateAsync(_chartData, _lineChartOptions);
     }
     
     private async Task InitializeAsync()

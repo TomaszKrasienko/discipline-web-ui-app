@@ -26,6 +26,9 @@
 @code {
     [Parameter, EditorRequired] 
     public ActivityDto Activity { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnActivityChangedCallback { get; set; }
 
     private async Task RowClickedAsync()
     {
@@ -34,6 +37,7 @@
         if (response.IsValid)
         {
             Activity.IsChecked = !Activity.IsChecked;
+            await OnActivityChangedCallback.InvokeAsync();
         }
     }
 
