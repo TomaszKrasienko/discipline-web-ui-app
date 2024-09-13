@@ -24,36 +24,49 @@
     <div class="col-md-8 offset-2">
         <div class="discipline-events-type-section pt-3">
             <DisciplineSubHeader Text="Important events:"/>
-            @if (_userCalendar?.ImportantDates is not null)
-            {
-                @foreach (var item in _userCalendar.ImportantDates)
-                {
-                    <EventCard
-                        ImportantDateDto="item"/>
-                }
-            }
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    @if (_userCalendar?.ImportantDates is not null)
+                    {
+                        @foreach (var item in _userCalendar.ImportantDates)
+                        {
+                        <EventCard
+                            ImportantDateDto="item"/>
+                        }
+                    }
+                </div>
+            </div>  
         </div>
         <div class="discipline-events-type-section pt-3">
             <DisciplineSubHeader Text="Calendar events:"/>
-            @if (_userCalendar?.CalendarEvents is not null)
-            {
-                @foreach (var item in _userCalendar.CalendarEvents)
-                {
-                    <EventCard
-                        CalendarEventDto="item"/>
-                }
-            }
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    @if (_userCalendar?.CalendarEvents is not null)
+                    {
+                        @foreach (var item in _userCalendar.CalendarEvents)
+                        {
+                            <EventCard
+                                CalendarEventDto="item"/>
+                        }
+                    }
+                </div>
+            </div>
         </div>
         <div class="discipline-events-type-section pt-3">
             <DisciplineSubHeader Text="Meetings:"/>
-            @if (_userCalendar?.Meetings is not null)
-            {
-                @foreach (var item in _userCalendar.Meetings)
-                {
-                    <EventCard
-                        MeetingDto="item"/>
-                }
-            }
+
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    @if (_userCalendar?.Meetings is not null)
+                    {
+                        @foreach (var item in _userCalendar.Meetings)
+                        {
+                            <EventCard
+                                MeetingDto="item"/>
+                        }
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -70,9 +83,9 @@
     private UserCalendarDto _userCalendar;
     private readonly Dictionary<string, string> _eventTypesDictionary = new Dictionary<string, string>()
     {
+        [EventType.ImportantDate.ToString()] = "Important date",
         [EventType.CalendarEvent.ToString()] = "Calendar event",
         [EventType.Meeting.ToString()] = "Meeting",
-        [EventType.ImportantDate.ToString()] = "Important date"
     };
     private CalendarEventModalForm _calendarEventModalForm;
     

@@ -13,12 +13,15 @@
 
 .discipline-important-date-card-color {
     border-color: #80805b;
+    background-color: #DEDECF;
 }
 
 .discipline-calendar-event-card-color {
     border-color: #805b5b;
+    background-color: #D4CAC4;
 }
 
 .discipline-meeting-card-color {
     border-color: #5b5b80;
+    background-color: #CBC8D0;
 }
