@@ -28,13 +28,16 @@
     </div>
 </div>
 
-<DisciplineCreateButton
-    OnClickButtonCallback="OpenCreateFormModal"/>
+@if (CreateBtnIsVisible)
+{
+    <DisciplineCreateButton
+        OnClickButtonCallback="OpenCreateFormModal"/>
 
-<DisciplineActivityModalForm
-    @ref="_formModal"
-    Day="_day"
-    OnHidingCallback="OnHideFormModalAsync"/>
+    <DisciplineActivityModalForm
+        @ref="_formModal"
+        Day="_day"
+        OnHidingCallback="OnHideFormModalAsync"/>
+}
 
 @code {
     private DateOnly _day = DateOnly.FromDateTime(DateTime.Now);
@@ -43,6 +46,9 @@
 
     [Parameter]
     public EventCallback OnActivityChangedCallback { get; set; }
+
+    [Parameter] 
+    public bool CreateBtnIsVisible { get; set; } = true;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

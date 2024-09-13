@@ -24,6 +24,7 @@ internal sealed class DisciplineResponseFacade(
     public async Task<T> GetAsResultAsync<T>(string path) where T : class
     {
         var result = await GetAsync(path);
+        await CheckAuth(result);
         if (result.StatusCode == HttpStatusCode.NoContent)
         {
             return null;
