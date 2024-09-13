@@ -1,7 +1,9 @@
 @using BlazorBootstrap
 @using discipline_wasm_ui.Infrastructure.Helpers
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Checkboxes
+@using discipline_wasm_ui.Ui.Components.Enums
 @inject IDailyProductivityDispatcher DailyProductivityDispatcher
 @inject ToastService ToastService
 
@@ -14,8 +16,15 @@
                         <DisciplineCheckbox
                             IsChecked="Activity.IsChecked"/>
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-md-9">
                         @Activity.Title
+                    </div>
+                    <div class="col-md-1 text-end">
+                        <DisciplineIconButton
+                            IconClass="bi-trash-fill"
+                            Color="DisciplineIconButtonColor.Red"
+                            OnClickButtonCallback="DeleteActivityAsync"
+                            TooltipText="Delete"/>
                     </div>
                 </div>
             </div>
@@ -29,6 +38,9 @@
     
     [Parameter] 
     public EventCallback OnActivityChangedCallback { get; set; }
+    
+    [Parameter]
+    public EventCallback OnActivityDeletedCallback { get; set; }
 
     private async Task RowClickedAsync()
     {
@@ -41,4 +53,13 @@
         }
     }
 
+    private async Task DeleteActivityAsync()
+    {
+        var response = await DailyProductivityDispatcher.DeleteActivityAsync(Activity.Id);
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            await OnActivityDeletedCallback.InvokeAsync();
+        }
+    }
 }

@@ -22,7 +22,8 @@
             {
                 <DisciplineActivityRow
                     Activity="activity"
-                    OnActivityChangedCallback="OnActivityChangedAsync"/>
+                    OnActivityChangedCallback="OnActivityChangedAsync"
+                    OnActivityDeletedCallback="OnActivityDeletedAsync"/>
             }
         }
     </div>
@@ -81,5 +82,8 @@
 
     private async Task OnActivityChangedAsync()
         => await OnActivityChangedCallback.InvokeAsync();
+
+    private async Task OnActivityDeletedAsync()
+        => await InitializeDataAsync();
 
 }
