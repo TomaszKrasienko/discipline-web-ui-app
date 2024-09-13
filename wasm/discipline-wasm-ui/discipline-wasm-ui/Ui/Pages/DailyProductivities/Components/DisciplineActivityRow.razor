@@ -10,23 +10,23 @@
 <div class="row discipline-row">
     <span class="pb-1 pt-1">
         <div class="row">
-            <div class="col-md-10" @onclick="RowClickedAsync">
+            <div class="col-md-11" @onclick="RowClickedAsync">
                 <div class="row">
                     <div class="col-md-2">
                         <DisciplineCheckbox
                             IsChecked="Activity.IsChecked"/>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-10">
                         @Activity.Title
                     </div>
-                    <div class="col-md-1 text-end">
-                        <DisciplineIconButton
-                            IconClass="bi-trash-fill"
-                            Color="DisciplineIconButtonColor.Red"
-                            OnClickButtonCallback="DeleteActivityAsync"
-                            TooltipText="Delete"/>
-                    </div>
                 </div>
+            </div>
+            <div class="col-md-1 text-end">
+                <DisciplineIconButton
+                    IconClass="bi-trash-fill"
+                    Color="DisciplineIconButtonColor.Red"
+                    OnClickButtonCallback="DeleteActivityAsync"
+                    TooltipText="Delete"/>
             </div>
         </div>
     </span>
