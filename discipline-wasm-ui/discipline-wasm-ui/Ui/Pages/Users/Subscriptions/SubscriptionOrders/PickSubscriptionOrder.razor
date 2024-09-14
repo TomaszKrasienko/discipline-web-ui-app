@@ -1,5 +1,6 @@
 @page "/pick-subscription-order"
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Services.Models.Users
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Enums
 @using discipline_wasm_ui.Ui.Components.Headers
@@ -55,6 +56,13 @@
         {
             _paidSubscriptionForm.SubscriptionId = subscription.Id;
             _paidSubscriptionModal.Open();
+        }
+        else
+        {
+            UserDispatcher.CreateSubscriptionOrder(new CreateSubscriptionOrderRequest()
+            {
+                SubscriptionId = subscription.Id
+            });
         }
     }
 
