@@ -1,0 +1,18 @@
+﻿@using BlazorBootstrap
+@using discipline_wasm_ui.Ui.NavMenuComponents
+@inherits LayoutComponentBase
+<div class="page">
+    <main>
+        <div class="row">
+            <DisciplineNavMenu/>
+        </div>
+        <article class="content">
+            @Body
+        </article>
+    </main>
+</div>
+<Toasts
+    Class="p-3"
+    AutoHide="true"
+    Delay="4000"
+    Placement="ToastsPlacement.TopRight"/>

@@ -1,0 +1,167 @@
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.Services.Models.ActivityRules
+@using discipline_wasm_ui.Infrastructure.Weekdays.Abstractions
+@using discipline_wasm_ui.Infrastructure.Weekdays.Factories
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Mappers
+@using discipline_wasm_ui.Ui.Components.Modals
+@inject IWeekdayTranslator WeekdayTranslator
+@inject IActivityRulesDispatcher ActivityRulesDispatcher
+@inject ToastService ToastService
+
+<DisciplineModal
+    @ref="_formModal"
+    Title="@(ActivityRuleId is null ? "New activity rule" : "Edit activity rule")"
+    Size="DisciplineModalSize.Large"
+    OnHidingCallback="HideAsync">
+    <Body>
+        <EditForm method="post" OnSubmit="Submit" Model="ActivityRuleRequest">
+            <div class="row">
+                <div class="col-md-8 offset-2">
+                    <div class="pt-2">
+                        <label for="new-activity-rule-title">Title: </label>
+                        <InputText
+                            class="form-control"
+                            id="new-activity-rule-title"
+                            placeholder="Title"
+                            @bind-Value="ActivityRuleRequest.Title"/>
+                    </div>
+                    <div class="pt-2">
+                        <label class="form-label" for="new-activity-rule-mode">Mode: </label>
+                        <InputSelect
+                            class="form-control"
+                            id="new-activity-rule-mode"
+                            Value="ActivityRuleRequest.Mode"
+                            ValueExpression="() => ActivityRuleRequest.Mode"
+                            ValueChanged="(string mode) => OnModeChanged(mode)">
+                            @foreach (var mode in _activityRuleModes)
+                            {
+                                <option value="@mode.Key">
+                                    @mode.Name
+                                </option>
+                            }
+                        </InputSelect>
+                    </div>
+                    @if (ActivityRuleRequest.Mode == ModeWithDays)
+                    {
+                        <div class="text-center pt-2">
+                            <Dropdown AutoClose="false" Color="DropdownColor.Light">
+                                <DropdownToggleButton>Days</DropdownToggleButton>
+                                <DropdownMenu>
+                                    @foreach (var weekday in _weekdays)
+                                    {
+                                        <span @onclick="() => OnWeekdayCheckChanged(weekday)">
+                                            <div class="form-check">
+                                                <InputCheckbox
+                                                    @bind-Value="weekday!.IsChecked">
+                                                </InputCheckbox>
+                                                <label class="form-check-label">
+                                                    @weekday.Name
+                                                </label>
+                                            </div>
+                                        </span>
+                                    }
+                                </DropdownMenu>
+                            </Dropdown>
+                        </div>
+                    }
+                </div>
+            </div>
+            <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Modal"/>
+        </EditForm>
+    </Body>
+</DisciplineModal>
+
+
+@code {
+    private const string ModeWithDays = "Custom";
+    private List<ActivityRuleModeDto> _activityRuleModes = [];
+    private List<WeekdayDto> _weekdays = [];
+    private DisciplineModal _formModal = default;
+    
+    [SupplyParameterFromForm] 
+    public ActivityRuleRequest ActivityRuleRequest { get; set; } = new();
+    
+    [Parameter] 
+    public Guid? ActivityRuleId { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnHidingCallback { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _activityRuleModes = await ActivityRulesDispatcher.GetActivityRuleModesAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ActivityRuleId is not null)
+        {
+            await InitializeActivityRuleAsync();
+        }
+    }
+
+    private async Task InitializeActivityRuleAsync()
+    {
+        var activityRuleDto = await ActivityRulesDispatcher.GetCreateActivityRuleByIdAsync(ActivityRuleId.Value);
+        ActivityRuleRequest = activityRuleDto.AsRequest();
+    }
+
+    public void Open()
+    {
+        ActivityRuleRequest = new ActivityRuleRequest();
+        ActivityRuleRequest.Mode = _activityRuleModes[0].Key;
+        _formModal.Open();
+    }
+
+    private void OnModeChanged(string mode)
+    {
+        ActivityRuleRequest.Mode = mode;
+        _weekdays = mode != ModeWithDays 
+            ? WeekdayFactory.Get() 
+            : WeekdayTranslator.Transform(ActivityRuleRequest.SelectedDays);
+    }
+    
+    private void OnWeekdayCheckChanged(WeekdayDto weekday)
+        => weekday.IsChecked = !weekday.IsChecked;
+
+
+    private async Task Submit()
+    {
+        ActivityRuleRequest.SelectedDays = null;
+        ActivityRuleRequest.SelectedDays = _weekdays
+            .Where(x => x.IsChecked)
+            .Select(x => x.Id)
+            .ToList();
+        ResponseDto response;
+        if (ActivityRuleId is null)
+        {
+            response = await AddAsync();
+        }
+        else
+        {
+            response = await EditAsync();
+        }
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            await _formModal.CloseAsync();
+        }
+    }
+
+    private async Task<ResponseDto> AddAsync()
+        => await ActivityRulesDispatcher
+            .CreateActivityRuleAsync(ActivityRuleRequest);
+
+    private async Task<ResponseDto> EditAsync()
+        => await ActivityRulesDispatcher
+            .EditActivityRuleAsync(ActivityRuleId.Value, ActivityRuleRequest);
+
+    private async Task HideAsync()
+        => await OnHidingCallback.InvokeAsync();
+
+}

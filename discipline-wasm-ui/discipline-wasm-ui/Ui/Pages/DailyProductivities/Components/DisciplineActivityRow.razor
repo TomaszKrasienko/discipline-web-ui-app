@@ -1,0 +1,65 @@
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Checkboxes
+@using discipline_wasm_ui.Ui.Components.Enums
+@inject IDailyProductivityDispatcher DailyProductivityDispatcher
+@inject ToastService ToastService
+
+<div class="row discipline-row">
+    <span class="pb-1 pt-1">
+        <div class="row">
+            <div class="col-md-11" @onclick="RowClickedAsync">
+                <div class="row">
+                    <div class="col-md-2">
+                        <DisciplineCheckbox
+                            IsChecked="Activity.IsChecked"/>
+                    </div>
+                    <div class="col-md-10">
+                        @Activity.Title
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1 text-end">
+                <DisciplineIconButton
+                    IconClass="bi-trash-fill"
+                    Color="DisciplineIconButtonColor.Red"
+                    OnClickButtonCallback="DeleteActivityAsync"
+                    TooltipText="Delete"/>
+            </div>
+        </div>
+    </span>
+</div>
+
+@code {
+    [Parameter, EditorRequired] 
+    public ActivityDto Activity { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnActivityChangedCallback { get; set; }
+    
+    [Parameter]
+    public EventCallback OnActivityDeletedCallback { get; set; }
+
+    private async Task RowClickedAsync()
+    {
+        var response = await DailyProductivityDispatcher.ChangeActivityCheck(Activity.Id);
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            Activity.IsChecked = !Activity.IsChecked;
+            await OnActivityChangedCallback.InvokeAsync();
+        }
+    }
+
+    private async Task DeleteActivityAsync()
+    {
+        var response = await DailyProductivityDispatcher.DeleteActivityAsync(Activity.Id);
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            await OnActivityDeletedCallback.InvokeAsync();
+        }
+    }
+}

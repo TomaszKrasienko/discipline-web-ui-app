@@ -1,0 +1,79 @@
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.Services.Models.DailyProductivity
+@using discipline_wasm_ui.Ui.Components.Enums
+@using discipline_wasm_ui.Ui.Components.Modals
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Ui.Components.Buttons
+@inject IDailyProductivityDispatcher DailyProductivityDispatcher
+@inject ToastService ToastService
+
+<DisciplineModal
+    @ref="_formModal"
+    Title="New activity"
+    Size="DisciplineModalSize.Large" 
+    OnHidingCallback="HideAsync">
+    <Body>
+        <EditForm method="post" OnSubmit="Submit" Model="ActivityRequest">
+            <div class="row">
+                <div class="col-md-8 offset-2">
+                    <div class="pt-2">
+                        <label for="new-activity-day">Day: </label>
+                        <DateInput
+                            TValue="DateOnly"
+                            Id="new-activity-day"
+                            @bind-Value="ActivityRequest.Day"/>
+                    </div>
+                    <div class="pt-2">
+                        <label for="new-activity-title">Title: </label>
+                        <InputText
+                            class="form-control"
+                            id="new-activity-title"
+                            placeholder="Title"
+                            @bind-Value="ActivityRequest.Title"/>
+                    </div>
+                </div>
+            </div>
+            <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Modal"/>
+        </EditForm>
+    </Body>
+</DisciplineModal>
+
+@code {
+    private DisciplineModal _formModal = default;
+
+    [SupplyParameterFromForm] 
+    public ActivityRequest ActivityRequest { get; set; } = new ActivityRequest();
+    
+    [Parameter] 
+    public DateOnly? Day { get; set; }
+    
+    [Parameter]
+    public EventCallback OnHidingCallback { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Day is not null)
+        {
+            ActivityRequest.Day = Day.Value;
+        }
+    } 
+
+    public void Open()
+        => _formModal.Open();
+    
+    private async Task Submit()
+    {
+        var response = await DailyProductivityDispatcher.CreateActivity(ActivityRequest);
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            await _formModal.CloseAsync();
+        }
+    }
+
+    private async Task HideAsync()
+        => await OnHidingCallback.InvokeAsync();
+
+}

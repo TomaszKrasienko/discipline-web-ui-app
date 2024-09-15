@@ -1,0 +1,72 @@
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.Services.Enums
+@using discipline_wasm_ui.Services.Models.Users
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
+@inject IUserDispatcher UserDispatcher;
+@inject ToastService ToastService;
+@inject NavigationManager NavigationManager;
+
+<EditForm
+    OnSubmit="OrderSubscriptionConfirmed"
+    Model="SubscriptionOrderRequest"
+    FormName="paid-subscription-order">
+    <div class="row">
+        <label for="order-frequency">Frequency:</label>
+        <InputSelect
+            @bind-Value="SubscriptionOrderRequest.SubscriptionOrderFrequency"
+            id="order-frequency"
+            class="form-select">
+            @foreach (var orderFrequency in _orderFrequencies)
+            {
+            <option>@orderFrequency</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="row">
+        <label for="order-card-number">Card number:</label>
+        <InputText
+            class="form-control"
+            id="order-card-number"
+            placeholder="Card number"
+            @bind-Value="SubscriptionOrderRequest.CardNumber"/>
+    </div>
+    <div class="row">
+        <label for="order-card-cvv-number">Card number:</label>
+        <InputText
+            class="form-control"
+            id="order-card-cvv-number"
+            placeholder="Card cvv number"
+            @bind-Value="SubscriptionOrderRequest.CardCvvNumber"/>
+    </div>
+    <div class="row">
+        <DisciplineSubmitButton 
+            Type="DisciplineSubmitButtonType.Modal"/>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] 
+    public Guid SubscriptionId { get; set; }
+    
+    [SupplyParameterFromForm]
+    public CreateSubscriptionOrderRequest SubscriptionOrderRequest { get; set; } = new();
+    
+    private IEnumerable<SubscriptionOrderFrequency> _orderFrequencies = [];
+
+    protected override void OnInitialized() 
+        => _orderFrequencies = Enum.GetValues<SubscriptionOrderFrequency>().Cast<SubscriptionOrderFrequency>();
+
+    private async Task OrderSubscriptionConfirmed()
+    {
+        SubscriptionOrderRequest.SubscriptionId = SubscriptionId;
+        var response = await UserDispatcher.CreateSubscriptionOrder(SubscriptionOrderRequest);
+        response.ToToastMessage();
+        if (response.IsValid)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

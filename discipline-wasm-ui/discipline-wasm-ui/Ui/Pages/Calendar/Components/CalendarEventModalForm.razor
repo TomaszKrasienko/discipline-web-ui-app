@@ -1,0 +1,161 @@
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.UserCalendar.Enums
+@using discipline_wasm_ui.Infrastructure.UserCalendar.Mappers
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
+@using discipline_wasm_ui.Ui.Components.Modals
+@inject IUserCalendarDispatcher UserCalendarDispatcher
+@inject ToastService ToastService
+
+
+<DisciplineModal
+    @ref="_formModal"
+    Title="@GetTitle()"
+    Size="DisciplineModalSize.Large"
+    OnHidingCallback="HideAsync">
+    <Body>
+        <EditForm
+            method="post"
+            Model="EventDto"
+            OnSubmit="SubmitAsync">
+            <div class="row">
+                <div class="col-md-8 offset-2">
+                    <div class="pt-2">
+                        <label for="user-calendar-day">Day: </label>
+                        <InputDate
+                            class="form-control"
+                            id="user-calendar-day"
+                            @bind-Value="EventDto.Day"/>
+                    </div>
+                    <div class="pt-2">
+                        <label for="user-calendar-event-title">Title:</label>
+                        <InputText
+                            class="form-control"
+                            id="user-calendar-event-title"
+                            placeholder="Title"
+                            @bind-Value="EventDto!.Title"/>
+                    </div>
+                    @if (EventType is EventType.CalendarEvent or EventType.Meeting)
+                    {                
+                        <div class="pt-2">
+                            <label for="user-calendar-event-time-from">Time from:</label>
+                            <TimeInput
+                                class="form-control"
+                                id="user-calendar-event-time-from"
+                                TValue="TimeOnly"
+                                @bind-Value="EventDto!.TimeFrom"/>
+                        </div>
+                        <div class="pt-2">
+                            <label for="user-calendar-event-time-to">Time to:</label>
+                            <TimeInput
+                                class="form-control"
+                                id="user-calendar-event-time-to"
+                                TValue="TimeOnly?"
+                                @bind-Value="EventDto!.TimeTo"/>
+                        </div>
+                    }
+                    @if (EventType is EventType.CalendarEvent)
+                    {
+                        <div class="pt-2">
+                            <label for="user-calendar-event-action">Action:</label>
+                            <InputText
+                                class="form-control"
+                                id="user-calendar-event-action"
+                                placeholder="Action"
+                                @bind-Value="EventDto!.Action"/>
+                        </div>
+                    }
+                    @if (EventType is EventType.Meeting)
+                    {
+                    <div class="pt-2">
+                        <label for="user-calendar-event-platform">Platform:</label>
+                        <InputText
+                            class="form-control"
+                            id="user-calendar-event-platform"
+                            placeholder="Platform"
+                            @bind-Value="EventDto!.Platform"/>
+                    </div>
+                    <div class="pt-2">
+                        <label for="user-calendar-event-uri">Uri:</label>
+                        <InputText
+                            class="form-control"
+                            id="user-calendar-event-uri"
+                            placeholder="Uri"
+                            @bind-Value="EventDto!.Uri"/>
+                    </div>
+                    <div class="pt-2">
+                        <label for="user-calendar-event-place">Place:</label>
+                        <InputText
+                            class="form-control"
+                            id="user-calendar-event-place"
+                            placeholder="Place"
+                            @bind-Value="EventDto!.Place"/>
+                    </div>
+                    }
+                </div>
+            </div>
+            <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Modal"/>
+        </EditForm>
+    </Body>
+</DisciplineModal>
+
+@code {
+    private DisciplineModal _formModal = default!;
+    
+    [Parameter, EditorRequired] 
+    public DateOnly Day { get; set; }
+    
+    [Parameter] 
+    public EventType EventType { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnHidingCallback { get; set; }
+
+    [SupplyParameterFromForm]
+    public EventDto EventDto { get; set; } = new();
+
+    protected override void OnParametersSet()
+        => EventDto.Day = Day;
+
+    public void Open()
+        => _formModal.Open();
+
+    private string GetTitle() => EventType switch
+    {
+        EventType.Meeting => "New meeting",
+        EventType.CalendarEvent => "New calendar event",
+        EventType.ImportantDate => "New important date",
+        _ => throw new ArgumentOutOfRangeException()
+    };
+
+    private async Task SubmitAsync()
+    {
+        ResponseDto response;
+        switch (EventType)
+        {
+            case EventType.Meeting:
+                response = await UserCalendarDispatcher.AddMeetingAsync(EventDto.AsMeetingRequest());
+                break;
+            case EventType.CalendarEvent:
+                response = await UserCalendarDispatcher.AddCalendarEventAsync(EventDto.AsCalendarEventRequest());
+                break;
+            case EventType.ImportantDate:
+                response = await UserCalendarDispatcher.AddImportantDateAsync(EventDto.AsImportantDateRequest());
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            await _formModal.CloseAsync();
+        }
+    }
+
+    private async Task HideAsync()
+        => await OnHidingCallback.InvokeAsync();
+
+}

@@ -1,0 +1,9 @@
+.discipline-card {
+    border-radius: 10px;
+    border: 2px solid #1C211D;
+    background-color: #546357;
+    color: #F5F4F5;
+    padding-right: 20px;
+    padding-left: 20px;
+    height: 300px;
+}

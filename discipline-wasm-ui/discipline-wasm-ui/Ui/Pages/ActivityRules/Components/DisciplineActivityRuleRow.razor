@@ -1,0 +1,64 @@
+@using discipline_wasm_ui.Infrastructure.Infrastructure.Weekdays.Extensions
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
+
+<div class="row discipline-row">
+    <span class="pb-1 pt-1">
+        <div class="row">
+            <div class="col-md-1 discipline-vertical-center-align">
+                <i class="bi bi-arrow-right-circle-fill"></i>
+            </div>
+            <div class="col-md-10" @onclick="RowClickedAsync">
+                <div class="row">
+                    <span class="discipline-row-header">
+                        @ActivityRule?.Title
+                    </span>
+                    <span class="discipline-row-mode">
+                        @ActivityRule?.Mode @ActivityRule.AsCheckedWeekdaysString("-")
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-1 text-end discipline-vertical-center-align">
+                <div class="pe-1">
+                    <DisciplineIconButton
+                        IconClass="bi-file-earmark"
+                        Color="DisciplineIconButtonColor.Light"
+                        OnClickButtonCallback="AddActivityFromRuleAsync"
+                        TooltipText="Add activity from rule"/>
+                </div>
+                <div class="pe-1">
+                    <DisciplineIconButton
+                        IconClass="bi-trash-fill"
+                        Color="DisciplineIconButtonColor.Red"
+                        OnClickButtonCallback="DeleteClickedAsync"
+                        TooltipText="Delete"/>
+                </div>
+            </div>
+        </div>
+    </span>
+</div>
+
+@code {
+    [Parameter] 
+    public ActivityRuleDto ActivityRule { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnActivityRuleRowClickCallback { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnActivityRuleDeleteClickCallback { get; set; } 
+    
+    [Parameter]
+    public EventCallback OnActivityRuleAddFromRuleCallback { get; set; }
+
+    private async Task RowClickedAsync()
+        => await OnActivityRuleRowClickCallback.InvokeAsync();
+
+    private async Task DeleteClickedAsync()
+        => await OnActivityRuleDeleteClickCallback.InvokeAsync();
+
+    private async Task AddActivityFromRuleAsync()
+        => await OnActivityRuleAddFromRuleCallback.InvokeAsync();
+
+}

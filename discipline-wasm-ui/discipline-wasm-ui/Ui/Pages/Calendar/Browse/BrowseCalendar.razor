@@ -1,0 +1,127 @@
+@page "/browse-calendar"
+@using discipline_wasm_ui.Ui.Components.Headers
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Services.Dispatchers.Internals
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.UserCalendar.Enums
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Pages.Calendar.Components
+@inject IUserCalendarDispatcher UserCalendarDispatcher;
+
+<PageTitle>Calendar</PageTitle>
+<DisciplinePageHeader
+    Title="Calendar"/>
+<div class="row pb-3">
+    <div class="col-md-4 offset-4">
+        <DateInput
+            TValue="DateOnly"
+            Value="_day"
+            ValueExpression="() => _day"
+            ValueChanged="async (value) => await OnDateChanged(value)"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <div class="discipline-events-type-section pt-3">
+            <DisciplineSubHeader Text="Important events:"/>
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    @if (_userCalendar?.ImportantDates is not null)
+                    {
+                        @foreach (var item in _userCalendar.ImportantDates)
+                        {
+                        <EventCard
+                            ImportantDateDto="item"/>
+                        }
+                    }
+                </div>
+            </div>  
+        </div>
+        <div class="discipline-events-type-section pt-3">
+            <DisciplineSubHeader Text="Calendar events:"/>
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    @if (_userCalendar?.CalendarEvents is not null)
+                    {
+                        @foreach (var item in _userCalendar.CalendarEvents)
+                        {
+                            <EventCard
+                                CalendarEventDto="item"/>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="discipline-events-type-section pt-3">
+            <DisciplineSubHeader Text="Meetings:"/>
+
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    @if (_userCalendar?.Meetings is not null)
+                    {
+                        @foreach (var item in _userCalendar.Meetings)
+                        {
+                            <EventCard
+                                MeetingDto="item"/>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<DisciplineCreateDropUpButton
+    Options="_eventTypesDictionary"
+    OnClickCallback="CreateEventTypeClicked"/>
+<CalendarEventModalForm
+    @ref="_calendarEventModalForm"
+    Day="_day"
+    OnHidingCallback="RefreshDataAsync"/>
+
+@code {
+    private DateOnly _day = DateOnly.FromDateTime(DateTime.Now);
+    private UserCalendarDto _userCalendar;
+    private readonly Dictionary<string, string> _eventTypesDictionary = new Dictionary<string, string>()
+    {
+        [EventType.ImportantDate.ToString()] = "Important date",
+        [EventType.CalendarEvent.ToString()] = "Calendar event",
+        [EventType.Meeting.ToString()] = "Meeting",
+    };
+    private CalendarEventModalForm _calendarEventModalForm;
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeDataAsync();
+            StateHasChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }    
+
+    private async Task OnDateChanged(DateOnly date)
+    {
+        if (!(_day == date))
+        {
+            _day = date;
+            await InitializeDataAsync();
+        }
+    }
+
+    private async Task InitializeDataAsync()
+        => _userCalendar = await UserCalendarDispatcher.GetUserCalendarByDayAsync(_day);
+
+    private void CreateEventTypeClicked(string key)
+    {
+        if(!Enum.TryParse(key,true, out EventType keyEventType))
+        {
+            throw new ArgumentException($"Key: {key} is not recognized as EventType");
+        }
+        _calendarEventModalForm.EventType = keyEventType;
+        _calendarEventModalForm.Open();   
+    }
+
+    private async Task RefreshDataAsync()
+        => await InitializeDataAsync();
+
+}

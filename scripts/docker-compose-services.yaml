@@ -1,0 +1,15 @@
+services:
+  discipline-web-ui:
+    container_name: discipline-web-ui
+    build: 
+      context: ./../discipline-wasm-ui
+    ports:
+      - 6002:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=docker
+    networks:
+      - discipline-network
+
+networks:
+  discipline-network:
+    driver: bridge

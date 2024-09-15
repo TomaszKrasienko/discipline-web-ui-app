@@ -1,0 +1,110 @@
+@page "/activity-rules-list"
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.Services.Models
+@using discipline_wasm_ui.Ui.Components.Headers
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.Models.ActivityRules
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Pages.ActivityRules.Components
+@inject IActivityRulesDispatcher ActivityRulesDispatcher;
+@inject IDailyProductivityDispatcher DailyProductivityDispatcher;
+@inject ToastService ToastService;
+
+<PageTitle>Activity rules list</PageTitle>
+<DisciplinePageHeader 
+    Title="Activity rules list"/>
+<div class="row">
+    <div class="col-md-8 offset-2">
+    @foreach (var activityRule in _activityRules)
+    {
+        <DisciplineActivityRuleRow
+            ActivityRule="activityRule"
+            OnActivityRuleRowClickCallback="() => OpenEditFormModal(activityRule.Id)"
+            OnActivityRuleDeleteClickCallback="async() => await DeleteActivityRule(activityRule.Id)"
+            OnActivityRuleAddFromRuleCallback="async() => await AddActivityFromRuleAsync(activityRule.Id)"/>
+    }
+    </div>
+</div>
+<div class="row discipline-pagination-position">
+    <Pagination
+        TotalPages="_totalPages"
+        ActivePageNumber="_pageNumber"
+        Size="PaginationSize.Small"
+        Alignment="Alignment.Center"
+        FirstLinkIcon="IconName.ChevronDoubleLeft"
+        PreviousLinkIcon="IconName.ChevronLeft"
+        NextLinkIcon="IconName.ChevronRight"
+        LastLinkIcon="IconName.ChevronDoubleRight"
+        Class="discipline-pagination-colors"
+        PageChanged="ChangePageAsync"/>
+</div>
+
+<DisciplineCreateButton
+    OnClickButtonCallback="OpenCreateFormModal"/>
+
+<DisciplineActivityRuleModalForm
+    @ref="_createFormModal"
+    OnHidingCallback="ModalFormHidden"/>
+
+<DisciplineActivityRuleModalForm
+    @ref="_editFromModal"
+    OnHidingCallback="ModalFormHidden"/>
+
+@code {
+    private List<ActivityRuleDto> _activityRules = [];
+    private int _pageNumber = 1;
+    private int _totalPages = 1;
+    private int _pageSize = 10;
+    private DisciplineActivityRuleModalForm _createFormModal;
+    private DisciplineActivityRuleModalForm _editFromModal;
+
+    protected override async Task OnInitializedAsync()
+        => await InitializeDataAsync();
+
+    private async Task InitializeDataAsync()
+    {
+        var data = await ActivityRulesDispatcher.BrowseActivityRules(new PaginationRequest()
+        {
+            PageNumber = _pageNumber,
+            PageSize = _pageSize
+        });
+        _activityRules = data.Data;
+        _pageNumber = data.MetaData.CurrentPage;
+        _totalPages = data.MetaData.TotalPages;
+    }
+    
+    private async Task ChangePageAsync(int newPageNumber)
+    {
+        _pageNumber = newPageNumber;
+        await InitializeDataAsync();
+    }
+
+    private void OpenCreateFormModal()
+        => _createFormModal.Open();
+
+    private void OpenEditFormModal(Guid activityRuleId)
+    {
+        _editFromModal.ActivityRuleId = activityRuleId;
+        _editFromModal.Open();
+    }
+
+    private async Task DeleteActivityRule(Guid activityRuleId)
+    {
+        var response = await ActivityRulesDispatcher.DeleteActivityRuleAsync(activityRuleId);
+        ToastService.Notify(response.ToToastMessage());
+        await InitializeDataAsync();
+    }
+
+    private async Task AddActivityFromRuleAsync(Guid activityRuleId)
+    {
+        var response = await DailyProductivityDispatcher.CreateFromActivityRule(new ActivityFromRuleRequest()
+        {
+            ActivityRuleId = activityRuleId
+        });
+        ToastService.Notify(response.ToToastMessage());
+    }
+
+    private async Task ModalFormHidden()
+        => await InitializeDataAsync();
+}

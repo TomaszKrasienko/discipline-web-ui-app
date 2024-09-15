@@ -1,0 +1,75 @@
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@inject IDailyProductivityDispatcher DailyProductivityDispatcher;
+
+<div class="col-md-8 offset-2">
+<LineChart
+    @ref="_lineChart"/>
+</div>
+@code {
+    private List<ProgressDataDto> Data { get; set; } = [];
+    private LineChart _lineChart = default;
+    private LineChartOptions _lineChartOptions = default;
+    private ChartData _chartData = default;
+    private const string BlackColorHex = "#000000"; 
+
+    protected override Task OnInitializedAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            InitializeChartOptions();
+            await InitializeAsync();
+            InitializeChart();
+            await _lineChart.InitializeAsync(_chartData, _lineChartOptions);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    internal async Task RefreshChart()
+    {
+        await InitializeAsync();
+        InitializeChart();
+        await _lineChart.UpdateAsync(_chartData, _lineChartOptions);
+    }
+    
+    private async Task InitializeAsync()
+        => Data = (await DailyProductivityDispatcher.GetProgressData())?.ToList();
+    
+    private void InitializeChart()
+    {
+        if (Data is null)
+        {
+            return;
+        }
+        var labels = Data?.Select(x => x.Day.ToString("dd-MM-yyyy")).ToList();
+        var datasets = new List<IChartDataset>();
+        List<double?> test = Data?.Select(x => (double?)x.Percent).ToList();
+        datasets.Add(new LineChartDataset()
+        {
+            Label = "Progress",
+            Data = test,
+            BackgroundColor = BlackColorHex,
+            BorderWidth = 5,
+            BorderColor = "#546357",
+            HoverBorderWidth = 4,
+            PointBackgroundColor = [BlackColorHex],
+            PointHoverRadius = [0]
+        });
+        _chartData = new ChartData() { Labels = labels, Datasets = datasets };
+    }
+    
+    private void InitializeChartOptions()
+    {
+        _lineChartOptions = new();
+        _lineChartOptions.Responsive = true;
+        _lineChartOptions.Interaction = new Interaction { Mode = InteractionMode.Index };
+        _lineChartOptions.Layout.Padding = 70;
+        _lineChartOptions.Scales.Y!.Max = 100;
+        _lineChartOptions.Scales.Y.Min = 0;
+    }
+}

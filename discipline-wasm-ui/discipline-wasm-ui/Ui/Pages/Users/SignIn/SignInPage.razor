@@ -1,0 +1,64 @@
+@page "/sign-in"
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Auth.Token
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Services.Models.Users
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
+@using discipline_wasm_ui.Ui.Components.Headers
+@inject IUserDispatcher UserDispatcher;
+@inject ITokenProvider TokenProvider;
+@inject ToastService ToastService
+@inject NavigationManager NavigationManager
+
+<DisciplinePageHeader Title="Sign in"/>
+<div class="row pt-2">
+    <div class="col-md-6 offset-3">
+        <EditForm
+            method="post"
+            OnSubmit="Submit"
+            Model="SignInRequest">
+            <div class="pt-2">
+                <label for="sign-in-email">Email:</label>
+                <InputText
+                    class="form-control"
+                    id="sign-in-email"
+                    placeholder="Email"
+                    @bind-Value="SignInRequest.Email"/>
+            </div>
+            <div class="pt-2">
+                <label for="sign-in-password">Password:</label>
+                <InputText
+                    class="form-control"
+                    id="sign-in-password"
+                    type="password"
+                    placeholder="Password"
+                    @bind-Value="SignInRequest.Password"/>
+            </div>
+            <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Page"/>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm] 
+    public SignInRequest SignInRequest { get; set; } = new ();
+    
+    private async Task Submit()
+    {
+        var result = await UserDispatcher.SignIn(SignInRequest);
+        if (result.IsValid)
+        {
+            var tokens = (TokensDto)result.Result!;
+            await TokenProvider.SetAsync(tokens);
+            StateHasChanged();
+            NavigationManager.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            ToastService.Notify(result.Message!.ToDangerToastMessage());
+        }
+    }
+}
