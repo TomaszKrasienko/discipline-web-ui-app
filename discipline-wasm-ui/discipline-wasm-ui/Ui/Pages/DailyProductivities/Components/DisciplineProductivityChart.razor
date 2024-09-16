@@ -42,17 +42,13 @@
     
     private void InitializeChart()
     {
-        if (Data is null)
-        {
-            return;
-        }
         var labels = Data?.Select(x => x.Day.ToString("dd-MM-yyyy")).ToList();
+        List<double?> data = Data?.Select(x => (double?)x.Percent)?.ToList();
         var datasets = new List<IChartDataset>();
-        List<double?> test = Data?.Select(x => (double?)x.Percent).ToList();
         datasets.Add(new LineChartDataset()
         {
             Label = "Progress",
-            Data = test,
+            Data = data,
             BackgroundColor = BlackColorHex,
             BorderWidth = 5,
             BorderColor = "#546357",
