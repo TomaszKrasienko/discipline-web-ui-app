@@ -63,7 +63,7 @@
     {
         SubscriptionOrderRequest.SubscriptionId = SubscriptionId;
         var response = await UserDispatcher.CreateSubscriptionOrder(SubscriptionOrderRequest);
-        response.ToToastMessage();
+        ToastService.Notify(response.ToToastMessage());
         if (response.IsValid)
         {
             NavigationManager.NavigateTo("/");
