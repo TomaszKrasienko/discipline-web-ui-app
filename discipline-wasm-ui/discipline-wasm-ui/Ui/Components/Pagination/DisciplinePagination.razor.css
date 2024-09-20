@@ -1,0 +1,10 @@
+.discipline-pagination-btn {
+    min-width: 35px;
+    max-width: 35px;
+    border-radius: 35px;
+    border: solid 1px #546357;
+}
+
+.discipline-pagination-btn-position {
+    padding-right: 2px;
+}
