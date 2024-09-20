@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-md-12">
+    @foreach (var number in _pageNumbers)
+    {
+        <button class="btn">
+            @number
+        </button>
+    }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] 
+    public int TotalPages { get; set; }
+    
+    [Parameter, EditorRequired] 
+    public int ActiveNumberPage { get; set; }
+    
+    [Parameter, EditorRequired] 
+    public EventCallback<int> OnPageChangedCallback { get; set; }
+
+    private List<int> _pageNumbers = new List<int>();
+
+    protected override void OnInitialized()
+    {
+            Console.WriteLine($"T: {TotalPages}");
+            for (int i = 1; i <= TotalPages; i++)
+            {
+                _pageNumbers.Add(i);
+            }
+    }
+
+}

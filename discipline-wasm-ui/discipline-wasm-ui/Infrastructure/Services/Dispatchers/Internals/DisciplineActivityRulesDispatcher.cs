@@ -38,8 +38,11 @@ internal sealed class DisciplineActivityRulesDispatcher(
             activity.Weekdays = weekdayTranslator.Transform(activity.SelectedDays);
         }
 
+        var headersData = response?
+            .Headers
+            .ToDictionary(k => k.Key, v => v.Value);
         var metaData = new MetaDataDto();
-        if (response?.Headers.TryGetValues("x-pagination", out var pagination) ?? false)
+        if (headersData?.TryGetValue("x-pagination", out var pagination) ?? false)
         {
             metaData = JsonConvert.DeserializeObject<MetaDataDto>(pagination!.Single());
         };
