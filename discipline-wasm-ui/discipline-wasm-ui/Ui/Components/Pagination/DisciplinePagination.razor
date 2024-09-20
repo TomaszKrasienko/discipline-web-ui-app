@@ -2,12 +2,14 @@
     <div class="col-md-12">
         <button
             class="btn btn-sm discipline-pagination-btn"
-            @onclick="() => ButtonClicked(FirstTag)">
+            @onclick="() => ButtonClicked(FirstTag)"
+            disabled="@(ActiveNumberPage == 1 ? "disabled" : null)">
             <i class="bi bi-chevron-double-left"></i>
         </button>
         <button
             class="btn btn-sm discipline-pagination-btn"
-            @onclick="() => ButtonClicked(PreviousTag)">
+            @onclick="() => ButtonClicked(PreviousTag)"
+            disabled="@(ActiveNumberPage == 1 ? "disabled" : null)">
             <i class="bi bi-chevron-left"></i>
         </button>
         @foreach (var number in _pageNumbers)
@@ -20,12 +22,14 @@
         }
         <button
             class="btn btn-sm discipline-pagination-btn"
-            @onclick="() => ButtonClicked(NextTag)">
+            @onclick="() => ButtonClicked(NextTag)"
+            disabled="@(ActiveNumberPage == TotalPages ? "disabled" : null)">
             <i class="bi bi-chevron-right"></i>
         </button>
         <button
             class="btn btn-sm discipline-pagination-btn"
-            @onclick="() => ButtonClicked(LastTag)">
+            @onclick="() => ButtonClicked(LastTag)"
+            disabled="@(ActiveNumberPage == TotalPages ? "disabled" : null)">
             <i class="bi bi-chevron-double-right"></i>
         </button>
     </div>
