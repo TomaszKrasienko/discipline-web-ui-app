@@ -2,30 +2,30 @@
     <div class="col-md-12">
         <button
             class="btn btn-sm discipline-pagination-btn"
-            @onclick="() => ButtonClicked(_firstTag)">
+            @onclick="() => ButtonClicked(FirstTag)">
             <i class="bi bi-chevron-double-left"></i>
         </button>
         <button
             class="btn btn-sm discipline-pagination-btn"
-            @onclick="() => ButtonClicked(_previousTag)">
+            @onclick="() => ButtonClicked(PreviousTag)">
             <i class="bi bi-chevron-left"></i>
         </button>
         @foreach (var number in _pageNumbers)
         {
             <button
-                class="btn btn-sm discipline-pagination-btn"
+                class="btn btn-sm discipline-pagination-btn @(number == ActiveNumberPage ?  "discipline-pagination-btn-active" : "")"
                 @onclick="() => ButtonClicked(number.ToString())">
                 @number
             </button>
         }
         <button
             class="btn btn-sm discipline-pagination-btn"
-            @onclick="() => ButtonClicked(_nextTag)">
+            @onclick="() => ButtonClicked(NextTag)">
             <i class="bi bi-chevron-right"></i>
         </button>
         <button
             class="btn btn-sm discipline-pagination-btn"
-            @onclick="() => ButtonClicked(_lastTag)">
+            @onclick="() => ButtonClicked(LastTag)">
             <i class="bi bi-chevron-double-right"></i>
         </button>
     </div>
@@ -33,10 +33,10 @@
 
 @code {
     private List<int> _pageNumbers = new List<int>();
-    private const string _nextTag = "first";
-    private const string _previousTag = "last";    
-    private const string _firstTag = "first";
-    private const string _lastTag = "last";
+    private const string NextTag = "next";
+    private const string PreviousTag = "previous";    
+    private const string FirstTag = "first";
+    private const string LastTag = "last";
     [Parameter, EditorRequired] 
     public int TotalPages { get; set; }
     
@@ -48,15 +48,38 @@
 
     protected override void OnInitialized()
     {
-            Console.WriteLine($"T: {TotalPages}");
-            for (int i = 1; i <= TotalPages; i++)
-            {
-                _pageNumbers.Add(i);
-            }
+        for (int i = 1; i <= TotalPages; i++)
+        {
+            _pageNumbers.Add(i);
+        }
     }
 
     private void ButtonClicked(string number)
     {
-        Console.WriteLine(number);
+        switch (number)
+        {
+            case NextTag:
+                ++ActiveNumberPage;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+            case PreviousTag:
+                --ActiveNumberPage;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+            case LastTag:
+                ActiveNumberPage = TotalPages;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+            case FirstTag:
+                ActiveNumberPage = 1;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+            default:
+                int.TryParse(number, out var parsed);
+                ActiveNumberPage = parsed;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+        }
+        
     }
 }

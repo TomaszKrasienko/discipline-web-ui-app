@@ -5,6 +5,10 @@
     border: solid 1px #546357;
 }
 
+.discipline-pagination-btn-active{
+    background-color: #C4D4C9;
+}
+
 .discipline-pagination-btn-position {
     padding-right: 2px;
 }
