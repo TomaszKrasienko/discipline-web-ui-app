@@ -30,7 +30,8 @@
 <DisciplinePagination
     TotalPages="_totalPages"
     ActiveNumberPage="_pageNumber"
-    OnPageChangedCallback="ChangePageAsync"/>
+    OnPageChangedCallback="ChangePageAsync"
+    OnPageSizeChangedCallback="ChangePageSizeAsync"/>
 @* <div class="row pt-4"> *@
 @*     <div class="col-md-4 offset-4"> *@
 @*         <div class="col-md-8"> *@
@@ -101,9 +102,9 @@
         await InitializeDataAsync();
     }
 
-    private async Task ChangePageSizeAsync()
+    private async Task ChangePageSizeAsync(int pageSize)
     {
-        Console.WriteLine(_pageSize);
+        _pageSize = pageSize;
         await InitializeDataAsync();
     }
 
