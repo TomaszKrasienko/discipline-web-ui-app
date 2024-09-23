@@ -1,4 +1,6 @@
 @page "/pick-subscription-order"
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using discipline_wasm_ui.Services.Models.Users
 @using discipline_wasm_ui.Ui.Components.Buttons
@@ -7,7 +9,9 @@
 @using discipline_wasm_ui.Ui.Components.Modals
 @using discipline_wasm_ui.Ui.Pages.Users.Subscriptions.Components
 @using discipline.ui.Infrastructure.Communication.DTOs
-@inject IUserDispatcher UserDispatcher;
+@inject IUserDispatcher UserDispatcher
+@inject ToastService ToastService
+@inject NavigationManager NavigationManager
 
 <DisciplinePageHeader Title="Pick subscription order"/>
 <div class="row">
@@ -50,7 +54,7 @@
         Subscriptions = await UserDispatcher.BrowseSubscriptions();
     }
 
-    private void SubscriptionPicked(SubscriptionDto subscription)
+    private async Task SubscriptionPicked(SubscriptionDto subscription)
     {
         if (subscription.IsPaid)
         {
@@ -59,11 +63,17 @@
         }
         else
         {
-            UserDispatcher.CreateSubscriptionOrder(new CreateSubscriptionOrderRequest()
+            var request = new CreateSubscriptionOrderRequest()
             {
                 SubscriptionId = subscription.Id
-            });
+            };
+            var response = await UserDispatcher.CreateSubscriptionOrder(request);
+            ToastService.Notify(response.ToToastMessage());
+            if (response.IsValid)
+            {
+                NavigationManager.NavigateTo("/");
+            }
         }
     }
-
+    
 }

@@ -1,3 +1,4 @@
-.discipline-pagination-position{
-    padding-top: 30px;
+.discipline-page-size {
+    width: 10px!important;
+    max-width: 10px!important;
 }

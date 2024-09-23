@@ -1,0 +1,122 @@
+<div class="row pt-3">
+    <div class="col-md-8 offset-2 text-center">
+        <button
+            class="btn btn-sm discipline-pagination-btn"
+            @onclick="() => ButtonClicked(FirstTag)"
+            disabled="@(ActiveNumberPage == 1 ? "disabled" : null)">
+            <i class="bi bi-chevron-double-left"></i>
+        </button>
+        <button
+            class="btn btn-sm discipline-pagination-btn"
+            @onclick="() => ButtonClicked(PreviousTag)"
+            disabled="@(ActiveNumberPage == 1 ? "disabled" : null)">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        @foreach (var number in _pageNumbers)
+        {
+            <button
+                class="btn btn-sm discipline-pagination-btn @(number == ActiveNumberPage ? "discipline-pagination-btn-active" : "")"
+                @onclick="() => ButtonClicked(number.ToString())">
+                @number
+            </button>
+        }
+        <button
+            class="btn btn-sm discipline-pagination-btn"
+            @onclick="() => ButtonClicked(NextTag)"
+            disabled="@(ActiveNumberPage == TotalPages ? "disabled" : null)">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+        <button
+            class="btn btn-sm discipline-pagination-btn"
+            @onclick="() => ButtonClicked(LastTag)"
+            disabled="@(ActiveNumberPage == TotalPages ? "disabled" : null)">
+            <i class="bi bi-chevron-double-right"></i>
+        </button>
+        <span style="padding-left: 40px;">
+            <InputSelect
+                ValueExpression="() => SelectedPageSize"
+                Value="SelectedPageSize"
+                ValueChanged="@((int value) => PageSizeChanged(value))"
+                style="min-width: 60px; max-width: 60px; min-height: 30px; color: #546357; border-color: #546357; border-radius: 5px;">
+                @foreach (var item in PageSizes)
+                {
+                    <option value="@item" selected="@(SelectedPageSize == item ? "selected" : null)">
+                        @item
+                    </option>
+                }
+            </InputSelect>
+        </span>
+    </div>
+</div>
+@code {
+    private List<int> _pageNumbers = new List<int>();
+    private const string NextTag = "next";
+    private const string PreviousTag = "previous";    
+    private const string FirstTag = "first";
+    private const string LastTag = "last";
+    
+    [Parameter, EditorRequired] 
+    public int TotalPages { get; set; }
+    
+    [Parameter, EditorRequired] 
+    public int ActiveNumberPage { get; set; }
+    
+    [Parameter, EditorRequired] 
+    public EventCallback<int> OnPageChangedCallback { get; set; }
+
+    [Parameter]
+    public List<int> PageSizes { get; set; } = [5, 10, 15];
+
+    [Parameter]
+    public int SelectedPageSize { get; set; } = 10;
+    
+    [Parameter]
+    public EventCallback<int> OnPageSizeChangedCallback { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        for (int i = 1; i <= TotalPages; i++)
+        {
+            _pageNumbers.Add(i);
+        }
+
+        if (!PageSizes.Contains(SelectedPageSize))
+        {
+            throw new ArgumentException("Page sizes does not contains selected page size");
+        }
+    }
+
+    private void ButtonClicked(string number)
+    {
+        switch (number)
+        {
+            case NextTag:
+                ++ActiveNumberPage;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+            case PreviousTag:
+                --ActiveNumberPage;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+            case LastTag:
+                ActiveNumberPage = TotalPages;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+            case FirstTag:
+                ActiveNumberPage = 1;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+            default:
+                int.TryParse(number, out var parsed);
+                ActiveNumberPage = parsed;
+                OnPageChangedCallback.InvokeAsync(ActiveNumberPage);
+                break;
+        }
+    }
+
+    private async Task PageSizeChanged(int value)
+    {
+        SelectedPageSize = value;
+        await OnPageSizeChangedCallback.InvokeAsync(SelectedPageSize);   
+    }
+}
