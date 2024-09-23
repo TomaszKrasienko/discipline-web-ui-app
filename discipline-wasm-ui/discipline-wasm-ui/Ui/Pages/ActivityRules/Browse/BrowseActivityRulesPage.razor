@@ -32,30 +32,6 @@
     ActiveNumberPage="_pageNumber"
     OnPageChangedCallback="ChangePageAsync"
     OnPageSizeChangedCallback="ChangePageSizeAsync"/>
-@* <div class="row pt-4"> *@
-@*     <div class="col-md-4 offset-4"> *@
-@*         <div class="col-md-8"> *@
-             @* <Pagination *@
-@*                 TotalPages="_totalPages" *@
-@*                 ActivePageNumber="_pageNumber" *@
-@*                 Size="PaginationSize.Small" *@
-@*                 FirstLinkIcon="IconName.ChevronDoubleLeft" *@
-@*                 PreviousLinkIcon="IconName.ChevronLeft" *@
-@*                 NextLinkIcon="IconName.ChevronRight" *@
-@*                 LastLinkIcon="IconName.ChevronDoubleRight" *@
-@*                 PageChanged="ChangePageAsync"/> *@
-@*         </div> *@
-@*         <div class="col-md-4"> *@
-@*             <InputSelect *@
-@*                 @bind-Value="_pageSize" *@
-@*                 @onchange="async () => await ChangePageSizeAsync()"> *@
-@*                 <option value="10" selected="">10</option> *@
-@*                 <option value="15">15</option> *@
-@*                 <option value="20">20</option> *@
-@*             </InputSelect> *@
-@*         </div> *@
-@*     </div> *@
-@* </div> *@
 
 <DisciplineCreateButton
     OnClickButtonCallback="OpenCreateFormModal"/>
