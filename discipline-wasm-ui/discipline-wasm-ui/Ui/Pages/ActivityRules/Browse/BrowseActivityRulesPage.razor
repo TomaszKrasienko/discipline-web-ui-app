@@ -8,6 +8,7 @@
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Pagination
 @using discipline_wasm_ui.Ui.Pages.ActivityRules.Components
+@using Microsoft.AspNetCore.WebUtilities
 @inject IActivityRulesDispatcher ActivityRulesDispatcher;
 @inject IDailyProductivityDispatcher DailyProductivityDispatcher;
 @inject ToastService ToastService;
@@ -49,19 +50,45 @@
 
 @code {
     private List<ActivityRuleDto> _activityRules = [];
-    private int _pageNumber = 1;
+    private int _pageNumber;
     private int _totalPages = 1;
-    private int _pageSize = 10;
+    private int _pageSize;
     private DisciplineActivityRuleModalForm _createFormModal;
     private DisciplineActivityRuleModalForm _editFromModal;
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageNumber", out var pageNumber))
+        {
+            if (int.TryParse(pageNumber, out var numberPageNumber))
+            {
+                _pageNumber = numberPageNumber;
+            }
+        }
+        else
+        {
+            _pageNumber = 1;
+        }
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageSize", out var pageSize))
+        {
+            if (int.TryParse(pageSize, out var numberPageSize))
+            {
+                _pageSize = numberPageSize;
+            }
+        }
+        else
+        {
+            _pageSize = 5;
+        }
         await InitializeDataAsync();
     }
 
     private async Task InitializeDataAsync()
     {
+        Console.WriteLine($"Total pages: {_totalPages} Page number: {_pageNumber}");
+
         var data = await ActivityRulesDispatcher.BrowseActivityRules(new PaginationRequest()
         {
             PageNumber = _pageNumber,
@@ -70,6 +97,11 @@
         _activityRules = data.Data;
         _pageNumber = data.MetaData.CurrentPage;
         _totalPages = data.MetaData.TotalPages;
+        if (_totalPages < _pageNumber)
+        {
+            _pageNumber = _totalPages;
+            await InitializeDataAsync();
+        }
         GoToPage();
         StateHasChanged();
     }

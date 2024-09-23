@@ -12,11 +12,12 @@
             disabled="@(ActiveNumberPage == 1 ? "disabled" : null)">
             <i class="bi bi-chevron-left"></i>
         </button>
-        @for(int i = 1; i<=TotalPages; i++)
+        @for(int i=1; i<TotalPages+1; i++)
         {
+            var pageNumber = i;
             <button
-                class="btn btn-sm discipline-pagination-btn @(i == ActiveNumberPage ? "discipline-pagination-btn-active" : "")"
-                @onclick="() => ButtonClicked(i.ToString())">
+                class="btn btn-sm discipline-pagination-btn @(pageNumber == ActiveNumberPage ? "discipline-pagination-btn-active" : "")"
+                @onclick="() => ButtonClicked(pageNumber.ToString())">
                 @i
             </button>
         }
