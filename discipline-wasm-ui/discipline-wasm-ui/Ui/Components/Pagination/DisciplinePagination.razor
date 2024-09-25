@@ -12,12 +12,13 @@
             disabled="@(ActiveNumberPage == 1 ? "disabled" : null)">
             <i class="bi bi-chevron-left"></i>
         </button>
-        @foreach (var number in _pageNumbers)
+        @for(int i=1; i<TotalPages+1; i++)
         {
+            var pageNumber = i;
             <button
-                class="btn btn-sm discipline-pagination-btn @(number == ActiveNumberPage ? "discipline-pagination-btn-active" : "")"
-                @onclick="() => ButtonClicked(number.ToString())">
-                @number
+                class="btn btn-sm discipline-pagination-btn @(pageNumber == ActiveNumberPage ? "discipline-pagination-btn-active" : "")"
+                @onclick="() => ButtonClicked(pageNumber.ToString())">
+                @i
             </button>
         }
         <button
@@ -86,6 +87,9 @@
         }
     }
 
+    protected override void OnParametersSet()
+        => StateHasChanged();
+
     private void ButtonClicked(string number)
     {
         switch (number)
@@ -117,6 +121,6 @@
     private async Task PageSizeChanged(int value)
     {
         SelectedPageSize = value;
-        await OnPageSizeChangedCallback.InvokeAsync(SelectedPageSize);   
+        await OnPageSizeChangedCallback.InvokeAsync(SelectedPageSize);
     }
 }

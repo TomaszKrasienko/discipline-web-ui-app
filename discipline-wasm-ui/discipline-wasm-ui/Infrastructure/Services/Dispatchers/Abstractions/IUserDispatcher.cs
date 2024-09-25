@@ -6,6 +6,7 @@ namespace discipline_wasm_ui.Infrastructure.Services.DTOs;
 public interface IUserDispatcher
 {
     Task<List<SubscriptionDto>> BrowseSubscriptions();
+    Task<UserDto> BrowseMe();
     Task<ResponseDto> SignUp(SignUpRequest request);
     Task<ResponseDto> SignIn(SignInRequest request);
     Task<ResponseDto> CreateSubscriptionOrder(CreateSubscriptionOrderRequest request);

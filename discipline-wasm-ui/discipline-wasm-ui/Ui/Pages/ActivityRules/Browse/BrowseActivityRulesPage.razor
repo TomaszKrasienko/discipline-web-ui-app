@@ -8,13 +8,16 @@
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Pagination
 @using discipline_wasm_ui.Ui.Pages.ActivityRules.Components
+@using Microsoft.AspNetCore.WebUtilities
 @inject IActivityRulesDispatcher ActivityRulesDispatcher;
 @inject IDailyProductivityDispatcher DailyProductivityDispatcher;
 @inject ToastService ToastService;
+@inject NavigationManager NavigationManager;
 
 <PageTitle>Activity rules list</PageTitle>
 <DisciplinePageHeader 
     Title="Activity rules list"/>
+
 <div class="row">
     <div class="col-md-8 offset-2">
         @foreach (var activityRule in _activityRules)
@@ -30,6 +33,7 @@
 <DisciplinePagination
     TotalPages="_totalPages"
     ActiveNumberPage="_pageNumber"
+    SelectedPageSize="_pageSize"
     OnPageChangedCallback="ChangePageAsync"
     OnPageSizeChangedCallback="ChangePageSizeAsync"/>
 
@@ -46,18 +50,45 @@
 
 @code {
     private List<ActivityRuleDto> _activityRules = [];
-    private int _pageNumber = 1;
+    private int _pageNumber;
     private int _totalPages = 1;
-    private int _pageSize = 5;
+    private int _pageSize;
     private DisciplineActivityRuleModalForm _createFormModal;
     private DisciplineActivityRuleModalForm _editFromModal;
 
     public override async Task SetParametersAsync(ParameterView parameters)
-        => await InitializeDataAsync();
-    
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageNumber", out var pageNumber))
+        {
+            if (int.TryParse(pageNumber, out var numberPageNumber))
+            {
+                _pageNumber = numberPageNumber;
+            }
+        }
+        else
+        {
+            _pageNumber = 1;
+        }
+        
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("pageSize", out var pageSize))
+        {
+            if (int.TryParse(pageSize, out var numberPageSize))
+            {
+                _pageSize = numberPageSize;
+            }
+        }
+        else
+        {
+            _pageSize = 5;
+        }
+        await InitializeDataAsync();
+    }
 
     private async Task InitializeDataAsync()
     {
+        Console.WriteLine($"Total pages: {_totalPages} Page number: {_pageNumber}");
+
         var data = await ActivityRulesDispatcher.BrowseActivityRules(new PaginationRequest()
         {
             PageNumber = _pageNumber,
@@ -66,10 +97,20 @@
         _activityRules = data.Data;
         _pageNumber = data.MetaData.CurrentPage;
         _totalPages = data.MetaData.TotalPages;
-        
-        Console.WriteLine(_totalPages);
-        
+        if (_totalPages < _pageNumber)
+        {
+            _pageNumber = _totalPages;
+            await InitializeDataAsync();
+        }
+        GoToPage();
         StateHasChanged();
+    }
+
+    private void GoToPage()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        var baseUrl = uri.GetLeftPart(UriPartial.Path);
+        NavigationManager.NavigateTo($"{baseUrl}?pageNumber={_pageNumber}&pageSize={_pageSize}");
     }
     
     private async Task ChangePageAsync(int newPageNumber)
