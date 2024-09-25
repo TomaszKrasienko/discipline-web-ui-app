@@ -14,6 +14,9 @@ internal sealed class DisciplineUserDispatcher(
     public async Task<List<SubscriptionDto>> BrowseSubscriptions()
         => await disciplineClientFacade.GetAsResultAsync<List<SubscriptionDto>>("users/subscriptions");
 
+    public async Task<UserDto> BrowseMe()
+        => await disciplineClientFacade.GetAsResultAsync<UserDto>("users/me");
+
     public async Task<ResponseDto> SignUp(SignUpRequest request)
         => await disciplineClientFacade.PostToResponseDtoAsync($"users/sign-up", request);
 
