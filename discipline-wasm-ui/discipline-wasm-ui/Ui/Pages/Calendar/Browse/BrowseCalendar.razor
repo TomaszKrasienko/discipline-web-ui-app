@@ -62,7 +62,8 @@
                         @foreach (var item in _userCalendar.Meetings)
                         {
                             <EventCard
-                                MeetingDto="item"/>
+                                MeetingDto="item"
+                                OnEventCardClickedCallback=""/>
                         }
                     }
                 </div>
@@ -123,5 +124,13 @@
 
     private async Task RefreshDataAsync()
         => await InitializeDataAsync();
+
+    private void EventCardClicked(UserCalendarEventIdentifierDto userCalendarEventIdentifierDto)
+    {
+        if (userCalendarEventIdentifierDto.Type is EventType.ImportantDate)
+        {
+            var 
+        }
+    }
 
 }

@@ -1,7 +1,8 @@
 @using System.Text
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
+@using discipline_wasm_ui.Infrastructure.UserCalendar.Enums
 <div class="pt-2">
-    <div class="discipline-event-card @GetEventCardColorClass()">
+    <div class="discipline-event-card @GetEventCardColorClass()" @onclick="">
         <div class="col-md-10 offset-1">
             <div class="row">
                 <div class="col-md-8 text-start">
@@ -30,6 +31,8 @@
 </div>
 
 @code {
+    private UserCalendarEventIdentifierDto _userCalendarEventIdentifier;
+    
     [Parameter] 
     public ImportantDateDto ImportantDateDto { get; set; }
     
@@ -39,6 +42,40 @@
     [Parameter]
     public MeetingDto MeetingDto { get; set; }
     
+    [Parameter] 
+    public EventCallback<UserCalendarEventIdentifierDto> OnEventCardClickedCallback { get; set; }
+
+    protected override void OnParametersSet()
+        => SetEventIdentifier();
+
+    private void SetEventIdentifier()
+    {
+        if (ImportantDateDto is not null)
+        {
+            _userCalendarEventIdentifier = new()
+            {
+                Id = ImportantDateDto.Id,
+                Type = EventType.ImportantDate
+            };
+        }
+        else if(CalendarEventDto is not null)
+        {
+            _userCalendarEventIdentifier = new()
+            {
+                Id = CalendarEventDto.Id,
+                Type = EventType.CalendarEvent
+            };
+        }
+        else if (MeetingDto is not null)
+        {
+            _userCalendarEventIdentifier = new()
+            {
+                Id = MeetingDto.Id,
+                Type = EventType.Meeting
+            };
+        }
+    }
+
     private string GetTitle()
     {
         if (ImportantDateDto is not null) return ImportantDateDto.Title;
@@ -81,4 +118,8 @@
             data.AppendLine($"Place: {MeetingDto.Place}");
         return data.ToString();
     }
+
+    private async Task EventCardClickedAsync()
+        => await OnEventCardClickedCallback.InvokeAsync(_userCalendarEventIdentifier);
+
 }
