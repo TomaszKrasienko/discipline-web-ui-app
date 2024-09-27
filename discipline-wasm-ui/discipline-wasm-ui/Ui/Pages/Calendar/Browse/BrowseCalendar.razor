@@ -31,7 +31,8 @@
                         @foreach (var item in _userCalendar.ImportantDates)
                         {
                         <EventCard
-                            ImportantDateDto="item"/>
+                            ImportantDateDto="item"
+                            OnEventCardClickedCallback="EventCardClicked"/>
                         }
                     }
                 </div>
@@ -46,7 +47,8 @@
                         @foreach (var item in _userCalendar.CalendarEvents)
                         {
                             <EventCard
-                                CalendarEventDto="item"/>
+                                CalendarEventDto="item"
+                                OnEventCardClickedCallback="EventCardClicked"/>
                         }
                     }
                 </div>
@@ -63,7 +65,7 @@
                         {
                             <EventCard
                                 MeetingDto="item"
-                                OnEventCardClickedCallback=""/>
+                                OnEventCardClickedCallback="EventCardClicked"/>
                         }
                     }
                 </div>
@@ -129,8 +131,22 @@
     {
         if (userCalendarEventIdentifierDto.Type is EventType.ImportantDate)
         {
-            var 
+            var importantDateDto = _userCalendar.ImportantDates.First(x
+                => x.Id == userCalendarEventIdentifierDto.Id);
+            _calendarEventModalForm.ImportantDateDto = importantDateDto;
         }
+        else if (userCalendarEventIdentifierDto.Type is EventType.CalendarEvent)
+        {
+            var calendarEventDto = _userCalendar.CalendarEvents.First(x
+                => x.Id == userCalendarEventIdentifierDto.Id);
+            _calendarEventModalForm.CalendarEventDto = calendarEventDto;
+        }
+        else if (userCalendarEventIdentifierDto.Type is EventType.Meeting)
+        {
+            var meetingDto = _userCalendar.Meetings.First(x
+                => x.Id == userCalendarEventIdentifierDto.Id);
+            _calendarEventModalForm.MeetingDto = meetingDto;
+        }
+        _calendarEventModalForm.Open();
     }
-
 }

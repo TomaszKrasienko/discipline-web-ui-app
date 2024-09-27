@@ -2,7 +2,7 @@
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using discipline_wasm_ui.Infrastructure.UserCalendar.Enums
 <div class="pt-2">
-    <div class="discipline-event-card @GetEventCardColorClass()" @onclick="">
+    <div class="discipline-event-card @GetEventCardColorClass()" @onclick="EventCardClickedAsync">
         <div class="col-md-10 offset-1">
             <div class="row">
                 <div class="col-md-8 text-start">
@@ -120,6 +120,9 @@
     }
 
     private async Task EventCardClickedAsync()
-        => await OnEventCardClickedCallback.InvokeAsync(_userCalendarEventIdentifier);
+    {
+        Console.WriteLine("test");
+        await OnEventCardClickedCallback.InvokeAsync(_userCalendarEventIdentifier);  
+    } 
 
 }
