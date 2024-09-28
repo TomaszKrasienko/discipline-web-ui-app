@@ -193,6 +193,13 @@
         }
     }
 
+    private async Task AddOrUpdateMeetingAsync()
+    {
+        ResponseDto response = MeetingDto is null
+            ? await UserCalendarDispatcher.AddMeetingAsync(EventDto.AsMeetingRequest())
+            : await 
+    }
+
     private async Task HideAsync()
         => await OnHidingCallback.InvokeAsync();
 
