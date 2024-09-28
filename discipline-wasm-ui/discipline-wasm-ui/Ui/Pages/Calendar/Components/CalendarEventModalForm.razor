@@ -175,13 +175,13 @@
         switch (EventType)
         {
             case EventType.Meeting:
-                response = await UserCalendarDispatcher.AddMeetingAsync(EventDto.AsMeetingRequest());
+                response = await AddOrUpdateMeetingAsync();
                 break;
             case EventType.CalendarEvent:
-                response = await UserCalendarDispatcher.AddCalendarEventAsync(EventDto.AsCalendarEventRequest());
+                response = await AddOrUpdateCalendarEventAsync();
                 break;
             case EventType.ImportantDate:
-                response = await UserCalendarDispatcher.AddImportantDateAsync(EventDto.AsImportantDateRequest());
+                response = await AddOrUpdateImportantDateAsync();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -193,12 +193,20 @@
         }
     }
 
-    private async Task AddOrUpdateMeetingAsync()
-    {
-        ResponseDto response = MeetingDto is null
+    private async Task<ResponseDto> AddOrUpdateMeetingAsync()
+        => MeetingDto is null
             ? await UserCalendarDispatcher.AddMeetingAsync(EventDto.AsMeetingRequest())
-            : await 
-    }
+            : await UserCalendarDispatcher.EditMeetingAsync(MeetingDto.Id, EventDto.AsMeetingRequest());
+    
+    private async Task<ResponseDto> AddOrUpdateCalendarEventAsync()
+        => CalendarEventDto is null
+            ? await UserCalendarDispatcher.AddCalendarEventAsync(EventDto.AsCalendarEventRequest())
+            : await UserCalendarDispatcher.EditCalendarEventAsync(CalendarEventDto.Id, EventDto.AsCalendarEventRequest());
+    
+    private async Task<ResponseDto> AddOrUpdateImportantDateAsync()
+        => ImportantDateDto is null
+            ? await UserCalendarDispatcher.AddImportantDateAsync(EventDto.AsImportantDateRequest())
+            : await UserCalendarDispatcher.EditImportantDateAsync(ImportantDateDto.Id, EventDto.AsImportantDateRequest());
 
     private async Task HideAsync()
         => await OnHidingCallback.InvokeAsync();
