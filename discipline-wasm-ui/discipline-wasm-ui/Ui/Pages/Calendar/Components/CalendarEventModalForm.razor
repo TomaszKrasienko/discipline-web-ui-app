@@ -209,6 +209,16 @@
             : await UserCalendarDispatcher.EditImportantDateAsync(ImportantDateDto.Id, EventDto.AsImportantDateRequest());
 
     private async Task HideAsync()
-        => await OnHidingCallback.InvokeAsync();
-
+    {
+        ClearAll();
+        await OnHidingCallback.InvokeAsync();
+    }
+    
+    private void ClearAll()
+    {
+        EventDto = new();
+        ImportantDateDto = null;
+        CalendarEventDto = null;
+        MeetingDto = null;
+    }
 }

@@ -31,6 +31,6 @@ internal sealed class UserCalendarDispatcher(
             "Meeting added");
 
     public async Task<ResponseDto> EditMeetingAsync(Guid id, MeetingRequest request)
-        => await disciplineClientFacade.PostToResponseDtoAsync($"/user-calendar/edit-meeting/{id}", request,
+        => await disciplineClientFacade.PutToResponseDtoAsync($"/user-calendar/edit-meeting/{id}", request,
             "Meeting edited");
 }
