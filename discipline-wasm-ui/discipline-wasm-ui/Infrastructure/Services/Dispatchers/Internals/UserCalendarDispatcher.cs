@@ -14,11 +14,23 @@ internal sealed class UserCalendarDispatcher(
         => await disciplineClientFacade.PostToResponseDtoAsync("/user-calendar/add-important-date", request,
             "Important date event added");
 
+    public async Task<ResponseDto> EditImportantDateAsync(Guid id, ImportantDateRequest request)
+        => await disciplineClientFacade.PutToResponseDtoAsync($"/user-calendar/edit-important-date/{id}", request,
+            "Important date event edited");
+
     public async Task<ResponseDto> AddCalendarEventAsync(CalendarEventRequest request)
         => await disciplineClientFacade.PostToResponseDtoAsync("/user-calendar/add-calendar-event", request,
             "Calendar event added");
 
+    public async Task<ResponseDto> EditCalendarEventAsync(Guid id, CalendarEventRequest request)
+        => await disciplineClientFacade.PutToResponseDtoAsync($"/user-calendar/edit-calendar-event/{id}", request,
+            "Calendar event edited");
+
     public async Task<ResponseDto> AddMeetingAsync(MeetingRequest request)
         => await disciplineClientFacade.PostToResponseDtoAsync("/user-calendar/add-meeting", request,
             "Meeting added");
+
+    public async Task<ResponseDto> EditMeetingAsync(Guid id, MeetingRequest request)
+        => await disciplineClientFacade.PutToResponseDtoAsync($"/user-calendar/edit-meeting/{id}", request,
+            "Meeting edited");
 }

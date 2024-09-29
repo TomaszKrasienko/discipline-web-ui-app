@@ -9,7 +9,6 @@
 @inject IUserCalendarDispatcher UserCalendarDispatcher
 @inject ToastService ToastService
 
-
 <DisciplineModal
     @ref="_formModal"
     Title="@GetTitle()"
@@ -116,9 +115,48 @@
 
     [SupplyParameterFromForm]
     public EventDto EventDto { get; set; } = new();
+    
+    [Parameter] 
+    public ImportantDateDto ImportantDateDto { get; set; }
+    
+    [Parameter] 
+    public CalendarEventDto CalendarEventDto { get; set; }
+    
+    [Parameter] 
+    public MeetingDto MeetingDto { get; set; }
 
     protected override void OnParametersSet()
-        => EventDto.Day = Day;
+    {
+        EventDto.Day = Day;
+        MapEventsDto();
+    }
+
+    private void MapEventsDto()
+    {
+        if (ImportantDateDto is not null)
+        {
+            EventType = EventType.ImportantDate;
+            EventDto.Title = ImportantDateDto.Title;
+        }
+        else if(CalendarEventDto is not null)
+        {
+            EventType = EventType.CalendarEvent;
+            EventDto.Title = CalendarEventDto.Title;
+            EventDto.TimeFrom = CalendarEventDto.TimeFrom;
+            EventDto.TimeTo = CalendarEventDto.TimeTo;
+            EventDto.Action = CalendarEventDto.Action;
+        }
+        else if (MeetingDto is not null)
+        {
+            EventType = EventType.Meeting;
+            EventDto.Title = MeetingDto.Title;
+            EventDto.TimeFrom = MeetingDto.TimeFrom;
+            EventDto.TimeTo = MeetingDto.TimeTo;
+            EventDto.Platform = MeetingDto.Platform;
+            EventDto.Uri = MeetingDto.Uri;
+            EventDto.Place = MeetingDto.Place;
+        }
+    }
 
     public void Open()
         => _formModal.Open();
@@ -137,13 +175,13 @@
         switch (EventType)
         {
             case EventType.Meeting:
-                response = await UserCalendarDispatcher.AddMeetingAsync(EventDto.AsMeetingRequest());
+                response = await AddOrUpdateMeetingAsync();
                 break;
             case EventType.CalendarEvent:
-                response = await UserCalendarDispatcher.AddCalendarEventAsync(EventDto.AsCalendarEventRequest());
+                response = await AddOrUpdateCalendarEventAsync();
                 break;
             case EventType.ImportantDate:
-                response = await UserCalendarDispatcher.AddImportantDateAsync(EventDto.AsImportantDateRequest());
+                response = await AddOrUpdateImportantDateAsync();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -155,7 +193,32 @@
         }
     }
 
-    private async Task HideAsync()
-        => await OnHidingCallback.InvokeAsync();
+    private async Task<ResponseDto> AddOrUpdateMeetingAsync()
+        => MeetingDto is null
+            ? await UserCalendarDispatcher.AddMeetingAsync(EventDto.AsMeetingRequest())
+            : await UserCalendarDispatcher.EditMeetingAsync(MeetingDto.Id, EventDto.AsMeetingRequest());
+    
+    private async Task<ResponseDto> AddOrUpdateCalendarEventAsync()
+        => CalendarEventDto is null
+            ? await UserCalendarDispatcher.AddCalendarEventAsync(EventDto.AsCalendarEventRequest())
+            : await UserCalendarDispatcher.EditCalendarEventAsync(CalendarEventDto.Id, EventDto.AsCalendarEventRequest());
+    
+    private async Task<ResponseDto> AddOrUpdateImportantDateAsync()
+        => ImportantDateDto is null
+            ? await UserCalendarDispatcher.AddImportantDateAsync(EventDto.AsImportantDateRequest())
+            : await UserCalendarDispatcher.EditImportantDateAsync(ImportantDateDto.Id, EventDto.AsImportantDateRequest());
 
+    private async Task HideAsync()
+    {
+        ClearAll();
+        await OnHidingCallback.InvokeAsync();
+    }
+    
+    private void ClearAll()
+    {
+        EventDto = new();
+        ImportantDateDto = null;
+        CalendarEventDto = null;
+        MeetingDto = null;
+    }
 }
