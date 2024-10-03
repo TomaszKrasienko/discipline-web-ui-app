@@ -58,10 +58,8 @@
                 Value="EventDate"
                 ValueExpression="() => EventDate"
                 ValueChanged="(value) => OnDateChanged(value)"/>
-            <DisciplineIconButton
-                Color="DisciplineIconButtonColor.Light"
-                IconClass="bi-check-lg"
-                OnClickButtonCallback="SubmitDateChangeAsync"/>
+            <DisciplineSubmitButton
+                OnClickCallback="SubmitDateChangeAsync"/>
         </div>
     </Body>
 
