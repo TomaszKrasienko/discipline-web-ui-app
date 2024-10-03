@@ -34,6 +34,12 @@ internal sealed class DisciplineClient(
         return await httpClient.PatchAsync(path, null);
     }
 
+    public async Task<HttpResponseMessage> PatchAsync<T>(string path, T t) where T : class
+    {
+        await Authorize();
+        return await httpClient.PatchAsJsonAsync(path, t);
+    }
+
     public async Task<HttpResponseMessage> DeleteAsync(string path)
     {
         await Authorize();

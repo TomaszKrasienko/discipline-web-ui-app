@@ -5,6 +5,10 @@
 @using discipline_wasm_ui.Ui.Components.Enums
 @using discipline_wasm_ui.Ui.Components.Modals
 @using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.Models.UserCalendar
+@inject IUserCalendarDispatcher UserCalendarDispatcher
+@inject ToastService ToastService
 
 <div class="pt-2">
     <div class="discipline-event-card @GetEventCardColorClass()">
@@ -52,13 +56,14 @@
     Size="DisciplineModalSize.Small"
     Title="Change event day">
     <Body>
-        <div class="col-md-4 offset-4">
+        <div class="col-md-8 offset-2">
             <DateInput
                 TValue="DateOnly"
                 Value="EventDate"
                 ValueExpression="() => EventDate"
                 ValueChanged="(value) => OnDateChanged(value)"/>
             <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Modal"
                 OnClickCallback="SubmitDateChangeAsync"/>
         </div>
     </Body>
@@ -178,6 +183,15 @@
 
     private async Task SubmitDateChangeAsync()
     {
-        
+        var request = new ChangeEventDateRequest()
+        {
+            NewDate = EventDate
+        };
+        var response = await UserCalendarDispatcher.ChangeEventDate(_userCalendarEventIdentifier.Id, request);
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            await _editDateModal.CloseAsync();
+        }
     }
 }

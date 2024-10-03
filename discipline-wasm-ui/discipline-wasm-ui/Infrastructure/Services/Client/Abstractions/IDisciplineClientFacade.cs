@@ -9,5 +9,6 @@ public interface IDisciplineClientFacade
     Task<ResponseDto> PostToResponseDtoAsync<T>(string path, T t, string successMessage = null) where T : class;
     Task<ResponseDto> PutToResponseDtoAsync<T>(string path, T t, string successMessage = null) where T : class;
     Task<ResponseDto> PatchToResponseDtoAsync(string path, string successMessage = null);
+    Task<ResponseDto> PatchToResponseDtoAsync<T>(string path, T t, string successMessage = null) where T : class;
     Task<ResponseDto> DeleteToResponseDtoAsync(string path, string successMessage = null);
 }
