@@ -29,8 +29,9 @@
                     @if (_userCalendar?.ImportantDates is not null)
                     {
                         @foreach (var item in _userCalendar.ImportantDates)
-                        {
+                        { 
                         <EventCard
+                            EventDate="_day"
                             ImportantDateDto="item"
                             OnEventCardClickedCallback="EventCardClicked"/>
                         }
@@ -47,6 +48,7 @@
                         @foreach (var item in _userCalendar.CalendarEvents)
                         {
                             <EventCard
+                                EventDate="_day"
                                 CalendarEventDto="item"
                                 OnEventCardClickedCallback="EventCardClicked"/>
                         }
@@ -64,6 +66,7 @@
                         @foreach (var item in _userCalendar.Meetings)
                         {
                             <EventCard
+                                EventDate="_day"
                                 MeetingDto="item"
                                 OnEventCardClickedCallback="EventCardClicked"/>
                         }

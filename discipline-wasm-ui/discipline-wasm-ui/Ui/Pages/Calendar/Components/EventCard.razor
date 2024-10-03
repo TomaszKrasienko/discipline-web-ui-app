@@ -4,50 +4,65 @@
 @using discipline_wasm_ui.Ui.Components.Buttons
 @using discipline_wasm_ui.Ui.Components.Enums
 @using discipline_wasm_ui.Ui.Components.Modals
+@using BlazorBootstrap
+
 <div class="pt-2">
     <div class="discipline-event-card @GetEventCardColorClass()">
-        <div class="col-md-10 offset-1">
-            <div class="row">
-                <div class="col-md-11" @onclick="EventCardClickedAsync">
-                    <div class="row">
-                        <div class="col-md-8 text-start">
-                            <span class="discipline-card-title">
-                                @GetTitle()
-                            </span>
-                        </div>
-                        <div class="col-md-4 text-end">
+        <div class="row">
+            <div class="col-md-11" @onclick="EventCardClickedAsync">
+                <div class="row">
+                    <div class="col-md-10 offset-1">
+                        <div class="row">
+                            <div class="col-md-8 text-start">
+                                <span class="discipline-card-title">
+                                    @GetTitle()
+                                </span>
+                            </div>
+                            <div class="col-md-4 text-end">
                             @GetMeetingTimeSpan()
                         </div>
+                        </div>
                     </div>
-                    <div class="row text-start discipline-card-content">
-                        <span>
-                            @if (CalendarEventDto is not null)
-                            {
-                                @CalendarEventDto.Action
-                            }
-                            @if (MeetingDto is not null)
-                            {
-                                @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
-                            }
-                        </span>
-                    </div>
+                </div>
+                <div class="row text-start discipline-card-content">
+                    <span>
+                        @if (CalendarEventDto is not null)
+                        {
+                            @CalendarEventDto.Action
+                        }
+                        @if (MeetingDto is not null)
+                        {
+                            @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
+                        }
+                    </span>
                 </div>
             </div>
             <div class="col-md-1">
                 <DisciplineIconButton 
-                    Color="DisciplineIconButtonColor.Dark"
+                    Color="DisciplineIconButtonColor.Light"
                     IconClass="bi-calendar-week"
                     TooltipText="Change date"
-                    OnClickButtonCallback=""/>
+                    OnClickButtonCallback="ShowEditDateForm"/>
             </div>
         </div>
     </div>
 </div>
 <DisciplineModal
+    @ref="_editDateModal"
     Size="DisciplineModalSize.Small"
     Title="Change event day">
     <Body>
-    
+        <div class="col-md-4 offset-4">
+            <DateInput
+                TValue="DateOnly"
+                Value="EventDate"
+                ValueExpression="() => EventDate"
+                ValueChanged="(value) => OnDateChanged(value)"/>
+            <DisciplineIconButton
+                Color="DisciplineIconButtonColor.Light"
+                IconClass="bi-check-lg"
+                OnClickButtonCallback="SubmitDateChangeAsync"/>
+        </div>
     </Body>
 
 </DisciplineModal>
@@ -55,6 +70,7 @@
 
 @code {
     private UserCalendarEventIdentifierDto _userCalendarEventIdentifier;
+    private DisciplineModal _editDateModal;
     
     [Parameter] 
     public ImportantDateDto ImportantDateDto { get; set; }
@@ -68,7 +84,8 @@
     [Parameter] 
     public EventCallback<UserCalendarEventIdentifierDto> OnEventCardClickedCallback { get; set; }
 
-    private DateOnly _eventDate;
+    [Parameter, EditorRequired]
+    public DateOnly EventDate { get; set; }
     
     protected override void OnParametersSet()
         => SetEventIdentifier();
@@ -148,6 +165,21 @@
     {
         Console.WriteLine("test");
         await OnEventCardClickedCallback.InvokeAsync(_userCalendarEventIdentifier);  
-    } 
+    }
 
+    private void ShowEditDateForm()
+        => _editDateModal.Open();
+
+    private void OnDateChanged(DateOnly date)
+    {
+        if (!(EventDate == date))
+        {
+            EventDate = date;
+        }
+    }
+
+    private async Task SubmitDateChangeAsync()
+    {
+        
+    }
 }
