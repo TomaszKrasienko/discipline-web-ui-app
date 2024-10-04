@@ -2,7 +2,7 @@
 @using discipline_wasm_ui.Ui.Components.Enums
 <div class="@_btnPosition">
     <Tooltip Class="me-4" Title="Submit">
-        <button type="submit" class="discipline-submit-button">
+        <button type="submit" class="discipline-submit-button" @onclick="OnClickCallback">
             <i class="bi bi-check-lg discipline-submit-btn-icon"></i>
         </button>
     </Tooltip>
@@ -14,10 +14,17 @@
     [Parameter] 
     public DisciplineSubmitButtonType Type { get; set; }
     
+    [Parameter] 
+    public EventCallback OnClickCallback { get; set; }
+    
     protected override void OnParametersSet()
     {
         _btnPosition = Type == DisciplineSubmitButtonType.Page 
             ? "discipline-submit-btn-position" 
             : "discipline-submit-btn-position-modal";
     }
+
+    private async Task ButtonClickedAsync()
+        => await OnClickCallback.InvokeAsync();
+
 }

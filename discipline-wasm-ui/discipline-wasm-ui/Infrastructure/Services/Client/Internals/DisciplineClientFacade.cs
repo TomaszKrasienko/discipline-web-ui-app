@@ -41,6 +41,9 @@ internal sealed class DisciplineResponseFacade(
     public async Task<ResponseDto> PatchToResponseDtoAsync(string path, string successMessage = null)
         => await ToResponseDto(await disciplineAppClient.PatchAsync(path), successMessage);
 
+    public async Task<ResponseDto> PatchToResponseDtoAsync<T>(string path, T t, string successMessage = null) where T : class
+        => await ToResponseDto(await disciplineAppClient.PatchAsync(path, t), successMessage);
+
     public async Task<ResponseDto> DeleteToResponseDtoAsync(string path, string successMessage = null)
         => await ToResponseDto(await disciplineAppClient.DeleteAsync(path), successMessage);
 

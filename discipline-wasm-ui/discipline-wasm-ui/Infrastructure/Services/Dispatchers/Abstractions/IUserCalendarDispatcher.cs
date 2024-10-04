@@ -11,4 +11,5 @@ public interface IUserCalendarDispatcher
     Task<ResponseDto> EditCalendarEventAsync(Guid id, CalendarEventRequest request);
     Task<ResponseDto> AddMeetingAsync(MeetingRequest request);
     Task<ResponseDto> EditMeetingAsync(Guid id, MeetingRequest request);
+    Task<ResponseDto> ChangeEventDate(Guid eventId, ChangeEventDateRequest request);
 }

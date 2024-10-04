@@ -1,37 +1,79 @@
 @using System.Text
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using discipline_wasm_ui.Infrastructure.UserCalendar.Enums
+@using discipline_wasm_ui.Ui.Components.Buttons
+@using discipline_wasm_ui.Ui.Components.Enums
+@using discipline_wasm_ui.Ui.Components.Modals
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Helpers
+@using discipline_wasm_ui.Infrastructure.Services.Models.UserCalendar
+@inject IUserCalendarDispatcher UserCalendarDispatcher
+@inject ToastService ToastService
+
 <div class="pt-2">
-    <div class="discipline-event-card @GetEventCardColorClass()" @onclick="EventCardClickedAsync">
-        <div class="col-md-10 offset-1">
-            <div class="row">
-                <div class="col-md-8 text-start">
-                    <span class="discipline-card-title">
-                        @GetTitle()
-                    </span>
-                </div>
-                <div class="col-md-4 text-end">
-                    @GetMeetingTimeSpan()
+    <div class="discipline-event-card @GetEventCardColorClass()">
+        <div class="row">
+            <div class="col-md-11" @onclick="EventCardClickedAsync">
+                <div class="row">
+                    <div class="col-md-10 offset-1">
+                        <div class="row">
+                            <div class="col-md-8 text-start">
+                                <span class="discipline-card-title">
+                                    Title: @GetTitle()
+                                </span>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                @GetMeetingTimeSpan()
+                            </div>
+                        </div>
+                        <div class="row text-start discipline-card-content">
+                                <span>
+                                    @if (CalendarEventDto is not null)
+                                    {
+                                    @($"Action: {CalendarEventDto.Action}")
+                                    }
+                                    @if (MeetingDto is not null)
+                                    {
+                                    @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
+                                    }
+                                </span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row text-start discipline-card-content">
-                <span>
-                    @if (CalendarEventDto is not null)
-                    {
-                        @CalendarEventDto.Action
-                    }
-                    @if (MeetingDto is not null)
-                    {
-                        @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
-                    }
-                </span>
+            <div class="col-md-1">
+                <DisciplineIconButton
+                    Color="DisciplineIconButtonColor.Light"
+                    IconClass="bi-calendar-week"
+                    TooltipText="Change date"
+                    OnClickButtonCallback="ShowEditDateForm"/>
             </div>
         </div>
     </div>
 </div>
+<DisciplineModal
+    @ref="_editDateModal"
+    Size="DisciplineModalSize.Small"
+    Title="Change event day">
+    <Body>
+        <div class="col-md-8 offset-2">
+            <DateInput
+                TValue="DateOnly"
+                Value="EventDate"
+                ValueExpression="() => EventDate"
+                ValueChanged="(value) => OnDateChanged(value)"/>
+            <DisciplineSubmitButton
+                Type="DisciplineSubmitButtonType.Modal"
+                OnClickCallback="SubmitDateChangeAsync"/>
+        </div>
+    </Body>
+
+</DisciplineModal>
+
 
 @code {
     private UserCalendarEventIdentifierDto _userCalendarEventIdentifier;
+    private DisciplineModal _editDateModal;
     
     [Parameter] 
     public ImportantDateDto ImportantDateDto { get; set; }
@@ -45,6 +87,12 @@
     [Parameter] 
     public EventCallback<UserCalendarEventIdentifierDto> OnEventCardClickedCallback { get; set; }
 
+    [Parameter] 
+    public EventCallback OnEventDateChangedCallback { get; set; }
+    
+    [Parameter, EditorRequired]
+    public DateOnly EventDate { get; set; }
+    
     protected override void OnParametersSet()
         => SetEventIdentifier();
 
@@ -94,7 +142,7 @@
     }
     
     private string GetTime(TimeOnly timeFrom, TimeOnly? timeTo)
-        => timeTo is null ? $"{timeFrom:HH:mm}" : $"{timeFrom:HH:mm} - {timeTo:HH:mm}";
+        => timeTo is null ? $"From: {timeFrom:HH:mm}" : $"From: {timeFrom:HH:mm} To: {timeTo:HH:mm}";
     
     private string GetEventCardColorClass()
     {
@@ -120,9 +168,31 @@
     }
 
     private async Task EventCardClickedAsync()
-    {
-        Console.WriteLine("test");
-        await OnEventCardClickedCallback.InvokeAsync(_userCalendarEventIdentifier);  
-    } 
+        => await OnEventCardClickedCallback.InvokeAsync(_userCalendarEventIdentifier);  
+    
+    private void ShowEditDateForm()
+        => _editDateModal.Open();
 
+    private void OnDateChanged(DateOnly date)
+    {
+        if (!(EventDate == date))
+        {
+            EventDate = date;
+        }
+    }
+
+    private async Task SubmitDateChangeAsync()
+    {
+        var request = new ChangeEventDateRequest()
+        {
+            NewDate = EventDate
+        };
+        var response = await UserCalendarDispatcher.ChangeEventDate(_userCalendarEventIdentifier.Id, request);
+        ToastService.Notify(response.ToToastMessage());
+        if (response.IsValid)
+        {
+            await OnEventDateChangedCallback.InvokeAsync();   
+            await _editDateModal.CloseAsync();
+        }
+    }
 }
