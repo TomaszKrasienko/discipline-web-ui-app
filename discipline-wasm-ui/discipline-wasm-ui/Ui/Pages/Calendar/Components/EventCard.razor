@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col-md-11" @onclick="EventCardClickedAsync">
                 <div class="row">
-                    <div class="col-md-8 offset-2">
+                    <div class="col-md-10 offset-1">
                         <div class="row">
                             <div class="col-md-8 text-start">
                                 <span class="discipline-card-title">
@@ -25,18 +25,18 @@
                             <div class="col-md-4 text-end">
                                 @GetMeetingTimeSpan()
                             </div>
-                            <div class="row text-start discipline-card-content">
+                        </div>
+                        <div class="row text-start discipline-card-content">
                                 <span>
                                     @if (CalendarEventDto is not null)
                                     {
-                                        @CalendarEventDto.Action
+                                    @($"Action: {CalendarEventDto.Action}")
                                     }
                                     @if (MeetingDto is not null)
                                     {
-                                        @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
+                                    @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
                                     }
                                 </span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
     }
     
     private string GetTime(TimeOnly timeFrom, TimeOnly? timeTo)
-        => timeTo is null ? $"{timeFrom:HH:mm}" : $"{timeFrom:HH:mm} - {timeTo:HH:mm}";
+        => timeTo is null ? $"From: {timeFrom:HH:mm}" : $"From: {timeFrom:HH:mm} To: {timeTo:HH:mm}";
     
     private string GetEventCardColorClass()
     {
@@ -168,11 +168,8 @@
     }
 
     private async Task EventCardClickedAsync()
-    {
-        Console.WriteLine("test");
-        await OnEventCardClickedCallback.InvokeAsync(_userCalendarEventIdentifier);  
-    }
-
+        => await OnEventCardClickedCallback.InvokeAsync(_userCalendarEventIdentifier);  
+    
     private void ShowEditDateForm()
         => _editDateModal.Open();
 
