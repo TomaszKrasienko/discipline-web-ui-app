@@ -33,7 +33,8 @@
                         <EventCard
                             EventDate="_day"
                             ImportantDateDto="item"
-                            OnEventCardClickedCallback="EventCardClicked"/>
+                            OnEventCardClickedCallback="EventCardClicked"
+                            OnEventDateChangedCallback="InitializeDataAsync"/>
                         }
                     }
                 </div>
@@ -50,7 +51,8 @@
                             <EventCard
                                 EventDate="_day"
                                 CalendarEventDto="item"
-                                OnEventCardClickedCallback="EventCardClicked"/>
+                                OnEventCardClickedCallback="EventCardClicked"
+                                OnEventDateChangedCallback="InitializeDataAsync"/>
                         }
                     }
                 </div>
@@ -68,7 +70,8 @@
                             <EventCard
                                 EventDate="_day"
                                 MeetingDto="item"
-                                OnEventCardClickedCallback="EventCardClicked"/>
+                                OnEventCardClickedCallback="EventCardClicked"
+                                OnEventDateChangedCallback="InitializeDataAsync"/>
                         }
                     }
                 </div>
@@ -100,7 +103,6 @@
         if (firstRender)
         {
             await InitializeDataAsync();
-            StateHasChanged();
         }
         await base.OnAfterRenderAsync(firstRender);
     }    
@@ -115,7 +117,10 @@
     }
 
     private async Task InitializeDataAsync()
-        => _userCalendar = await UserCalendarDispatcher.GetUserCalendarByDayAsync(_day);
+    {
+        _userCalendar = await UserCalendarDispatcher.GetUserCalendarByDayAsync(_day);
+        StateHasChanged();
+    }
 
     private void CreateEventTypeClicked(string key)
     {

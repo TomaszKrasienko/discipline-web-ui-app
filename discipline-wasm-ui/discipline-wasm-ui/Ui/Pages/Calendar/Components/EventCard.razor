@@ -15,34 +15,34 @@
         <div class="row">
             <div class="col-md-11" @onclick="EventCardClickedAsync">
                 <div class="row">
-                    <div class="col-md-10 offset-1">
+                    <div class="col-md-8 offset-2">
                         <div class="row">
                             <div class="col-md-8 text-start">
                                 <span class="discipline-card-title">
-                                    @GetTitle()
+                                    Title: @GetTitle()
                                 </span>
                             </div>
                             <div class="col-md-4 text-end">
-                            @GetMeetingTimeSpan()
-                        </div>
+                                @GetMeetingTimeSpan()
+                            </div>
+                            <div class="row text-start discipline-card-content">
+                                <span>
+                                    @if (CalendarEventDto is not null)
+                                    {
+                                        @CalendarEventDto.Action
+                                    }
+                                    @if (MeetingDto is not null)
+                                    {
+                                        @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
+                                    }
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row text-start discipline-card-content">
-                    <span>
-                        @if (CalendarEventDto is not null)
-                        {
-                            @CalendarEventDto.Action
-                        }
-                        @if (MeetingDto is not null)
-                        {
-                            @((MarkupString)ConvertToHtmlLines(GetMeetingNavigationData()))
-                        }
-                    </span>
-                </div>
             </div>
             <div class="col-md-1">
-                <DisciplineIconButton 
+                <DisciplineIconButton
                     Color="DisciplineIconButtonColor.Light"
                     IconClass="bi-calendar-week"
                     TooltipText="Change date"
@@ -87,6 +87,9 @@
     [Parameter] 
     public EventCallback<UserCalendarEventIdentifierDto> OnEventCardClickedCallback { get; set; }
 
+    [Parameter] 
+    public EventCallback OnEventDateChangedCallback { get; set; }
+    
     [Parameter, EditorRequired]
     public DateOnly EventDate { get; set; }
     
@@ -191,6 +194,7 @@
         ToastService.Notify(response.ToToastMessage());
         if (response.IsValid)
         {
+            await OnEventDateChangedCallback.InvokeAsync();   
             await _editDateModal.CloseAsync();
         }
     }
