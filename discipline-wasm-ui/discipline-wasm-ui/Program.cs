@@ -2,18 +2,16 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using discipline_wasm_ui;
 using discipline_wasm_ui.Configuration;
-using Microsoft.AspNetCore.SignalR.Client;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.Services.AddSingleton(serviceProvider =>
-{
-    var navigationManager = serviceProvider.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
-    return new HubConnectionBuilder()
-        .WithUrl(navigationManager.ToAbsoluteUri("http://localhost:5227/discipline-notifications-hub"))
-        .WithAutomaticReconnect()
-        .Build();
-});
-
+// builder.Services.AddSingleton(serviceProvider =>
+// {
+//     var navigationManager = serviceProvider.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
+//     return new HubConnectionBuilder()
+//         .WithUrl("http://localhost:5227/discipline-notifications-hub")
+//         .WithAutomaticReconnect()
+//         .Build();
+// });
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");

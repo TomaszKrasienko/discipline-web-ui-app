@@ -1,6 +1,11 @@
 @page "/notifications"
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.SignalR
 @using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.Extensions.Options
+@inject IOptions<SignalROptions> SignalOptions
 @inject HubConnection HubConnection
+@inject ToastService ToastService
 
 @foreach (var message in _messages)
 {
@@ -8,17 +13,31 @@
 }
 
 @code {
+    private const string NotificationsMethodKey = "UserNotifications";
     private List<string> _messages = [];
-    
+
     protected override async Task OnInitializedAsync()
     {
-        HubConnection.On<string>("test", (message) =>
+        var options = SignalOptions.Value;
+        if (options.Methods.TryGetValue(NotificationsMethodKey, out var signalMethod))
         {
-            _messages.Add(message);
-            InvokeAsync(StateHasChanged);
-        });
+            HubConnection.On<string>(signalMethod, (message) =>
+            {
+                _messages.Add(message);
+                InvokeAsync(StateHasChanged);
+            });
 
-        await HubConnection.StartAsync();
+            await HubConnection.StartAsync();
+        }
+        else
+        {
+            ToastService.Notify(new ToastMessage()
+            {
+                Type = ToastType.Danger,
+                AutoHide = true,
+                Message = "Notifications not enabled"
+            });   
+        }
     }
 
 }

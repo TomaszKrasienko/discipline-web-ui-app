@@ -1,5 +1,6 @@
 using discipline_wasm_ui.Infrastructure.Auth.Configuration;
 using discipline_wasm_ui.Infrastructure.Services.Configuration;
+using discipline_wasm_ui.Infrastructure.SignalR;
 using discipline_wasm_ui.Infrastructure.Storage.Configuration;
 using discipline_wasm_ui.Infrastructure.Weekdays.Configuration;
 
@@ -12,8 +13,9 @@ internal static class Extensions
             .AddServices(configuration)
             .AddStorage()
             .AddAuth()
-            .AddWeekdays();
-
+            .AddWeekdays()
+            .AddSignalR(configuration);
+    
     internal static T GetOptions<T>(this IConfiguration configuration, string section) where T : class, new()
     {
         var t = new T();
