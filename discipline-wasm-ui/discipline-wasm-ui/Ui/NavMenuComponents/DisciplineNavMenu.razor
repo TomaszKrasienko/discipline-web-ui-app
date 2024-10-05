@@ -24,6 +24,10 @@
             Text="Calendar"
             IconClass="bi-calendar-check"
             OnClickButtonCallback="NavigateToCalendar"/>
+        <DisciplineNavButton
+            Text="Notifications"
+            IconClass="bi-calendar-check"
+            OnClickButtonCallback="NavigateToNotifications"/>
     }
     <form class="form-inline">
         <div class="row">
@@ -49,5 +53,8 @@
 
     private void NavigateToCalendar()
         => NavigationManager.NavigateTo("/browse-calendar");
+
+    private void NavigateToNotifications()
+        => NavigationManager.NavigateTo("/notifications");
 
 }  

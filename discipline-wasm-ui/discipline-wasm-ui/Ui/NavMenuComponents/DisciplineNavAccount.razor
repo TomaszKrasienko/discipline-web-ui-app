@@ -2,9 +2,10 @@
 @using discipline_wasm_ui.Infrastructure.Auth.Token
 @using discipline_wasm_ui.Infrastructure.Services.DTOs
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.SignalR.Client
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ITokenProvider TokenProvider
-@inject IUserDispatcher UserDispatcher;
+@inject IUserDispatcher UserDispatcher
 
 <Tooltip
     Class="me-4"

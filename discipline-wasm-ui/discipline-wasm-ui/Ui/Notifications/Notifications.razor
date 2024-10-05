@@ -1,0 +1,24 @@
+@page "/notifications"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject HubConnection HubConnection
+
+@foreach (var message in _messages)
+{
+    @message
+}
+
+@code {
+    private List<string> _messages = [];
+    
+    protected override async Task OnInitializedAsync()
+    {
+        HubConnection.On<string>("test", (message) =>
+        {
+            _messages.Add(message);
+            InvokeAsync(StateHasChanged);
+        });
+
+        await HubConnection.StartAsync();
+    }
+
+}
