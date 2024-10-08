@@ -29,6 +29,7 @@
             if (state?.User?.Identity?.IsAuthenticated ?? false)
             {
                 var token = await TokenProvider.GetTokenAsync();
+                Console.WriteLine(token);
                 var connection = new HubConnectionBuilder()
                     .WithUrl(options.Url, opt =>
                     {
