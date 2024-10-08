@@ -14,7 +14,8 @@
     <div class="btn-group" style="align-items: center; justify-content: center">
         @if (_isAuthenticated)
         { 
-        <span style="color: #C4D4C9;">Hello @_userName</span>
+            @* <span style="color: #C4D4C9;">Hello @_userName</span> *@
+            <DisciplineNavNotification/>
         }
         <button
             class="btn discipline-nav-btn dropdown-toggle"
