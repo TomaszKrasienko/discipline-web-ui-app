@@ -1,0 +1,70 @@
+@page "/notifications"
+@using BlazorBootstrap
+@using discipline_wasm_ui.Infrastructure.Auth.Token
+@using discipline_wasm_ui.Infrastructure.Auth.Token.Internals
+@using discipline_wasm_ui.Infrastructure.SignalR
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.Extensions.Options
+@inject IOptions<SignalROptions> SignalOptions
+@inject ToastService ToastService
+@inject AuthenticationStateProvider AuthStateProvider
+
+@foreach (var message in _messages)
+{
+    @message
+}
+
+@code {
+    private const string NotificationsMethodKey = "UserNotifications";
+    private List<string> _messages = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var options = SignalOptions.Value;
+        if (options.Methods.TryGetValue(NotificationsMethodKey, out var signalMethod))
+        {
+            var state = await AuthStateProvider.GetAuthenticationStateAsync();
+            if (state?.User?.Identity?.IsAuthenticated ?? false)
+            {
+                //var token = await TokenProvider.GetTokenAsync();
+                //TODO: Getting token
+                string token = string.Empty;
+                Console.WriteLine(token);
+                var connection = new HubConnectionBuilder()
+                    .WithUrl(options.Url, opt =>
+                    {
+                        opt.AccessTokenProvider = () => Task.FromResult(token);
+                    })
+                    .WithAutomaticReconnect()
+                    .Build();
+                connection.On<string>(signalMethod, (message) =>
+                {
+                    _messages.Add(message);
+                    InvokeAsync(StateHasChanged);
+                });
+
+                await connection.StartAsync();   
+            }
+            else
+            {
+                ToastService.Notify(new ToastMessage()
+                {
+                    Type = ToastType.Danger,
+                    AutoHide = true,
+                    Message = "Unauthorized"
+                });   
+            }
+        }
+        else
+        {
+            ToastService.Notify(new ToastMessage()
+            {
+                Type = ToastType.Danger,
+                AutoHide = true,
+                Message = "Notifications not enabled"
+            });   
+        }
+    }
+
+}
