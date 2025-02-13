@@ -15,15 +15,22 @@ internal sealed class SignInFacade(
     public async Task<OneOf<bool, string>> SignIn(string email, string password)
     {
         var signInRequest = new SignInRequestDto(email, password);
-        
-        var signInResponse = await userHttpClient.SignIn(signInRequest);
 
-        if (!signInResponse.IsSuccessStatusCode)
+        try
         {
-            var response = await signInResponse.Content.ReadFromJsonAsync<ProblemDetails>();
-            return response?.Detail ?? "Unknown Error";
+            var signInResponse = await userHttpClient.SignIn(signInRequest);
+
+            if (!signInResponse.IsSuccessStatusCode)
+            {
+                var response = await signInResponse.Content.ReadFromJsonAsync<ProblemDetails>();
+                return response?.Detail ?? "Unknown Error";
+            }
         }
-        
+        catch (Exception )
+        {
+            return "Server communication error";
+        }
+
         var tokens = new TokensDto(email, password);
         await tokenHandler.SetAsync(tokens);
         return true;
