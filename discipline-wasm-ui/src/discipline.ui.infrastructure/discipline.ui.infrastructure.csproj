@@ -17,4 +17,7 @@
       <PackageReference Include="OneOf" Version="3.0.271" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="discipline.ui.infrastructure.tests"/>
+    </ItemGroup>
 </Project>

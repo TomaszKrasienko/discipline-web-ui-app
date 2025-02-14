@@ -12,17 +12,18 @@ internal sealed class SignInFacade(
     IUserHttpClient userHttpClient,
     ITokenHandler tokenHandler) : ISignInFacade
 {
-    public async Task<OneOf<bool, string>> SignIn(string email, string password)
+    public async Task<OneOf<bool, string>> SignIn(string email, string password, CancellationToken cancellationToken)
     {
         var signInRequest = new SignInRequestDto(email, password);
 
+        HttpResponseMessage signInResponse;
         try
         {
-            var signInResponse = await userHttpClient.SignIn(signInRequest);
+            signInResponse = await userHttpClient.SignIn(signInRequest);
 
             if (!signInResponse.IsSuccessStatusCode)
             {
-                var response = await signInResponse.Content.ReadFromJsonAsync<ProblemDetails>();
+                var response = await signInResponse.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken);
                 return response?.Detail ?? "Unknown Error";
             }
         }
