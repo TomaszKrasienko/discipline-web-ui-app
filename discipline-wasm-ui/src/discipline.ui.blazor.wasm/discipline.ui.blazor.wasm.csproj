@@ -31,8 +31,10 @@
       <AdditionalFiles Include="Components\Buttons\DisciplineIconButton.razor" />
       <AdditionalFiles Include="Components\Buttons\DisciplineSubmitButton.razor" />
       <AdditionalFiles Include="Components\Buttons\DisciplineTextButton.razor" />
+      <AdditionalFiles Include="Components\Checkboxes\DisciplineCheckbox.razor" />
       <AdditionalFiles Include="Components\Headers\DisciplinePageHeader.razor" />
       <AdditionalFiles Include="Components\Headers\DisciplineSubHeader.razor" />
+      <AdditionalFiles Include="Components\Modals\DisciplineModal.razor" />
       <AdditionalFiles Include="NavMenuComponents\DisciplineNavAccount.razor" />
       <AdditionalFiles Include="NavMenuComponents\DisciplineNavButton.razor" />
       <AdditionalFiles Include="NavMenuComponents\DisciplineNavMenu.razor" />

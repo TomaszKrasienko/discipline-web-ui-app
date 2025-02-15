@@ -8,6 +8,7 @@ public static class InfrastructureServicesConfiguration
     public static IServiceCollection SetInfrastructureServices(this IServiceCollection services)
         => services
             .SetUsersServices()
+            .SetDailyTrackersServices()
             .SetStorageServices()
             .SetAuthServices();
 }

@@ -1,13 +1,13 @@
-using discipline.ui.infrastructure.Auth.Tokens.Abstractions;
-using discipline.ui.infrastructure.Auth.Tokens.DTOs;
+using discipline.ui.communication.http.Auth;
+using discipline.ui.communication.http.Auth.DTOs;
 using discipline.ui.infrastructure.Storage.Abstractions;
 
-namespace discipline.ui.infrastructure.Auth.Tokens.Internals;
+namespace discipline.ui.infrastructure.Auth.Tokens;
 
 internal sealed class TokenHandler(
     ILocalStorageAccessor localStorageAccessor) : ITokenHandler
 {
-    public async Task<string> GetTokenAsync()
+    public async Task<string?> GetTokenAsync(CancellationToken cancellationToken)
     {
         var tokens = await localStorageAccessor.GetItemAsync<TokensDto>();
         return tokens?.Token;

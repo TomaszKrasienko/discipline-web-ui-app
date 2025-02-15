@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using System.Text.Json;
-using discipline.ui.infrastructure.Auth.Tokens.Abstractions;
+using discipline.ui.communication.http.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace discipline.ui.infrastructure.Auth.State;
@@ -10,7 +10,7 @@ internal sealed class CustomAuthenticationStateProvider(
 {
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var token = await tokenHandler.GetTokenAsync();
+        var token = await tokenHandler.GetTokenAsync(CancellationToken.None);
         var identity = string.IsNullOrWhiteSpace(token)
             ? new ClaimsIdentity()
             : new ClaimsIdentity(ParseClaimsFromJwt(token), "authentication");

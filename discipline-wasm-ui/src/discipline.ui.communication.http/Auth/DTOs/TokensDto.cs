@@ -1,3 +1,3 @@
-namespace discipline.ui.infrastructure.Auth.Tokens.DTOs;
+namespace discipline.ui.communication.http.Auth.DTOs;
 
 public sealed record TokensDto(string Token, string RefreshToken);

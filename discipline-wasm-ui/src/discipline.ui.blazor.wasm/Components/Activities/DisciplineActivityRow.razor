@@ -1,0 +1,74 @@
+@using BlazorBootstrap
+@using discipline.ui.infrastructure.DailyTrackers.Activities
+@using discipline.ui.infrastructure.DailyTrackers.DTOs
+@using discipline.ui.blazor.wasm.Components.Buttons
+@using discipline.ui.blazor.wasm.Enums
+@using discipline.ui.blazor.wasm.Components.Checkboxes
+@inject IChangeActivityCheckFacade ChangeActivityCheckFacade
+@inject IDeleteActivityFacade DeleteActivityFacade
+@inject ToastService ToastService
+
+<div class="row discipline-row">
+    <span class="pb-1 pt-1">
+        <div class="row">
+            <div class="col-md-11" @onclick="RowClickedAsync">
+                <div class="row">
+                    <div class="col-md-2">
+                        <DisciplineCheckbox
+                            IsChecked="Activity.IsChecked"/>
+                    </div>
+                    <div class="col-md-10">
+                        @Activity.Title
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1 text-end">
+                <DisciplineIconButton
+                    IconClass="bi-trash-fill"
+                    Color="DisciplineIconButtonColor.Red"
+                    OnClickButtonCallback="DeleteActivityAsync"
+                    TooltipText="Delete"/>
+            </div>
+        </div>
+    </span>
+</div>
+
+@code {
+    private CancellationTokenSource? cts;
+    
+    [Parameter, EditorRequired] 
+    public required ActivityDto Activity { get; set; }
+    
+    [Parameter] 
+    public EventCallback OnActivityChangedCallback { get; set; }
+    
+    [Parameter]
+    public EventCallback OnActivityDeletedCallback { get; set; }
+
+    private async Task RowClickedAsync()
+    {
+        cts = new CancellationTokenSource();
+        
+        var response = await ChangeActivityCheckFacade.HandleAsync(Activity.DailyTrackerId, Activity.ActivityId, cts.Token);
+        
+        if (response.IsT1)
+        {
+            ToastService.Notify(response.AsT1.ToDangerToastMessage());
+        }
+        
+        Activity.ChangeCheck();
+        await OnActivityChangedCallback.InvokeAsync();
+    }
+
+    private async Task DeleteActivityAsync()
+    {
+        var response = await DeleteActivityFacade.HandleAsync(Activity.DailyTrackerId, Activity.ActivityId, cts.Token);
+        
+        if (response.IsT1)
+        {
+            ToastService.Notify(response.AsT1.ToDangerToastMessage());
+        }
+        
+        await OnActivityDeletedCallback.InvokeAsync();
+    }
+}

@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
+using discipline.ui.communication.http.Auth;
+using discipline.ui.communication.http.Auth.DTOs;
 using discipline.ui.communication.http.Users;
 using discipline.ui.communication.http.Users.Requests;
-using discipline.ui.infrastructure.Auth.Tokens.Abstractions;
-using discipline.ui.infrastructure.Auth.Tokens.DTOs;
 using OneOf;
 using Refit;
 
@@ -12,14 +12,14 @@ internal sealed class SignInFacade(
     IUserHttpClient userHttpClient,
     ITokenHandler tokenHandler) : ISignInFacade
 {
-    public async Task<OneOf<bool, string>> SignIn(string email, string password, CancellationToken cancellationToken)
+    public async Task<OneOf<bool, string>> HandleAsync(string email, string password, CancellationToken cancellationToken)
     {
         var signInRequest = new SignInRequestDto(email, password);
 
         HttpResponseMessage signInResponse;
         try
         {
-            signInResponse = await userHttpClient.SignIn(signInRequest);
+            signInResponse = await userHttpClient.SignIn(signInRequest, cancellationToken);
 
             if (!signInResponse.IsSuccessStatusCode)
             {
@@ -32,8 +32,8 @@ internal sealed class SignInFacade(
             return "Server communication error";
         }
 
-        var tokens = new TokensDto(email, password);
-        await tokenHandler.SetAsync(tokens);
+        var tokens = await signInResponse.Content.ReadFromJsonAsync<TokensDto>(cancellationToken);
+        await tokenHandler.SetAsync(tokens!);
         return true;
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using discipline.ui.blazor.wasm.Components.Headers
 @using Microsoft.AspNetCore.Components.Authorization
+@using discipline.ui.blazor.wasm.Components.Activities
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 
@@ -8,12 +9,22 @@
 <DisciplinePageHeader
     Title="Keep your discipline."/>
     
+@if (_isAuthenticated)
+{
+    <DisciplineDailyTracker/>
+}
+
 @code
 {
+    private bool _isAuthenticated = false;
+    
     protected override async Task OnInitializedAsync()
     {
         var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        if (!(authenticationState?.User?.Identity?.IsAuthenticated ?? false))
+        
+        _isAuthenticated = authenticationState?.User?.Identity?.IsAuthenticated ?? false;
+        
+        if (!(_isAuthenticated))
         {
             NavigationManager.NavigateTo("sign-in");
         }

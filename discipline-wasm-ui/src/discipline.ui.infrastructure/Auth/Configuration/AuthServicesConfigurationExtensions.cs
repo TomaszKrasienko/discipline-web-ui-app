@@ -1,6 +1,6 @@
+using discipline.ui.communication.http.Auth;
 using discipline.ui.infrastructure.Auth.State;
-using discipline.ui.infrastructure.Auth.Tokens.Abstractions;
-using discipline.ui.infrastructure.Auth.Tokens.Internals;
+using discipline.ui.infrastructure.Auth.Tokens;
 using Microsoft.AspNetCore.Components.Authorization;
 
 // ReSharper disable once CheckNamespace

@@ -6,5 +6,5 @@ namespace discipline.ui.communication.http.Users;
 public interface IUserHttpClient
 {
     [Post("/api/users-module/users/tokens")]
-    Task<HttpResponseMessage> SignIn(SignInRequestDto signInRequestDto);
+    Task<HttpResponseMessage> SignIn(SignInRequestDto signInRequestDto, CancellationToken cancellationToken);
 }
