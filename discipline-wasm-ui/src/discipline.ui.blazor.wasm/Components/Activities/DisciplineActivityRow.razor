@@ -1,40 +1,108 @@
+@using System.Diagnostics
 @using BlazorBootstrap
 @using discipline.ui.infrastructure.DailyTrackers.Activities
 @using discipline.ui.infrastructure.DailyTrackers.DTOs
 @using discipline.ui.blazor.wasm.Components.Buttons
 @using discipline.ui.blazor.wasm.Enums
 @using discipline.ui.blazor.wasm.Components.Checkboxes
+@using discipline.ui.blazor.wasm.Components.Paragraphs
 @inject IChangeActivityCheckFacade ChangeActivityCheckFacade
 @inject IDeleteActivityFacade DeleteActivityFacade
 @inject ToastService ToastService
 
-<div class="row discipline-row">
+<div class="row discipline-activity-section">
     <span class="pb-1 pt-1">
-        <div class="row">
-            <div class="col-md-11" @onclick="RowClickedAsync">
-                <div class="row">
-                    <div class="col-md-2">
-                        <DisciplineCheckbox
-                            IsChecked="Activity.IsChecked"/>
+        
+    </span>
+    <div class="row discipline-row" @onclick="RowClickedAsync">
+        <div class="col-md-2">
+            <DisciplineCheckbox
+                IsChecked="Activity.IsChecked"/>
+        </div>
+        <div class="col-md-9">
+            <MainParagraph Content="@Activity.Title"/>
+        </div>
+        <div class="col-md-1">
+            <DisciplineIconButton
+                IconClass="bi-trash-fill"
+                Color="DisciplineIconButtonColor.Red"
+                OnClickButtonCallback="DeleteActivityAsync"
+                TooltipText="Delete"/>
+        </div>
+    </div>
+    <div class="row discipline-stage-section">
+        <div class="col-md-2">
+            @if (Activity.Stages is not null)
+            {
+                <div class="row discipline-toggle-stages-section" @onclick="ToggleContentAsync">
+                    <div class="col-md-6">
+                        <DisciplineIconButton
+                            IconClass="bi-arrow-down"
+                            OnClickButtonCallback="ToggleContentAsync"/>
                     </div>
-                    <div class="col-md-10">
-                        @Activity.Title
+                    <div class="col-md-6">
+                        <SubParagraph
+                            Content=@($"{Activity.Stages.Count(x => x.IsChecked)}/{Activity.Stages.Count()}")/>
                     </div>
                 </div>
+            }
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <SubParagraph Content="@Activity.Note"/>
             </div>
-            <div class="col-md-1 text-end">
-                <DisciplineIconButton
-                    IconClass="bi-trash-fill"
-                    Color="DisciplineIconButtonColor.Red"
-                    OnClickButtonCallback="DeleteActivityAsync"
-                    TooltipText="Delete"/>
+            <div class="row">
+                <Collapse @ref="_stageCollapse">
+                    <Card Style="border-color: transparent">
+                        <CardBody Style="border-color: transparent">
+                            @if (Activity.Stages is not null)
+                            {
+                                <div class="discipline-stage-section">
+                                    <SortableList
+                                        Style="border-color: transparent"
+                                        TItem="StageDto"
+                                        Data="@Activity.Stages.ToList()"
+                                        Context="item"
+                                        OnUpdate="@StageMovedAsync">
+                                        <ItemTemplate>
+                                            <div class="row discipline-row" @onclick="() => StageClickedAsync(item.StageId)">
+                                                <div class="col-md-2">
+                                                    <DisciplineCheckbox
+                                                        IsChecked="item.IsChecked"/>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <SubParagraph
+                                                        Content="@($"{item.Index}. {item.Title}")"/>
+                                                </div>
+                                            </div>
+                                        </ItemTemplate>
+                                    </SortableList>
+                                    @* @foreach (var stage in Activity.Stages) *@
+                                    @* { *@
+                                    @*     <div class="row discipline-row" @onclick="() => StageClickedAsync(stage.StageId)"> *@
+                                    @*         <div class="col-md-2"> *@
+                                    @*             <DisciplineCheckbox *@
+                                    @*                 IsChecked="stage.IsChecked"/> *@
+                                    @*         </div> *@
+                                    @*         <div class="col-md-10"> *@
+                                    @*             <SubParagraph *@
+                                    @*                 Content="@($"{stage.Index}. {stage.Title}")"/> *@
+                                    @*         </div> *@
+                                    @*     </div> *@
+                                    @* } *@
+                                </div>
+                            }
+                        </CardBody>
+                    </Card>
+                </Collapse>
             </div>
         </div>
-    </span>
+    </div>
 </div>
 
 @code {
-    private CancellationTokenSource? cts;
+    private CancellationTokenSource? _cts;
+    private Collapse? _stageCollapse = default;
     
     [Parameter, EditorRequired] 
     public required ActivityDto Activity { get; set; }
@@ -47,9 +115,9 @@
 
     private async Task RowClickedAsync()
     {
-        cts = new CancellationTokenSource();
+        _cts = new CancellationTokenSource();
         
-        var response = await ChangeActivityCheckFacade.HandleAsync(Activity.DailyTrackerId, Activity.ActivityId, cts.Token);
+        var response = await ChangeActivityCheckFacade.HandleAsync(Activity.DailyTrackerId, Activity.ActivityId, _cts.Token);
         
         if (response.IsT1)
         {
@@ -60,9 +128,21 @@
         await OnActivityChangedCallback.InvokeAsync();
     }
 
+    private async Task StageClickedAsync(string stageId)
+    {
+        Activity.ChangeStageCheck(stageId);
+    }
+
+    private async Task StageMovedAsync(SortableListEventArgs args)
+    {
+        var stage = Activity.Stages.Single(x => x.Index == args.OldIndex);
+        
+        Activity.ChangeIndeks(stage.StageId, args.NewIndex);
+    }
+
     private async Task DeleteActivityAsync()
     {
-        var response = await DeleteActivityFacade.HandleAsync(Activity.DailyTrackerId, Activity.ActivityId, cts.Token);
+        var response = await DeleteActivityFacade.HandleAsync(Activity.DailyTrackerId, Activity.ActivityId, _cts.Token);
         
         if (response.IsT1)
         {
@@ -71,4 +151,6 @@
         
         await OnActivityDeletedCallback.InvokeAsync();
     }
+    
+    private async Task ToggleContentAsync() => await _stageCollapse!.ToggleAsync();
 }

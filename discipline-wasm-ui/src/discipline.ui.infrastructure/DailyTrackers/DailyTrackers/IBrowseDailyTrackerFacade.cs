@@ -29,7 +29,7 @@ internal sealed class BrowseDailyTrackerFacade(
 
         if (getDailyTrackerResponse.StatusCode == HttpStatusCode.NotFound)
         {
-            return new DailyTrackerDto(day, []);
+            return DailyTrackerDto.Create(day, []);
         }
         
         if (!getDailyTrackerResponse.IsSuccessStatusCode)
@@ -45,11 +45,16 @@ internal sealed class BrowseDailyTrackerFacade(
             return "Unknown Error";
         }
 
-        var activities = dailyTrackerResponse.Activities.Select(x => new ActivityDto(x.ActivityId,
-            dailyTrackerResponse.DailyTrackerId,
-            x.Details.Title, x.Details.Note, x.IsChecked));
+        List<ActivityDto> activities = [];
+        
+        foreach (var activity in dailyTrackerResponse.Activities)
+        {
+            var stages = activity.Stages?.Select(x => StageDto.Create(x.StageId, x.Title, x.Index, x.IsChecked));
+            activities.Add(ActivityDto.Create(activity.ActivityId, dailyTrackerResponse.DailyTrackerId, activity.Details.Title, activity.Details.Note,
+                activity.IsChecked, stages));
+        }
 
-        var dailyTracker = new DailyTrackerDto(dailyTrackerResponse.Day, activities);
+        var dailyTracker = DailyTrackerDto.Create(dailyTrackerResponse.Day, activities);
 
         return dailyTracker;
     }
