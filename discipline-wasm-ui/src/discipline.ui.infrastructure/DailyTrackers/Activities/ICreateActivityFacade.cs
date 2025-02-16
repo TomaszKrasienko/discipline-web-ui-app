@@ -9,14 +9,14 @@ namespace discipline.ui.infrastructure.DailyTrackers.Activities;
 
 public interface ICreateActivityFacade
 {
-    Task<OneOf<bool, string>> HandleAsync(DateOnly day, string title, string? note, List<StageDto>? stages,
+    Task<OneOf<bool, string>> HandleAsync(DateOnly day, string title, string? note, List<StageModel>? stages,
         CancellationToken cancellationToken);
 }
 
 internal sealed class CreateActivityFacade(
     IDailyTrackerHttpService dailyTrackerHttpService) : ICreateActivityFacade
 {
-    public async Task<OneOf<bool, string>> HandleAsync(DateOnly day, string title, string? note, List<StageDto>? stages,
+    public async Task<OneOf<bool, string>> HandleAsync(DateOnly day, string title, string? note, List<StageModel>? stages,
         CancellationToken cancellationToken)
     {
         List<CreateStageRequestDto>? createStageRequests = null;

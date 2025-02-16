@@ -1,4 +1,3 @@
-@using System.Diagnostics
 @using BlazorBootstrap
 @using discipline.ui.infrastructure.DailyTrackers.Activities
 @using discipline.ui.infrastructure.DailyTrackers.DTOs
@@ -6,6 +5,7 @@
 @using discipline.ui.blazor.wasm.Enums
 @using discipline.ui.blazor.wasm.Components.Checkboxes
 @using discipline.ui.blazor.wasm.Components.Paragraphs
+@using discipline.ui.infrastructure.DailyTrackers.Models
 @inject IChangeActivityCheckFacade ChangeActivityCheckFacade
 @inject IDeleteActivityFacade DeleteActivityFacade
 @inject ToastService ToastService
@@ -60,8 +60,8 @@
                                 <div class="discipline-stage-section">
                                     <SortableList
                                         Style="border-color: transparent"
-                                        TItem="StageDto"
-                                        Data="@Activity.Stages.ToList()"
+                                        TItem="StageModel"
+                                        Data="@Activity.Stages.OrderBy(x => x.Index).ToList()"
                                         Context="item"
                                         OnUpdate="@StageMovedAsync">
                                         <ItemTemplate>
@@ -70,26 +70,20 @@
                                                     <DisciplineCheckbox
                                                         IsChecked="item.IsChecked"/>
                                                 </div>
-                                                <div class="col-md-10">
+                                                <div class="col-md-9">
                                                     <SubParagraph
                                                         Content="@($"{item.Index}. {item.Title}")"/>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <DisciplineIconButton
+                                                        IconClass="bi-trash-fill"
+                                                        Color="DisciplineIconButtonColor.Red"
+                                                        OnClickButtonCallback="async () => await DeleteStageAsync(item.StageId)"
+                                                        TooltipText="Delete"/>
                                                 </div>
                                             </div>
                                         </ItemTemplate>
                                     </SortableList>
-                                    @* @foreach (var stage in Activity.Stages) *@
-                                    @* { *@
-                                    @*     <div class="row discipline-row" @onclick="() => StageClickedAsync(stage.StageId)"> *@
-                                    @*         <div class="col-md-2"> *@
-                                    @*             <DisciplineCheckbox *@
-                                    @*                 IsChecked="stage.IsChecked"/> *@
-                                    @*         </div> *@
-                                    @*         <div class="col-md-10"> *@
-                                    @*             <SubParagraph *@
-                                    @*                 Content="@($"{stage.Index}. {stage.Title}")"/> *@
-                                    @*         </div> *@
-                                    @*     </div> *@
-                                    @* } *@
                                 </div>
                             }
                         </CardBody>
@@ -105,7 +99,7 @@
     private Collapse? _stageCollapse = default;
     
     [Parameter, EditorRequired] 
-    public required ActivityDto Activity { get; set; }
+    public required ActivityModel Activity { get; set; }
     
     [Parameter] 
     public EventCallback OnActivityChangedCallback { get; set; }
@@ -135,9 +129,12 @@
 
     private async Task StageMovedAsync(SortableListEventArgs args)
     {
-        var stage = Activity.Stages.Single(x => x.Index == args.OldIndex);
-        
-        Activity.ChangeIndeks(stage.StageId, args.NewIndex);
+        Activity.ChangeStageIndex(args.OldIndex + 1, args.NewIndex + 1);
+    }
+
+    private async Task DeleteStageAsync(string stageId)
+    {
+        Activity.DeleteStage(stageId);
     }
 
     private async Task DeleteActivityAsync()

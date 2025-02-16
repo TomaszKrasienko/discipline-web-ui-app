@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using discipline.ui.communication.http.DailyTrackers;
 using discipline.ui.communication.http.DailyTrackers.Responses;
 using discipline.ui.infrastructure.DailyTrackers.DTOs;
+using discipline.ui.infrastructure.DailyTrackers.Models;
 using Microsoft.AspNetCore.Components;
 using OneOf;
 using Refit;
@@ -45,12 +46,12 @@ internal sealed class BrowseDailyTrackerFacade(
             return "Unknown Error";
         }
 
-        List<ActivityDto> activities = [];
+        List<ActivityModel> activities = [];
         
         foreach (var activity in dailyTrackerResponse.Activities)
         {
-            var stages = activity.Stages?.Select(x => StageDto.Create(x.StageId, x.Title, x.Index, x.IsChecked));
-            activities.Add(ActivityDto.Create(activity.ActivityId, dailyTrackerResponse.DailyTrackerId, activity.Details.Title, activity.Details.Note,
+            var stages = activity.Stages?.Select(x => StageModel.Create(x.StageId, x.Title, x.Index, x.IsChecked));
+            activities.Add(ActivityModel.Create(activity.ActivityId, dailyTrackerResponse.DailyTrackerId, activity.Details.Title, activity.Details.Note,
                 activity.IsChecked, stages));
         }
 
