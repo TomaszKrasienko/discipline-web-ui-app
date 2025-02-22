@@ -1,5 +1,7 @@
+using System.Net.Http.Json;
 using discipline.ui.communication.http.DailyTrackers;
 using OneOf;
+using Refit;
 
 namespace discipline.ui.infrastructure.DailyTrackers.Activities;
 
@@ -14,7 +16,14 @@ internal sealed class ChangeActivityCheckFacade(
 {
     public async Task<OneOf<bool, string>> HandleAsync(string dailyTrackerId, string activityId, CancellationToken cancellationToken)
     {
-        await Task.Delay(1, cancellationToken);
-        return true;
+        var response = await dailyTrackerHttpService.ChangeActivityCheckAsync(dailyTrackerId, activityId, cancellationToken);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        var errorResult = await response.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken);
+        return errorResult?.Detail ?? "Unexpected error";
+
     }
 }

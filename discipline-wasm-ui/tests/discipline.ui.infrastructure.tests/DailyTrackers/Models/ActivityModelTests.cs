@@ -20,7 +20,7 @@ public sealed class ActivityModelTests
             "test_activity_title", null, false, [stage1, stage2]);
         
         //act
-        activity.ChangeStageIndex(stage2.StageId, 1);
+        activity.ChangeStageIndex(2, 1);
         
         //assert
         stage1.Index.ShouldBe(2);
