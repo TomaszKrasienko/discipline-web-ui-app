@@ -1,0 +1,38 @@
+﻿@using discipline_wasm_ui.Ui.Components.Headers
+@using Microsoft.AspNetCore.Components.Authorization
+@page "/"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<PageTitle>Home</PageTitle>
+<DisciplinePageHeader
+    Title="Keep your discipline."/>
+
+@* <div class="row pb-5"> *@
+@*     <DisciplineDailyProductivityActivities *@
+@*         OnActivityChangedCallback="RefreshChar" *@
+@*         CreateBtnIsVisible="false"/> *@
+@* </div> *@
+@* *@
+@* <div> *@
+@*     <DisciplineProductivityChart *@
+@*         @ref="_disciplineProductivityChart"/> *@
+@* </div> *@
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (!(authenticationState?.User?.Identity?.IsAuthenticated ?? false))
+        {
+            NavigationManager.NavigateTo("sign-in");
+        }
+    }
+
+    // private DisciplineProductivityChart _disciplineProductivityChart = default!;
+    //
+    // private async Task RefreshChar()
+    //     => await _disciplineProductivityChart.RefreshChart();
+    
+}
