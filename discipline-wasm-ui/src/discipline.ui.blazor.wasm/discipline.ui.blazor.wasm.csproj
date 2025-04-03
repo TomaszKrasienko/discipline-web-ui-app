@@ -50,4 +50,9 @@
       <_ContentIncludedByDefault Remove="Pages\Users\Subscriptions\SubscriptionOrders\PickSubscriptionOrder.razor" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\ActivityRules\" />
+      <Folder Include="Pages\ActivityRules\Create\" />
+    </ItemGroup>
+
 </Project>

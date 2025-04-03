@@ -20,4 +20,9 @@
     <ItemGroup>
         <InternalsVisibleTo Include="discipline.ui.infrastructure.tests"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ActivityRules\Configuration\" />
+      <Folder Include="ActivityRules\Models\" />
+    </ItemGroup>
 </Project>

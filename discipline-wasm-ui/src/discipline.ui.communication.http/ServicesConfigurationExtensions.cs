@@ -1,3 +1,4 @@
+using discipline.ui.communication.http.ActivityRules;
 using discipline.ui.communication.http.DailyTrackers;
 using discipline.ui.communication.http.Users;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,15 @@ public static class ServicesConfigurationExtensions
             })
             .AddHttpMessageHandler<AuthorizeHandler>();
 
+        services
+            .AddRefitClient<IActivityRulesHttpService>()
+            .ConfigureHttpClient(c =>
+            {
+                c.BaseAddress = new Uri(httpClientOptions.Url);
+                c.Timeout = httpClientOptions.Timeout;
+            })
+            .AddHttpMessageHandler<AuthorizeHandler>();
+        
         services
             .AddRefitClient<IDailyTrackerHttpService>()
             .ConfigureHttpClient(c =>

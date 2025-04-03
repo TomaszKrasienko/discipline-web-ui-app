@@ -1,0 +1,62 @@
+@page "/activity-rules-list"
+@using discipline.ui.communication.http.ActivityRules.DTOs.Responses
+@using discipline.ui.infrastructure.ActivityRules.Facades
+@using discipline.ui.blazor.wasm.Components.Headers
+@using discipline.ui.blazor.wasm.Components.Paragraphs
+@using BlazorBootstrap
+@inject IActivityRulesBrowseFacade BrowseFacade
+
+<DisciplinePageHeader Title="Activity Rules List"/>
+
+@foreach (var item in _activityRules)
+{
+    <div class="row">
+        <div class="row">
+            <div class="col-md-5">
+                <MainParagraph Content="@item.Title"/>
+            </div>
+            <div class="col-md-5 text-end">
+                <SubParagraph Content=@GetModeWithSelectedDays(item)/>
+            </div>
+        </div>
+        @if (item.Stages.Any())
+        {
+            <div class="row">
+                <div class="col-md-10 offset-1">
+                    <SortableList TItem="ActivityRuleStageResponseDto"
+                                  Data="@item.Stages"
+                                  Context="item"
+                                  OnUpdate="@OnEmployeeListUpdate">
+                        <ItemTemplate>
+                            <SubParagraph Content="@GetStageHeader(item)"/>
+                        </ItemTemplate>
+                    </SortableList>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@code {
+    private CancellationTokenSource _cts = new ();
+    private IReadOnlyList<ActivityRuleResponseDto> _activityRules = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cts = new CancellationTokenSource();
+        _activityRules = await BrowseFacade.HandleAsync(_cts.Token);
+    }
+
+    private string GetModeWithSelectedDays(ActivityRuleResponseDto activityRule)
+        => activityRule.SelectedDays is null 
+            ? activityRule.Mode 
+            : $"{activityRule.Mode} ({string.Join(',', activityRule.SelectedDays)})";
+
+    private string GetStageHeader(ActivityRuleStageResponseDto stage)
+        => $"{stage.Index}. {stage.Title}";
+
+    private void OnEmployeeListUpdate(SortableListEventArgs args)
+    {
+    }
+}
