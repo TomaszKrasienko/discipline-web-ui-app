@@ -4,34 +4,31 @@
 @using discipline.ui.blazor.wasm.Components.Headers
 @using discipline.ui.blazor.wasm.Components.Paragraphs
 @using BlazorBootstrap
-@inject IActivityRulesBrowseFacade BrowseFacade
+@inject IActivityRulesBrowseFacade ActivityRulesBrowseFacade
+@inject NavigationManager NavigationManager
 
 <DisciplinePageHeader Title="Activity Rules List"/>
 
-@foreach (var item in _activityRules)
+@foreach (var activityRule in _activityRules)
 {
     <div class="row">
-        <div class="row">
+        <div class="row selecting-row">
             <div class="col-md-5">
-                <MainParagraph Content="@item.Title"/>
+                <MainParagraph Content="@activityRule.Title"/>
             </div>
             <div class="col-md-5 text-end">
-                <SubParagraph Content=@GetModeWithSelectedDays(item)/>
+                <SubParagraph Content=@GetModeWithSelectedDays(activityRule)/>
             </div>
         </div>
-        @if (item.Stages.Any())
+        @if (activityRule.Stages.Any())
         {
-            <div class="row">
-                <div class="col-md-10 offset-1">
-                    <SortableList TItem="ActivityRuleStageResponseDto"
-                                  Data="@item.Stages"
-                                  Context="item"
-                                  OnUpdate="@OnEmployeeListUpdate">
-                        <ItemTemplate>
-                            <SubParagraph Content="@GetStageHeader(item)"/>
-                        </ItemTemplate>
-                    </SortableList>
+            <div class="col-md-10 offset-lg-1">
+            @foreach (var stage in activityRule.Stages)
+            {
+                <div class="row selecting-row">
+                    <SubParagraph Content="@GetStageHeader(stage)"/>
                 </div>
+            }
             </div>
         }
     </div>
@@ -40,12 +37,20 @@
 
 @code {
     private CancellationTokenSource _cts = new ();
-    private IReadOnlyList<ActivityRuleResponseDto> _activityRules = [];
+    private List<ActivityRuleResponseDto> _activityRules = [];
 
     protected override async Task OnInitializedAsync()
     {
         _cts = new CancellationTokenSource();
-        _activityRules = await BrowseFacade.HandleAsync(_cts.Token);
+
+        var result = await ActivityRulesBrowseFacade.HandleAsync(_cts.Token);
+
+        if (result.IsT1)
+        {
+            NavigationManager.NavigateTo("/sign-in");   
+        }
+        
+        _activityRules = result.AsT0.ToList();
     }
 
     private string GetModeWithSelectedDays(ActivityRuleResponseDto activityRule)

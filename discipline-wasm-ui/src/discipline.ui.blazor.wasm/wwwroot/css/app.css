@@ -1,3 +1,12 @@
+:root{
+    --danger-light: #967371;
+    --danger: #391010;
+    --dark: #1C211D;
+    --primary:#546357;
+    --secondary: #C4D4C9;
+    --light:#F5F4F5;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }

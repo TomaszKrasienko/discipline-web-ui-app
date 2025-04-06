@@ -1,6 +1,6 @@
 .selecting-row{
     border-bottom-width: 1px;
-    border-color: var(--primary); 
+    border-color: var(--primary);
     border-bottom-style: solid;
     margin-bottom: 10px;
 }
@@ -8,4 +8,3 @@
 .selecting-row:hover{
     background-color: var(--secondary);
 }
-
