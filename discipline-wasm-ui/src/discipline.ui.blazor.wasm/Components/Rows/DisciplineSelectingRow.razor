@@ -1,14 +1,12 @@
-@using discipline.ui.blazor.wasm.Components.Buttons
+@namespace discipline.ui.blazor.wasm.Components.Rows
+
 <div class="col-md-11">
     <div class="row selecting-row">
-        @Body
+        @ChildComponent
     </div>
-</div>
-<div class="col-md-1">
-    <DisciplineIconButton  OnClickButtonCallback="" IconClass="trash3-fill"/>
 </div>
 
 @code {
-    [Parameter, EditorRequired]
-    public required RenderFragment Body { get; set; }
+    [Parameter]
+    public RenderFragment ChildComponent { get; set; }
 }

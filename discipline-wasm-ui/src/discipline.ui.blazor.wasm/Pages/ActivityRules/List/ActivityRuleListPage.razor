@@ -2,41 +2,19 @@
 @using discipline.ui.communication.http.ActivityRules.DTOs.Responses
 @using discipline.ui.infrastructure.ActivityRules.Facades
 @using discipline.ui.blazor.wasm.Components.Headers
-@using discipline.ui.blazor.wasm.Components.Paragraphs
-@using BlazorBootstrap
+@using discipline.ui.blazor.wasm.Components.Rows
 @inject IActivityRulesBrowseFacade ActivityRulesBrowseFacade
 @inject NavigationManager NavigationManager
 
 <DisciplinePageHeader Title="Activity Rules List"/>
 
-@foreach (var activityRule in _activityRules)
-{
-    <div class="row">
-        <div class="row selecting-row">
-            <div class="col-md-5">
-                <MainParagraph Content="@activityRule.Title"/>
-            </div>
-            <div class="col-md-5 text-end">
-                <SubParagraph Content=@GetModeWithSelectedDays(activityRule)/>
-            </div>
-        </div>
-        @if (activityRule.Stages.Any())
-        {
-            <div class="col-md-10 offset-lg-1">
-            @foreach (var stage in activityRule.Stages)
-            {
-                <div class="row selecting-row">
-                    <SubParagraph Content="@GetStageHeader(stage)"/>
-                </div>
-            }
-            </div>
-        }
-    </div>
-}
+<DisciplineSelectingRow>
+    test
+</DisciplineSelectingRow>
 
 
 @code {
-    private CancellationTokenSource _cts = new ();
+    private CancellationTokenSource _cts = new();
     private List<ActivityRuleResponseDto> _activityRules = [];
 
     protected override async Task OnInitializedAsync()
@@ -47,21 +25,38 @@
 
         if (result.IsT1)
         {
-            NavigationManager.NavigateTo("/sign-in");   
+            NavigationManager.NavigateTo("/sign-in");
         }
-        
+
         _activityRules = result.AsT0.ToList();
     }
 
     private string GetModeWithSelectedDays(ActivityRuleResponseDto activityRule)
-        => activityRule.SelectedDays is null 
-            ? activityRule.Mode 
+        => activityRule.SelectedDays is null
+            ? activityRule.Mode
             : $"{activityRule.Mode} ({string.Join(',', activityRule.SelectedDays)})";
 
     private string GetStageHeader(ActivityRuleStageResponseDto stage)
         => $"{stage.Index}. {stage.Title}";
 
-    private void OnEmployeeListUpdate(SortableListEventArgs args)
+    private async Task OpenEditActivityRuleAsync()
     {
+        await Task.Delay(1);
     }
+
+    private async Task RemoveActivityRuleAsync()
+    {
+        await Task.Delay(1);
+    }
+
+    private async Task OpenEditActivityRuleStageAsync()
+    {
+        await Task.Delay(1);
+    }
+
+    private async Task RemoveActivityRuleStageAsync()
+    {
+        await Task.Delay(1);
+    }
+
 }
