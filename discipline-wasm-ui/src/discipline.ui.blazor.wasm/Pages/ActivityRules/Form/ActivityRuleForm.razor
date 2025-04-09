@@ -1,0 +1,22 @@
+@using discipline.ui.blazor.wasm.Components.Modals
+@using discipline.ui.blazor.wasm.Enums
+
+<DisciplineModal
+    @ref="_formModal"
+    Size="DisciplineModalSize.Large"
+    Title="Create activity rule">
+    <Body>
+        <EditForm method="post" OnSubmit="Submit">
+            
+        </EditForm>
+    </Body>
+</DisciplineModal>
+
+@code {
+    private DisciplineModal _formModal = new DisciplineModal();
+
+    private async Task Submit()
+    {
+        
+    }
+}

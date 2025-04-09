@@ -8,6 +8,7 @@ public static class InfrastructureServicesConfiguration
     public static IServiceCollection SetInfrastructureServices(this IServiceCollection services)
         => services
             .AddTransient<IActivityRulesBrowseFacade, ActivityRulesBrowseFacade>()
+            .AddTransient<IDeleteActivityRuleFacade, DeleteActivityRuleFacade>()
             .SetUsersServices()
             .SetDailyTrackersServices()
             .SetStorageServices()

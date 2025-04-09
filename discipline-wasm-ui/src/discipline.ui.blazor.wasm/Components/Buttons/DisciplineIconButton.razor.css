@@ -1,5 +1,5 @@
 .discipline-icon-button{
-    font-size: x-large;
+    font-size: large;
     width: 30px;
     height: 30px;
     background-color: transparent;
@@ -9,15 +9,15 @@
 }
 
 .discipline-icon-red {
-    color: #391010;
+    color: var(--danger);
 }
 
 .discipline-icon-red:hover {
-    color: #967371;
+    color: var(--danger-light);
 }
 
 .discipline-icon-red:active {
-    color: #967371;
+    color: var(--danger-light);
 }
 
 .discipline-icon-dark {

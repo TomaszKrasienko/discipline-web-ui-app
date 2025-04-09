@@ -1,16 +1,46 @@
 @page "/activity-rules-list"
+@using BlazorBootstrap
 @using discipline.ui.communication.http.ActivityRules.DTOs.Responses
 @using discipline.ui.infrastructure.ActivityRules.Facades
 @using discipline.ui.blazor.wasm.Components.Headers
+@using discipline.ui.blazor.wasm.Components.Paragraphs
 @using discipline.ui.blazor.wasm.Components.Rows
 @inject IActivityRulesBrowseFacade ActivityRulesBrowseFacade
+@inject IDeleteActivityRuleFacade DeleteActivityRuleFacade
 @inject NavigationManager NavigationManager
+@inject ToastService ToastService
 
 <DisciplinePageHeader Title="Activity Rules List"/>
 
-<DisciplineSelectingRow>
-    test
-</DisciplineSelectingRow>
+@if (_activityRules.Any())
+{
+    @foreach (var activityRule in _activityRules)
+    {
+        <DisciplineSelectingRow
+            OnRowClickCallback="OpenEditActivityRuleAsync"
+            OnTrashClickCallback="async () => await RemoveActivityRuleAsync(activityRule.ActivityRuleId)">
+            <div class="col-md-5">
+                <MainParagraph Content="@activityRule.Title"/>
+            </div>
+            <div class="col-md-5 text-end">
+                <SubParagraph Content=@GetModeWithSelectedDays(activityRule)/>
+            </div>
+        </DisciplineSelectingRow>
+        @if (activityRule.Stages.Any())
+        {
+            <div class="col-md-10 offset-lg-1">
+                @foreach (var stage in activityRule.Stages)
+                {
+                    <DisciplineSelectingRow
+                        OnRowClickCallback="OpenEditActivityRuleStageAsync"
+                        OnTrashClickCallback="RemoveActivityRuleStageAsync">
+                        <SubParagraph Content="@GetStageHeader(stage)"/>
+                    </DisciplineSelectingRow>
+                }
+            </div>
+        }
+    }
+}
 
 
 @code {
@@ -20,12 +50,16 @@
     protected override async Task OnInitializedAsync()
     {
         _cts = new CancellationTokenSource();
+        await FillActivityRules();
+    }
 
+    private async Task FillActivityRules()
+    {
         var result = await ActivityRulesBrowseFacade.HandleAsync(_cts.Token);
 
-        if (result.IsT1)
+        if (result is { IsT1: true, AsT1: "user.unauthorized" })
         {
-            NavigationManager.NavigateTo("/sign-in");
+            NavigationManager.NavigateTo("/sign-in", true);
         }
 
         _activityRules = result.AsT0.ToList();
@@ -44,9 +78,21 @@
         await Task.Delay(1);
     }
 
-    private async Task RemoveActivityRuleAsync()
+    private async Task RemoveActivityRuleAsync(string activityRuleId)
     {
-        await Task.Delay(1);
+        var result = await DeleteActivityRuleFacade.HandleAsync(activityRuleId, _cts.Token);
+
+        if (result is { IsT1: true, AsT1: "user.unauthorized" })
+        {
+            NavigationManager.NavigateTo("/sign-in", true);
+        }
+
+        if (result.IsT1)
+        {
+            ToastService.Notify(result.AsT1.ToDangerToastMessage());
+        }
+
+        await FillActivityRules();
     }
 
     private async Task OpenEditActivityRuleStageAsync()

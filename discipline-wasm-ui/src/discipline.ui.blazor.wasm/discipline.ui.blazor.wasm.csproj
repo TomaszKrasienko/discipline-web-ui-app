@@ -52,7 +52,6 @@
 
     <ItemGroup>
       <Folder Include="Components\ActivityRules\" />
-      <Folder Include="Pages\ActivityRules\Create\" />
     </ItemGroup>
 
 </Project>
