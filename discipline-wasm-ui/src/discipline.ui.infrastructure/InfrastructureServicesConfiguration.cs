@@ -9,6 +9,8 @@ public static class InfrastructureServicesConfiguration
         => services
             .AddTransient<IActivityRulesBrowseFacade, ActivityRulesBrowseFacade>()
             .AddTransient<IDeleteActivityRuleFacade, DeleteActivityRuleFacade>()
+            .AddTransient<ICreateActivityRuleFacade, CreateActivityRuleFacade>()
+            .AddTransient<IGetModesFacade, GetModesFacade>()
             .SetUsersServices()
             .SetDailyTrackersServices()
             .SetStorageServices()

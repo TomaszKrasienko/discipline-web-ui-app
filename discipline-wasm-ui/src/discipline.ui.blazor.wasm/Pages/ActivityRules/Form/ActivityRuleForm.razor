@@ -1,22 +1,101 @@
+@using BlazorBootstrap
 @using discipline.ui.blazor.wasm.Components.Modals
 @using discipline.ui.blazor.wasm.Enums
+@using discipline.ui.communication.http.ActivityRules.DTOs
+@using discipline.ui.communication.http.ActivityRules.DTOs.Requests
+@using discipline.ui.communication.http.ActivityRules.DTOs.Responses
+@using discipline.ui.infrastructure.ActivityRules.Facades
+@using discipline.ui.infrastructure.ActivityRules.Models
+@inject ICreateActivityRuleFacade CreateActivityRuleFacade
+@inject IGetModesFacade GetModesFacade
+@inject ToastService ToastService
 
 <DisciplineModal
     @ref="_formModal"
     Size="DisciplineModalSize.Large"
     Title="Create activity rule">
     <Body>
-        <EditForm method="post" OnSubmit="Submit">
-            
-        </EditForm>
+    <EditForm
+        method="post"
+        OnSubmit="Submit"
+        EditContext="_editContext">
+        <DataAnnotationsValidator/>
+        <label for="activity-rule-title">Title:</label>
+        <InputText
+            class="form-control"
+            id="activity-rule-title"
+            placeholder="Title"
+            @bind-Value="ActivityRule.Title"/>
+        <label for="activity-rule-note">Note:</label>
+        <InputTextArea
+            class="form-control"
+            id="activity-rule-note"
+            placeholder="Note"
+            @bind-Value="ActivityRule.Title"/>
+        <label for="activity-rule-mode">Modes:</label>
+        <InputSelect 
+            class="form-control"
+            id="activity-rule-mode"
+            @bind-Value="ActivityRule.Mode">
+            @foreach (var mode in _modes)
+            {
+                <option value="@mode.Mode">@mode.Mode</option>
+            }
+        </InputSelect>
+        <
+    </EditForm>
     </Body>
 </DisciplineModal>
 
 @code {
+    private CancellationTokenSource _cts = new();
     private DisciplineModal _formModal = new DisciplineModal();
+    private EditContext? _editContext;
+    private IReadOnlyList<ModeResponseDto> _modes = [];
 
+    [SupplyParameterFromForm] 
+    public WriteActivityRuleDto ActivityRule { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cts = new CancellationTokenSource();        
+        var result = await GetModesFacade.HandelAsync(_cts.Token);
+        
+        if (result.IsT0)
+        {
+            _modes = result.AsT0;
+        }
+        else
+        {
+            ToastService.Notify(result.AsT1.ToDangerToastMessage());
+        }
+    }
+
+    private void OnModeChanged(ChangeEventArgs e)
+    {
+        var selectedValue = e.Value?.ToString();
+        Console.WriteLine(selectedValue);
+    }
+
+    
     private async Task Submit()
     {
+        var createActivityRuleRequestDto = new CreateActivityRuleRequestDto(
+            new ActivityRuleDetailsDto(ActivityRule.Title, ActivityRule.Note),
+            "EveryDay", null, null);
+
+        var result = await CreateActivityRuleFacade.HandleAsync(createActivityRuleRequestDto, _cts.Token);
         
+        if (result.IsT0)
+        {
+            await _formModal.CloseAsync();
+        }
+        else
+        {
+            ToastService.Notify(result.AsT1.ToDangerToastMessage());
+        }
     }
+
+    internal void Open()
+        => _formModal.Open();
 }

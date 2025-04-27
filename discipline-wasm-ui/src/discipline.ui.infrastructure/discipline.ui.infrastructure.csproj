@@ -23,6 +23,5 @@
 
     <ItemGroup>
       <Folder Include="ActivityRules\Configuration\" />
-      <Folder Include="ActivityRules\Models\" />
     </ItemGroup>
 </Project>

@@ -5,6 +5,8 @@
 @using discipline.ui.blazor.wasm.Components.Headers
 @using discipline.ui.blazor.wasm.Components.Paragraphs
 @using discipline.ui.blazor.wasm.Components.Rows
+@using discipline.ui.blazor.wasm.Components.Buttons
+@using discipline.ui.blazor.wasm.Pages.ActivityRules.Form
 @inject IActivityRulesBrowseFacade ActivityRulesBrowseFacade
 @inject IDeleteActivityRuleFacade DeleteActivityRuleFacade
 @inject NavigationManager NavigationManager
@@ -42,10 +44,16 @@
     }
 }
 
+<DisciplineCreateButton
+    OnClickButtonCallback="OpenEditActivityRuleAsync"/>
+
+<ActivityRuleForm
+    @ref="_activityRuleForm"/>
 
 @code {
     private CancellationTokenSource _cts = new();
     private List<ActivityRuleResponseDto> _activityRules = [];
+    private ActivityRuleForm? _activityRuleForm;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,11 +81,9 @@
     private string GetStageHeader(ActivityRuleStageResponseDto stage)
         => $"{stage.Index}. {stage.Title}";
 
-    private async Task OpenEditActivityRuleAsync()
-    {
-        await Task.Delay(1);
-    }
-
+    private void OpenEditActivityRuleAsync()
+        => _activityRuleForm?.Open();
+    
     private async Task RemoveActivityRuleAsync(string activityRuleId)
     {
         var result = await DeleteActivityRuleFacade.HandleAsync(activityRuleId, _cts.Token);
@@ -94,7 +100,7 @@
 
         await FillActivityRules();
     }
-
+    
     private async Task OpenEditActivityRuleStageAsync()
     {
         await Task.Delay(1);
