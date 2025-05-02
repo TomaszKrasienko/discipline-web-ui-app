@@ -34,9 +34,11 @@
                     placeholder="Password"
                     @bind-Value="SignIn.Password"/>
             </div>
-            <DisciplineSubmitButton
-                IsDisabled="@(!_isValid)"
-                Type="DisciplineSubmitButtonType.Page"/>
+            <div style="padding-top: 30px">
+                <DisciplineSubmitButton
+                    IsDisabled="@(!_isValid)"
+                    Type="DisciplineSubmitButtonType.Page"/>
+            </div>
         </EditForm>
     </div>
     <div class="fixed-bottom">

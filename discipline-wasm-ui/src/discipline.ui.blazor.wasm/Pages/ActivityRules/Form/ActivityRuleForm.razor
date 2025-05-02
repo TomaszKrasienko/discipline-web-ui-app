@@ -1,11 +1,13 @@
 @using BlazorBootstrap
 @using discipline.ui.blazor.wasm.Components.Modals
+@using discipline.ui.blazor.wasm.Components.WeekDays
 @using discipline.ui.blazor.wasm.Enums
 @using discipline.ui.communication.http.ActivityRules.DTOs
 @using discipline.ui.communication.http.ActivityRules.DTOs.Requests
 @using discipline.ui.communication.http.ActivityRules.DTOs.Responses
 @using discipline.ui.infrastructure.ActivityRules.Facades
 @using discipline.ui.infrastructure.ActivityRules.Models
+@using discipline.ui.infrastructure.Constants
 @inject ICreateActivityRuleFacade CreateActivityRuleFacade
 @inject IGetModesFacade GetModesFacade
 @inject ToastService ToastService
@@ -36,13 +38,17 @@
         <InputSelect 
             class="form-control"
             id="activity-rule-mode"
-            @bind-Value="ActivityRule.Mode">
+            @bind-Value="ActivityRule.Mode"
+            @onchange="OnModeChanged">
             @foreach (var mode in _modes)
             {
                 <option value="@mode.Mode">@mode.Mode</option>
             }
         </InputSelect>
     </EditForm>
+    <WeekDaysPicker 
+        @ref="_weekDaysPicker"
+        IsVisible="_isDaysVisible"/>
     </Body>
 </DisciplineModal>
 
@@ -51,12 +57,15 @@
     private DisciplineModal _formModal = new DisciplineModal();
     private EditContext? _editContext;
     private IReadOnlyList<ModeResponseDto> _modes = [];
-
+    private WeekDaysPicker _weekDaysPicker = new();
+    private bool _isDaysVisible = false;
+    
     [SupplyParameterFromForm] 
     public WriteActivityRuleDto ActivityRule { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
+        _editContext = new EditContext(ActivityRule);
         _cts = new CancellationTokenSource();        
         var result = await GetModesFacade.HandelAsync(_cts.Token);
         
@@ -68,12 +77,14 @@
         {
             ToastService.Notify(result.AsT1.ToDangerToastMessage());
         }
+
+        await _weekDaysPicker.ShowToggle();
     }
 
-    private void OnModeChanged(ChangeEventArgs e)
+    private void OnModeChanged()
     {
-        var selectedValue = e.Value?.ToString();
-        Console.WriteLine(selectedValue);
+        Console.WriteLine("Test");
+        _isDaysVisible = !_isDaysVisible;
     }
 
     

@@ -1,6 +1,6 @@
 .discipline-modal-lg{
-    width: 60vw;
-    height: 60vh;
+    width: 80vw;
+    height: 100vh;
 }
 .discipline-modal-sm{
     width: 25vw;
@@ -8,20 +8,20 @@
 }
 
 .modal-content {
-    background-color: #1C211D;!important;
-    color: #C4D4C9;!important;
+    background-color: var(--dark);!important;
+    color:var(--light) ;!important;
 }
 
 .discipline-btn-close {
     background-color: transparent;
     border-color: transparent;
-    color: #f5f4f5 !important;
+    color: var(--secondary) !important;
 }
 .discipline-btn-close:hover {
-    color: #C4D4C9;
+    color: var(--primary);
     cursor: pointer;
 }
 
 .discipline-btn-close:active{
-    color: #F5F4F5;
+    color: var(--secondary);
 }
