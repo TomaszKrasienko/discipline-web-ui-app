@@ -1,31 +1,26 @@
 @using BlazorBootstrap
 @using discipline.ui.infrastructure.Constants
-<div style="visibility: @(IsVisible ? "visible" : "hidden")">
-    <Collapse @ref="@_weekdaysCollapse">
-        <Card>
-            <CardBody Style="background-color: var(--dark); border-color: var(--dark)">
-                @foreach (var weekDay in _weekDays)
-                {
-                    <Button
-                        style="background-color: var(--light)"
-                        Active="@(_selected.Contains(weekDay.Value))"
-                        @onclick="() => ChangeSelection(weekDay.Value)">
-                        @weekDay.Name
-                    </Button>
-                }
-            </CardBody>
-        </Card>
-    </Collapse>
-</div>
+<Collapse @ref="@_weekdaysCollapse">
+    <Card>
+        <CardBody Style="background-color: var(--dark); border-color: var(--dark)">
+            @foreach (var weekDay in _weekDays)
+            {
+                <Button
+                    style="background-color: var(--light)"
+                    Active="@(_selected.Contains(weekDay.Value))"
+                    @onclick="() => ChangeSelection(weekDay.Value)">
+                    @weekDay.Name
+                </Button>
+            }
+        </CardBody>
+    </Card>
+</Collapse>
 
 
 @code {
     private Collapse _weekdaysCollapse = new();
     private readonly IEnumerable<WeekDay> _weekDays = WeekDay.List();
     private readonly HashSet<int> _selected = [];
-
-    [Parameter]
-    public bool IsVisible { get; set; }
 
     private void ChangeSelection(int value)
     {
@@ -37,5 +32,8 @@
 
     public async Task ShowToggle()
         => await _weekdaysCollapse.ShowAsync();
+
+    public async Task HideToggle()
+        => await _weekdaysCollapse.HideAsync();
 
 }

@@ -11,6 +11,7 @@
 @inject ICreateActivityRuleFacade CreateActivityRuleFacade
 @inject IGetModesFacade GetModesFacade
 @inject ToastService ToastService
+@inject ILogger<ActivityRuleForm> Logger
 
 <DisciplineModal
     @ref="_formModal"
@@ -38,8 +39,7 @@
         <InputSelect 
             class="form-control"
             id="activity-rule-mode"
-            @bind-Value="ActivityRule.Mode"
-            @onchange="OnModeChanged">
+            @bind-Value="SelectedMode">
             @foreach (var mode in _modes)
             {
                 <option value="@mode.Mode">@mode.Mode</option>
@@ -47,8 +47,7 @@
         </InputSelect>
     </EditForm>
     <WeekDaysPicker 
-        @ref="_weekDaysPicker"
-        IsVisible="_isDaysVisible"/>
+        @ref="_weekDaysPicker"/>
     </Body>
 </DisciplineModal>
 
@@ -59,6 +58,18 @@
     private IReadOnlyList<ModeResponseDto> _modes = [];
     private WeekDaysPicker _weekDaysPicker = new();
     private bool _isDaysVisible = false;
+
+    private string _selectedMode;
+
+    public string SelectedMode
+    {
+        get => _selectedMode;
+        set
+        {
+            _selectedMode = value;
+            OnModeChanged(value).ConfigureAwait(true);
+        }
+    }
     
     [SupplyParameterFromForm] 
     public WriteActivityRuleDto ActivityRule { get; set; } = new();
@@ -77,16 +88,7 @@
         {
             ToastService.Notify(result.AsT1.ToDangerToastMessage());
         }
-
-        await _weekDaysPicker.ShowToggle();
     }
-
-    private void OnModeChanged()
-    {
-        Console.WriteLine("Test");
-        _isDaysVisible = !_isDaysVisible;
-    }
-
     
     private async Task Submit()
     {
@@ -108,4 +110,20 @@
 
     internal void Open()
         => _formModal.Open();
+
+    private async Task OnModeChanged(string newValue)
+    {
+        Logger.LogInformation("Test");
+        var selectedMode = _modes.SingleOrDefault(x => x.Mode == newValue);
+
+        if (selectedMode?.IsDaysRequired ?? false)
+        {
+            await _weekDaysPicker.ShowToggle();
+        }
+        else
+        {
+            await _weekDaysPicker.HideToggle();
+        }
+    }
+
 }
