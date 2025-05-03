@@ -7,8 +7,8 @@
             {
                 <Button
                     style="background-color: var(--light)"
-                    Active="@(_selected.Contains(weekDay.Value))"
-                    @onclick="() => ChangeSelection(weekDay.Value)">
+                    Active="@(_selected?.Contains(weekDay.Value) ?? false)"
+                    @onclick="async () => await ChangeSelection(weekDay.Value)">
                     @weekDay.Name
                 </Button>
             }
@@ -20,14 +20,29 @@
 @code {
     private Collapse _weekdaysCollapse = new();
     private readonly IEnumerable<WeekDay> _weekDays = WeekDay.List();
-    private readonly HashSet<int> _selected = [];
+    private HashSet<int>? _selected;
 
-    private void ChangeSelection(int value)
+    [Parameter, EditorRequired]
+    public EventCallback<HashSet<int>?> OnSelectionChanged { get; set; }
+
+    private async Task ChangeSelection(int value)
     {
+        if (_selected is null)
+        {
+            _selected = [];
+        }
+        
         if (!_selected.Add(value))
         {
             _selected.Remove(value);
         }
+
+        if (!_selected.Any())
+        {
+            _selected = null;
+        }
+
+        await OnSelectionChanged.InvokeAsync(_selected);
     }
 
     public async Task ShowToggle()

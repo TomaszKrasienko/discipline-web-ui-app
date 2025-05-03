@@ -1,4 +1,5 @@
 @using BlazorBootstrap
+@using discipline.ui.blazor.wasm.Components.Buttons
 @using discipline.ui.blazor.wasm.Components.Modals
 @using discipline.ui.blazor.wasm.Components.WeekDays
 @using discipline.ui.blazor.wasm.Enums
@@ -34,7 +35,7 @@
             class="form-control"
             id="activity-rule-note"
             placeholder="Note"
-            @bind-Value="ActivityRule.Title"/>
+            @bind-Value="ActivityRule.Note"/>
         <label for="activity-rule-mode">Modes:</label>
         <InputSelect 
             class="form-control"
@@ -45,9 +46,12 @@
                 <option value="@mode.Mode">@mode.Mode</option>
             }
         </InputSelect>
+        <DisciplineSubmitButton
+            Type="DisciplineSubmitButtonType.Modal"/>
     </EditForm>
-    <WeekDaysPicker 
-        @ref="_weekDaysPicker"/>
+    <DisciplineWeekDaysPicker 
+        @ref="_disciplineWeekDaysPicker"
+        OnSelectionChanged="SelectedDaysChanged"/>
     </Body>
 </DisciplineModal>
 
@@ -56,18 +60,19 @@
     private DisciplineModal _formModal = new DisciplineModal();
     private EditContext? _editContext;
     private IReadOnlyList<ModeResponseDto> _modes = [];
-    private WeekDaysPicker _weekDaysPicker = new();
+    private DisciplineWeekDaysPicker _disciplineWeekDaysPicker = new();
     private bool _isDaysVisible = false;
+    private HashSet<int>? _selectedDays;
+    
+    private string? _selectedMode;
 
-    private string _selectedMode;
-
-    public string SelectedMode
+    public string? SelectedMode
     {
         get => _selectedMode;
         set
         {
-            _selectedMode = value;
             OnModeChanged(value).ConfigureAwait(true);
+            _selectedMode = value;
         }
     }
     
@@ -83,6 +88,7 @@
         if (result.IsT0)
         {
             _modes = result.AsT0;
+            SelectedMode = _modes.FirstOrDefault()?.Mode;
         }
         else
         {
@@ -92,9 +98,14 @@
     
     private async Task Submit()
     {
+        if (_selectedMode is null)
+        {
+            return;
+        }
+        
         var createActivityRuleRequestDto = new CreateActivityRuleRequestDto(
-            new ActivityRuleDetailsDto(ActivityRule.Title, ActivityRule.Note),
-            "EveryDay", null, null);
+            new ActivityRuleDetailsRequestDto(ActivityRule.Title!, ActivityRule.Note),
+            new ActivityRuleModeRequestDto(_selectedMode, null));
 
         var result = await CreateActivityRuleFacade.HandleAsync(createActivityRuleRequestDto, _cts.Token);
         
@@ -111,19 +122,21 @@
     internal void Open()
         => _formModal.Open();
 
-    private async Task OnModeChanged(string newValue)
+    private async Task OnModeChanged(string? newValue)
     {
-        Logger.LogInformation("Test");
         var selectedMode = _modes.SingleOrDefault(x => x.Mode == newValue);
 
         if (selectedMode?.IsDaysRequired ?? false)
         {
-            await _weekDaysPicker.ShowToggle();
+            await _disciplineWeekDaysPicker.ShowToggle();
         }
         else
         {
-            await _weekDaysPicker.HideToggle();
+            await _disciplineWeekDaysPicker.HideToggle();
         }
     }
+
+    private void SelectedDaysChanged(HashSet<int>? selectedDays)
+        => _selectedDays = selectedDays;
 
 }
